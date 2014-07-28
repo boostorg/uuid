@@ -9,6 +9,7 @@
 //  09 Nov 2007 - Initial Revision
 //  25 Feb 2008 - moved to namespace boost::uuids::detail
 //  28 Nov 2009 - disabled deprecated warnings for MSVC
+//  28 Jul 2014 - fixed valgrind warnings and better entropy sources for MSVC
 
 // seed_rng models a UniformRandomNumberGenerator (see Boost.Random).
 // Random number generators are hard to seed well.  This is intended to provide
@@ -27,6 +28,7 @@
 #include <ctime> // for time_t, time, clock_t, clock
 #include <cstdlib> // for rand
 #include <cstdio> // for FILE, fopen, fread, fclose
+#include <boost/core/noncopyable.hpp>
 #include <boost/uuid/sha1.hpp>
 //#include <boost/nondet_random.hpp> //forward declare boost::random::random_device
 
@@ -38,6 +40,7 @@
 #if defined(_MSC_VER)
 #pragma warning(push) // Save warning settings.
 #pragma warning(disable : 4996) // Disable deprecated std::fopen
+#include <boost/detail/winapi/crypt.hpp> // for CryptAcquireContextA, CryptGenRandom, CryptReleaseContext
 #endif
 
 #ifdef BOOST_NO_STDC_NAMESPACE
@@ -65,33 +68,33 @@ namespace uuids {
 namespace detail {
 
 // should this be part of Boost.Random?
-class seed_rng
+class seed_rng: private boost::noncopyable
 {
 public:
     typedef unsigned int result_type;
     BOOST_STATIC_CONSTANT(bool, has_fixed_range = false);
-    //BOOST_STATIC_CONSTANT(unsigned int, min_value = 0);
-    //BOOST_STATIC_CONSTANT(unsigned int, max_value = UINT_MAX);
 
 public:
     // note: rd_ intentionally left uninitialized
-    seed_rng()
+    seed_rng() BOOST_NOEXCEPT
         : rd_index_(5)
         , random_(std::fopen( "/dev/urandom", "rb" ))
-    {}
+    {
+        std::memset(rd_, 0, sizeof(rd_));
+    }
     
-    ~seed_rng()
+    ~seed_rng() BOOST_NOEXCEPT
     {
         if (random_) {
             std::fclose(random_);
         }
     }
 
-    result_type min BOOST_PREVENT_MACRO_SUBSTITUTION () const
+    result_type min BOOST_PREVENT_MACRO_SUBSTITUTION () const BOOST_NOEXCEPT
     {
         return (std::numeric_limits<result_type>::min)();
     }
-    result_type max BOOST_PREVENT_MACRO_SUBSTITUTION () const
+    result_type max BOOST_PREVENT_MACRO_SUBSTITUTION () const BOOST_NOEXCEPT
     {
         return (std::numeric_limits<result_type>::max)();
     }
@@ -109,11 +112,12 @@ public:
     }
 
 private:
+    BOOST_STATIC_CONSTANT(std::size_t, internal_state_size = 5);
     inline void ignore_size(size_t) {}
 
     static unsigned int * sha1_random_digest_state_()
     {
-        static unsigned int state[ 5 ];
+        static unsigned int state[ internal_state_size ];
         return state;
     }
 
@@ -121,12 +125,35 @@ private:
     {
         boost::uuids::detail::sha1 sha;
 
+
+        // intentionally left uninitialized
+        unsigned char state[ 20 ];
+        {
+#if defined(BOOST_WINDOWS)
+            boost::detail::winapi::HCRYPTPROV_ hCryptProv;
+            if (boost::detail::winapi::CryptAcquireContextA(
+                    &hCryptProv,
+                    NULL,
+                    NULL,
+                    boost::detail::winapi::PROV_RSA_FULL_,
+                    boost::detail::winapi::CRYPT_VERIFYCONTEXT_ | boost::detail::winapi::CRYPT_SILENT_))
+            {
+                boost::detail::winapi::CryptGenRandom(hCryptProv, sizeof(state), state);
+            }
+            boost::detail::winapi::CryptReleaseContext(hCryptProv, 0);
+#endif
+            if (random_)
+            {
+                ignore_size(std::fread( state, 1, sizeof(state), random_ ));
+            }
+
+            // still using an uninitialized buffer[] if fopen or CryptGenRandom fails
+            // (we rely on `buffer[]` contents being random even without fopen or CryptGenRandom)
+            sha.process_bytes( state, sizeof( state ) );
+        }
+
         unsigned int * ps = sha1_random_digest_state_();
-
-        unsigned int state[ 5 ];
-        std::memcpy( state, ps, sizeof( state ) ); // harmless data race
-
-        sha.process_bytes( (unsigned char const*)state, sizeof( state ) );
+        sha.process_bytes( ps, internal_state_size * sizeof( unsigned int ) );
         sha.process_bytes( (unsigned char const*)&ps, sizeof( ps ) );
 
         {
@@ -149,27 +176,13 @@ private:
         }
 
         {
-            // intentionally left uninitialized
-            unsigned char buffer[ 20 ];
-
-            if(random_)
-            {
-                ignore_size(std::fread( buffer, 1, 20, random_ ));
-            }
-
-            // using an uninitialized buffer[] if fopen fails
-            // intentional, we rely on its contents being random
-            sha.process_bytes( buffer, sizeof( buffer ) );
-        }
-
-        {
-            // *p is intentionally left uninitialized
             unsigned int * p = new unsigned int;
-
-            sha.process_bytes( (unsigned char const*)p, sizeof( *p ) );
             sha.process_bytes( (unsigned char const*)&p, sizeof( p ) );
-
             delete p;
+
+            const seed_rng* this_ptr = this;
+            sha.process_bytes( (unsigned char const*)&this_ptr, sizeof( this_ptr ) );
+            sha.process_bytes( (unsigned char const*)&std::rand, sizeof( void(*)() ) );
         }
 
         sha.process_bytes( (unsigned char const*)rd_, sizeof( rd_ ) );
@@ -189,10 +202,6 @@ private:
     unsigned int rd_[5];
     int rd_index_;
     std::FILE * random_;
-    
-private: // make seed_rng noncopyable
-    seed_rng(seed_rng const&);
-    seed_rng& operator=(seed_rng const&);
 };
 
 // almost a copy of boost::generator_iterator
