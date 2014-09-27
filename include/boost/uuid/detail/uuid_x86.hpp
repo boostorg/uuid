@@ -22,6 +22,20 @@
 #include <emmintrin.h>
 #endif
 
+#if defined(BOOST_MSVC) && BOOST_MSVC == 1800
+// MSVC 12 (VS2013) has an optimizer bug that sometimes results in incorrect SIMD code generated in Release x64 mode.
+// In particular, it affects operator==, where the compiler sometimes generates pcmpeqd with a memory opereand
+// instead of movdqu followed by pcmpeqd. The problem is that uuid can be not aligned to 16 bytes and pcmpeqd
+// causes alignment violation in this case.
+//
+// https://svn.boost.org/trac/boost/ticket/8509#comment:3
+// https://connect.microsoft.com/VisualStudio/feedbackdetail/view/981648#tabs
+//
+#define BOOST_UUID_DETAIL_MSVC_BUG981648
+extern "C" void _ReadWriteBarrier(void);
+#pragma intrinsic(_ReadWriteBarrier)
+#endif
+
 namespace boost {
 namespace uuids {
 namespace detail {
@@ -60,6 +74,11 @@ inline bool operator== (uuid const& lhs, uuid const& rhs) BOOST_NOEXCEPT
 {
     register __m128i mm_left = uuids::detail::load_unaligned_si128(lhs.data);
     register __m128i mm_right = uuids::detail::load_unaligned_si128(rhs.data);
+
+#if defined(BOOST_UUID_DETAIL_MSVC_BUG981648)
+    // Make sure the loads above are not merged with pcmpeqd below
+    _ReadWriteBarrier();
+#endif
 
     register __m128i mm_cmp = _mm_cmpeq_epi32(mm_left, mm_right);
 #if defined(BOOST_UUID_USE_SSE41)
