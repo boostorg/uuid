@@ -38,9 +38,12 @@
 # include <boost/iterator/iterator_facade.hpp>
 
 #if defined(_MSC_VER)
-#pragma warning(push) // Save warning settings.
-#pragma warning(disable : 4996) // Disable deprecated std::fopen
-#include <boost/detail/winapi/crypt.hpp> // for CryptAcquireContextA, CryptGenRandom, CryptReleaseContext
+#   pragma warning(push) // Save warning settings.
+#   pragma warning(disable : 4996) // Disable deprecated std::fopen
+#   include <boost/detail/winapi/crypt.hpp> // for CryptAcquireContextA, CryptGenRandom, CryptReleaseContext
+#   include <boost/detail/winapi/timers.hpp>
+#else 
+#   include <time.h>  // for clock_gettime
 #endif
 
 #ifdef BOOST_NO_STDC_NAMESPACE
@@ -78,15 +81,33 @@ public:
     // note: rd_ intentionally left uninitialized
     seed_rng() BOOST_NOEXCEPT
         : rd_index_(5)
-        , random_(std::fopen( "/dev/urandom", "rb" ))
+        , random_(NULL)
     {
+#if defined(BOOST_WINDOWS)
+        if (!boost::detail::winapi::CryptAcquireContextA(
+                    &random_,
+                    NULL,
+                    NULL,
+                    boost::detail::winapi::PROV_RSA_FULL_,
+                    boost::detail::winapi::CRYPT_VERIFYCONTEXT_ | boost::detail::winapi::CRYPT_SILENT_))
+        {
+            random_ = NULL;
+        }
+#else
+        random_ = std::fopen( "/dev/urandom", "rb" );
+#endif
+
         std::memset(rd_, 0, sizeof(rd_));
     }
     
     ~seed_rng() BOOST_NOEXCEPT
     {
         if (random_) {
+#if defined(BOOST_WINDOWS)
+            boost::detail::winapi::CryptReleaseContext(random_, 0);
+#else
             std::fclose(random_);
+#endif
         }
     }
 
@@ -128,29 +149,42 @@ private:
 
         // intentionally left uninitialized
         unsigned char state[ 20 ];
+        if (random_)
         {
 #if defined(BOOST_WINDOWS)
-            boost::detail::winapi::HCRYPTPROV_ hCryptProv;
-            if (boost::detail::winapi::CryptAcquireContextA(
-                    &hCryptProv,
-                    NULL,
-                    NULL,
-                    boost::detail::winapi::PROV_RSA_FULL_,
-                    boost::detail::winapi::CRYPT_VERIFYCONTEXT_ | boost::detail::winapi::CRYPT_SILENT_))
-            {
-                boost::detail::winapi::CryptGenRandom(hCryptProv, sizeof(state), state);
-            }
-            boost::detail::winapi::CryptReleaseContext(hCryptProv, 0);
+            boost::detail::winapi::CryptGenRandom(random_, sizeof(state), state);
+#else
+            ignore_size(std::fread( state, 1, sizeof(state), random_ ));
 #endif
-            if (random_)
+        } else 
+        {
+            // failed to gather entropy from system entropy source.
+            // Getting enropy from QueryPerformanceCounter or clock_gettime 
+            for(unsigned int i = 0; i < sizeof(state) / sizeof(unsigned char); ++i )
             {
-                ignore_size(std::fread( state, 1, sizeof(state), random_ ));
-            }
+#if defined(BOOST_WINDOWS)
+                boost::detail::winapi::LARGE_INTEGER_ ts = 0;
+                boost::detail::winapi::QueryPerformanceCounter( &ts )
+                    && QueryPerformanceFrequency( &ts );
+                state[i] = static_cast<unsigned char>(ts);
+#else
+                /*
+                // Following code requires linking with -lrt. Seems like a breaking change
+                timespec ts;
+                std::memset(&ts, 0, sizeof(ts));
+                ::clock_gettime( CLOCK_MONOTONIC_RAW, &ts ) 
+                    && ::clock_gettime( CLOCK_MONOTONIC, &ts ) 
+                    && ::clock_gettime( CLOCK_REALTIME, &ts );
 
-            // still using an uninitialized buffer[] if fopen or CryptGenRandom fails
-            // (we rely on `buffer[]` contents being random even without fopen or CryptGenRandom)
-            sha.process_bytes( state, sizeof( state ) );
+                state[i] = static_cast<unsigned char>(ts.tv_nsec);
+                */
+
+                state[i] = static_cast<unsigned char>(std::rand());
+#endif
+            }
         }
+
+        sha.process_bytes( state, sizeof( state ) );
 
         unsigned int * ps = sha1_random_digest_state_();
         sha.process_bytes( ps, internal_state_size * sizeof( unsigned int ) );
@@ -201,7 +235,12 @@ private:
 private:
     unsigned int rd_[5];
     int rd_index_;
+
+#if defined(BOOST_WINDOWS)
+    boost::detail::winapi::HCRYPTPROV_ hCryptProv_;
+#else
     std::FILE * random_;
+#endif
 };
 
 // almost a copy of boost::generator_iterator
