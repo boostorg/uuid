@@ -163,10 +163,11 @@ private:
             for(unsigned int i = 0; i < sizeof(state) / sizeof(unsigned char); ++i )
             {
 #if defined(BOOST_WINDOWS)
-                boost::detail::winapi::LARGE_INTEGER_ ts = 0;
+                boost::detail::winapi::LARGE_INTEGER_ ts;
+                ts.QuadPart = 0;
                 boost::detail::winapi::QueryPerformanceCounter( &ts )
                     && QueryPerformanceFrequency( &ts );
-                state[i] = static_cast<unsigned char>(ts);
+                state[i] = static_cast<unsigned char>(ts.QuadPart);
 #else
                 /*
                 // Following code requires linking with -lrt. Seems like a breaking change
@@ -237,7 +238,7 @@ private:
     int rd_index_;
 
 #if defined(BOOST_WINDOWS)
-    boost::detail::winapi::HCRYPTPROV_ hCryptProv_;
+    boost::detail::winapi::HCRYPTPROV_ random_;
 #else
     std::FILE * random_;
 #endif
