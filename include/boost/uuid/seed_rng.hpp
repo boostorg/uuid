@@ -42,8 +42,11 @@
 #   pragma warning(disable : 4996) // Disable deprecated std::fopen
 #   include <boost/detail/winapi/crypt.hpp> // for CryptAcquireContextA, CryptGenRandom, CryptReleaseContext
 #   include <boost/detail/winapi/timers.hpp>
+#   include <boost/detail/winapi/process.hpp>
+#   include <boost/detail/winapi/thread.hpp>
+#   pragma comment(lib, "advapi32.lib")
 #else 
-#   include <time.h>  // for clock_gettime
+#   include <sys/time.h> // for gettimeofday
 #endif
 
 #ifdef BOOST_NO_STDC_NAMESPACE
@@ -147,45 +150,41 @@ private:
         boost::uuids::detail::sha1 sha;
 
 
-        // intentionally left uninitialized
-        unsigned char state[ 20 ];
         if (random_)
         {
+            // intentionally left uninitialized
+            unsigned char state[ 20 ];
 #if defined(BOOST_WINDOWS)
             boost::detail::winapi::CryptGenRandom(random_, sizeof(state), state);
 #else
             ignore_size(std::fread( state, 1, sizeof(state), random_ ));
 #endif
-        } else 
-        {
-            // failed to gather entropy from system entropy source.
-            // Getting enropy from QueryPerformanceCounter or clock_gettime 
-            for(unsigned int i = 0; i < sizeof(state) / sizeof(unsigned char); ++i )
-            {
-#if defined(BOOST_WINDOWS)
-                boost::detail::winapi::LARGE_INTEGER_ ts;
-                ts.QuadPart = 0;
-                boost::detail::winapi::QueryPerformanceCounter( &ts )
-                    && QueryPerformanceFrequency( &ts );
-                state[i] = static_cast<unsigned char>(ts.QuadPart);
-#else
-                /*
-                // Following code requires linking with -lrt. Seems like a breaking change
-                timespec ts;
-                std::memset(&ts, 0, sizeof(ts));
-                ::clock_gettime( CLOCK_MONOTONIC_RAW, &ts ) 
-                    && ::clock_gettime( CLOCK_MONOTONIC, &ts ) 
-                    && ::clock_gettime( CLOCK_REALTIME, &ts );
-
-                state[i] = static_cast<unsigned char>(ts.tv_nsec);
-                */
-
-                state[i] = static_cast<unsigned char>(std::rand());
-#endif
-            }
+            sha.process_bytes( state, sizeof( state ) );
         }
 
-        sha.process_bytes( state, sizeof( state ) );
+        {
+            // Getting enropy from some system specific sources
+#if defined(BOOST_WINDOWS)
+            boost::detail::winapi::DWORD_ procid = boost::detail::winapi::GetCurrentProcessId();
+            sha.process_bytes( (unsigned char const*)&procid, sizeof( procid ) );
+
+            boost::detail::winapi::DWORD_ threadid = boost::detail::winapi::GetCurrentThreadId();
+            sha.process_bytes( (unsigned char const*)&threadid, sizeof( threadid ) );
+
+            boost::detail::winapi::LARGE_INTEGER_ ts;
+            ts.QuadPart = 0;
+            boost::detail::winapi::QueryPerformanceCounter( &ts );
+            sha.process_bytes( (unsigned char const*)&ts, sizeof( ts ) );
+#else
+            pid_t pid = getpid();
+            sha.process_bytes( (unsigned char const*)&pid, sizeof( pid ) );
+
+            timeval ts;
+            gettimeofday(&ts, NULL); // We do not use `clock_gettime` to avoid linkage with -lrt
+            sha.process_bytes( (unsigned char const*)&ts, sizeof( ts ) );
+#endif
+        }
+
 
         unsigned int * ps = sha1_random_digest_state_();
         sha.process_bytes( ps, internal_state_size * sizeof( unsigned int ) );

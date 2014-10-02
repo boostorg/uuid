@@ -5,9 +5,6 @@
 
 import testing ;
 
-# Windows lib
-lib AdvAPI32 ;
-
 test-suite uuid :
     # make sure each header file is self-contained
     [ compile compile_uuid.cpp ]
@@ -36,15 +33,15 @@ test-suite uuid :
     # test generators
     [ run test_nil_generator.cpp ]
     [ run test_name_generator.cpp ]
-    [ run test_string_generator.cpp : : : <target-os>windows:<library>AdvAPI32 ]
-    [ run test_random_generator.cpp : : : <target-os>windows:<library>AdvAPI32 ]
+    [ run test_string_generator.cpp ]
+    [ run test_random_generator.cpp ]
 
     # test tagging an object
-    [ run test_tagging.cpp : : : <target-os>windows:<library>AdvAPI32 ]
+    [ run test_tagging.cpp ]
 
     # test use cases
-    [ run test_uuid_class.cpp : : : <target-os>windows:<library>AdvAPI32 ]
-    [ run test_uuid_in_map.cpp : : : <target-os>windows:<library>AdvAPI32 ]
+    [ run test_uuid_class.cpp ]
+    [ run test_uuid_in_map.cpp ]
 
     # test serializing uuids
     [ run test_serialization.cpp ../../serialization/build//boost_serialization ]
