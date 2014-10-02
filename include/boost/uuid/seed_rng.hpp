@@ -46,7 +46,9 @@
 #   include <boost/detail/winapi/thread.hpp>
 #   pragma comment(lib, "advapi32.lib")
 #else 
-#   include <sys/time.h> // for gettimeofday
+#   include <sys/time.h>  // for gettimeofday
+#   include <sys/types.h> // for pid_t
+#   include <unistd.h>    // for getpid()
 #endif
 
 #ifdef BOOST_NO_STDC_NAMESPACE
@@ -175,6 +177,9 @@ private:
             ts.QuadPart = 0;
             boost::detail::winapi::QueryPerformanceCounter( &ts );
             sha.process_bytes( (unsigned char const*)&ts, sizeof( ts ) );
+
+            std::time_t tm = std::time( 0 );
+            sha.process_bytes( (unsigned char const*)&tm, sizeof( tm ) );
 #else
             pid_t pid = getpid();
             sha.process_bytes( (unsigned char const*)&pid, sizeof( pid ) );
@@ -189,11 +194,6 @@ private:
         unsigned int * ps = sha1_random_digest_state_();
         sha.process_bytes( ps, internal_state_size * sizeof( unsigned int ) );
         sha.process_bytes( (unsigned char const*)&ps, sizeof( ps ) );
-
-        {
-            std::time_t tm = std::time( 0 );
-            sha.process_bytes( (unsigned char const*)&tm, sizeof( tm ) );
-        }
 
         {
             std::clock_t ck = std::clock();
