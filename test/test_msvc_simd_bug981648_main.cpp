@@ -25,10 +25,21 @@ static my_obj g_my_obj;
 int main(int argc, char* argv[])
 {
     my_obj *p = &g_my_obj;
-    my_obj a;
 
-    p->m_uuid = a.m_uuid = uuid();
+    p->m_uuid = uuid();
+
+    uuid one, two;
+    one.data[0] = 0; two.data[0] = 1;
+
+    //*****************************************
+    // This != statement generates two movdqu statements or pcmpeqd with a memory operand which crashes
+    if (one != two) {
+        std::printf("The first != operator works okay if it reaches this printf.\n");
+    }
+    my_obj a;
     a.m_uuid.data[0] = 1;
+
+    std::printf("There should be a another printf coming next.\n");
 
     //*****************************************
     // The != statement in this function generates a movups and a movdqu statement.
