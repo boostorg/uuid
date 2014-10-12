@@ -56,7 +56,7 @@ BOOST_FORCEINLINE __m128i load_unaligned_si128(const uint8_t* p) BOOST_NOEXCEPT
     return mm;
 #else
     // VS2008 x64 doesn't respect _ReadWriteBarrier above, so we have to generate this crippled code to load unaligned data
-    return _mm_unpacklo_epi64(_mm_loadl_epi64(reinterpret_cast< const __m128i* >(p)), _mm_loadl_epi64(reinterpret_cast< const __m128i* >(p) + 1));
+    return _mm_unpacklo_epi64(_mm_loadl_epi64(reinterpret_cast< const __m128i* >(p)), _mm_loadl_epi64(reinterpret_cast< const __m128i* >(p + 8)));
 #endif
 }
 
