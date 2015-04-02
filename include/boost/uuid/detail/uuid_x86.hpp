@@ -100,7 +100,7 @@ inline bool operator< (uuid const& lhs, uuid const& rhs) BOOST_NOEXCEPT
     cmp = (cmp - 1u) ^ cmp;
     rcmp = (rcmp - 1u) ^ rcmp;
 
-    return static_cast< uint16_t >(cmp) < static_cast< uint16_t >(rcmp);
+    return cmp < rcmp;
 }
 
 } // namespace uuids
