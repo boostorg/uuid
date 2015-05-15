@@ -201,7 +201,7 @@ private:
         }
 
         {
-            unsigned int rn[] = 
+            unsigned int rn[] =
                 { static_cast<unsigned int>(std::rand())
                 , static_cast<unsigned int>(std::rand())
                 , static_cast<unsigned int>(std::rand())
@@ -260,7 +260,7 @@ class generator_iterator
       , single_pass_traversal_tag
       , typename Generator::result_type const&
     > super_t;
-    
+
  public:
     generator_iterator() : m_g(NULL), m_value(0) {}
     generator_iterator(Generator* g) : m_g(g), m_value((*m_g)()) {}
