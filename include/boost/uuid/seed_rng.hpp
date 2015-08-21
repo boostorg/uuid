@@ -37,7 +37,7 @@
 //#include <boost/generator_iterator.hpp>
 # include <boost/iterator/iterator_facade.hpp>
 
-#if defined(_MSC_VER)
+#if defined(BOOST_WINDOWS)
 #   pragma warning(push) // Save warning settings.
 #   pragma warning(disable : 4996) // Disable deprecated std::fopen
 #   include <boost/detail/winapi/crypt.hpp> // for CryptAcquireContextA, CryptGenRandom, CryptReleaseContext
