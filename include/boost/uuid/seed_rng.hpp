@@ -40,6 +40,7 @@
 #if defined(_MSC_VER)
 #   pragma warning(push) // Save warning settings.
 #   pragma warning(disable : 4996) // Disable deprecated std::fopen
+#   pragma comment(lib, "advapi32.lib")
 #endif
 
 #if defined(BOOST_WINDOWS)
@@ -47,9 +48,6 @@
 #   include <boost/detail/winapi/timers.hpp>
 #   include <boost/detail/winapi/process.hpp>
 #   include <boost/detail/winapi/thread.hpp>
-#if defined(_MSC_VER)
-#   pragma comment(lib, "advapi32.lib")
-#endif
 #else 
 #   include <sys/time.h>  // for gettimeofday
 #   include <sys/types.h> // for pid_t
