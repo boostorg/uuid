@@ -22,12 +22,13 @@
 #include <emmintrin.h>
 #endif
 
-#if defined(BOOST_MSVC) && defined(_M_X64) && !defined(BOOST_UUID_USE_SSE3)
+#if defined(BOOST_MSVC) && defined(_M_X64) && !defined(BOOST_UUID_USE_SSE3) && (BOOST_MSVC < 1900 /* Fixed in Visual Studio 2015 */ )
 // At least MSVC 9 (VS2008) and 12 (VS2013) have an optimizer bug that sometimes results in incorrect SIMD code
 // generated in Release x64 mode. In particular, it affects operator==, where the compiler sometimes generates
 // pcmpeqd with a memory opereand instead of movdqu followed by pcmpeqd. The problem is that uuid can be
 // not aligned to 16 bytes and pcmpeqd causes alignment violation in this case. We cannot be sure that other
-// MSVC versions are not affected so we apply the workaround for all versions.
+// MSVC versions are not affected so we apply the workaround for all versions, except VS2015 on up where
+// the bug has been fixed.
 //
 // https://svn.boost.org/trac/boost/ticket/8509#comment:3
 // https://connect.microsoft.com/VisualStudio/feedbackdetail/view/981648#tabs
