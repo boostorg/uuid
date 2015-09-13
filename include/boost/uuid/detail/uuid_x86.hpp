@@ -87,9 +87,9 @@ inline bool operator== (uuid const& lhs, uuid const& rhs) BOOST_NOEXCEPT
     __m128i mm_right = uuids::detail::load_unaligned_si128(rhs.data);
 
     __m128i mm_cmp = _mm_cmpeq_epi32(mm_left, mm_right);
-    
+
 #if defined(BOOST_UUID_USE_SSE41)
-    return _mm_test_all_ones(mm_cmp);
+    return _mm_test_all_ones(mm_cmp) != 0;
 #else
     return _mm_movemask_epi8(mm_cmp) == 0xFFFF;
 #endif
