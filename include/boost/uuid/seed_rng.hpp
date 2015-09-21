@@ -92,7 +92,7 @@ public:
         , random_(NULL)
     {
 #if defined(BOOST_WINDOWS)
-        if (!boost::detail::winapi::CryptAcquireContextA(
+        if (!boost::detail::winapi::CryptAcquireContextW(
                     &random_,
                     NULL,
                     NULL,
