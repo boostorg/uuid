@@ -40,7 +40,11 @@
 #if defined(_MSC_VER)
 #   pragma warning(push) // Save warning settings.
 #   pragma warning(disable : 4996) // Disable deprecated std::fopen
-#   pragma comment(lib, "advapi32.lib")
+#   if !defined(BOOST_ALL_NO_LIB)
+#       define BOOST_LIB_NAME "advapi32"
+#       define BOOST_AUTO_LINK_NOMANGLE
+#       include <boost/config/auto_link.hpp>
+#   endif
 #endif
 
 #if defined(BOOST_WINDOWS)
