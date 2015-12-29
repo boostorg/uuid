@@ -50,18 +50,22 @@ int main(int, char*[])
         std::stringstream ss3;
         ss3 << u3;
         BOOST_TEST_EQ(ss3.str(), "12345678-90ab-cdef-1234-567890abcdef");
-        
+
         std::stringstream ss4;
         ss4 << std::uppercase << u3;
         BOOST_TEST_EQ(ss4.str(), "12345678-90AB-CDEF-1234-567890ABCDEF");
-        
+
         std::stringstream ss5;
         ss5 << 'a' << std::right << std::setfill('*') << std::setw(40) << u1 << 'a';
         BOOST_TEST_EQ(ss5.str(), "a****00000000-0000-0000-0000-000000000000a");
-        
+
         std::stringstream ss6;
         ss6 << std::left << std::setfill('*') << std::setw(45) << u1;
         BOOST_TEST_EQ(ss6.str(), "00000000-0000-0000-0000-000000000000*********");
+
+        std::stringstream ss7;
+        ss7 << std::left << std::setfill('*') << std::setw(45) << u2;
+        BOOST_TEST_EQ(ss7.str(), "00010203-0405-0607-0809-0a0b0c0d0e0f*********");
     }
 
  #ifndef BOOST_NO_STD_WSTRING
@@ -77,18 +81,22 @@ int main(int, char*[])
         std::wstringstream ss3;
         ss3 << u3;
         BOOST_TEST_EQ(ss3.str(), L"12345678-90ab-cdef-1234-567890abcdef");
-        
+
         std::wstringstream ss4;
         ss4 << std::uppercase << u3;
         BOOST_TEST_EQ(ss4.str(), L"12345678-90AB-CDEF-1234-567890ABCDEF");
-        
+
         std::wstringstream ss5;
         ss5 << L'a' << std::right << std::setfill(L'*') << std::setw(40) << u1 << L'a';
         BOOST_TEST_EQ(ss5.str(), L"a****00000000-0000-0000-0000-000000000000a");
-        
+
         std::wstringstream ss6;
         ss6 << std::left << std::setfill(L'*') << std::setw(45) << u1;
         BOOST_TEST_EQ(ss6.str(), L"00000000-0000-0000-0000-000000000000*********");
+
+        std::wstringstream ss7;
+        ss7 << std::left << std::setfill(L'*') << std::setw(45) << u2;
+        BOOST_TEST_EQ(ss7.str(), L"00010203-0405-0607-0809-0a0b0c0d0e0f*********");
     }
 #endif
 
@@ -137,12 +145,12 @@ int main(int, char*[])
         BOOST_TEST_EQ(boost::lexical_cast<uuid>(L"12345678-90ab-cdef-1234-567890abcdef"), u3);
     }
 #endif
-    
+
     { // test to_string
         BOOST_TEST_EQ(to_string(u1), std::string("00000000-0000-0000-0000-000000000000"));
         BOOST_TEST_EQ(to_string(u3), std::string("12345678-90ab-cdef-1234-567890abcdef"));
     }
-    
+
 #ifndef BOOST_NO_STD_WSTRING
     { // test to_wstring
         BOOST_TEST_EQ(to_wstring(u1), std::wstring(L"00000000-0000-0000-0000-000000000000"));
