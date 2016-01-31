@@ -46,8 +46,8 @@
 #if defined(BOOST_WINDOWS)
 #   include <boost/detail/winapi/crypt.hpp> // for CryptAcquireContextA, CryptGenRandom, CryptReleaseContext
 #   include <boost/detail/winapi/timers.hpp>
-#   include <boost/detail/winapi/process.hpp>
-#   include <boost/detail/winapi/thread.hpp>
+#   include <boost/detail/winapi/get_current_process_id.hpp>
+#   include <boost/detail/winapi/get_current_thread_id.hpp>
 #else 
 #   include <sys/time.h>  // for gettimeofday
 #   include <sys/types.h> // for pid_t
@@ -107,7 +107,7 @@ public:
 
         std::memset(rd_, 0, sizeof(rd_));
     }
-    
+
     ~seed_rng() BOOST_NOEXCEPT
     {
         if (random_) {
