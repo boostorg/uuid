@@ -49,7 +49,7 @@ BOOST_FORCEINLINE __m128i load_unaligned_si128(const uint8_t* p) BOOST_NOEXCEPT
     return _mm_lddqu_si128(reinterpret_cast< const __m128i* >(p));
 #elif !defined(BOOST_UUID_DETAIL_MSVC_BUG981648)
     return _mm_loadu_si128(reinterpret_cast< const __m128i* >(p));
-#elif BOOST_MSVC >= 1600
+#elif defined(BOOST_MSVC) && BOOST_MSVC >= 1600
     __m128i mm = _mm_loadu_si128(reinterpret_cast< const __m128i* >(p));
     // Make sure this load doesn't get merged with the subsequent instructions
     _ReadWriteBarrier();
