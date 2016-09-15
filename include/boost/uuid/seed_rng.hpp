@@ -40,7 +40,11 @@
 #if defined(_MSC_VER)
 #   pragma warning(push) // Save warning settings.
 #   pragma warning(disable : 4996) // Disable deprecated std::fopen
+#if defined(_WIN32_WCE)
+#   pragma comment(lib, "coredll.lib")
+#else
 #   pragma comment(lib, "advapi32.lib")
+#endif
 #endif
 
 #if defined(BOOST_WINDOWS)
