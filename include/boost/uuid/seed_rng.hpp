@@ -44,7 +44,11 @@
 #   include <boost/detail/winapi/timers.hpp>
 #   include <boost/detail/winapi/process.hpp>
 #   include <boost/detail/winapi/thread.hpp>
+#if defined(_WIN32_WCE)
+#   pragma comment(lib, "coredll.lib")
+#else
 #   pragma comment(lib, "advapi32.lib")
+#endif
 #else 
 #   include <sys/time.h>  // for gettimeofday
 #   include <sys/types.h> // for pid_t
