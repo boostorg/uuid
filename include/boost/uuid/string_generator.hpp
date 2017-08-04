@@ -32,8 +32,8 @@ namespace uuids {
 // and be more efficient
 // would like to accept the following forms:
 // 0123456789abcdef0123456789abcdef
-// 01234567-89ab-cdef-0123456789abcdef
-// {01234567-89ab-cdef-0123456789abcdef}
+// 01234567-89ab-cdef-0123-456789abcdef
+// {01234567-89ab-cdef-0123-456789abcdef}
 // {0123456789abcdef0123456789abcdef}
 // others?
 struct string_generator {
