@@ -93,7 +93,7 @@ public:
     // note: rd_ intentionally left uninitialized
     seed_rng() BOOST_NOEXCEPT
         : rd_index_(5)
-        , random_(NULL)
+        , random_(0)
     {
 #if defined(BOOST_WINDOWS)
         if (!boost::detail::winapi::CryptAcquireContextW(
@@ -103,7 +103,7 @@ public:
                     boost::detail::winapi::PROV_RSA_FULL_,
                     boost::detail::winapi::CRYPT_VERIFYCONTEXT_ | boost::detail::winapi::CRYPT_SILENT_))
         {
-            random_ = NULL;
+            random_ = 0;
         }
 #else
         random_ = std::fopen( "/dev/urandom", "rb" );
