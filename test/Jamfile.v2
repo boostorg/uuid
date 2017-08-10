@@ -34,7 +34,7 @@ test-suite uuid :
     [ run test_nil_generator.cpp ]
     [ run test_name_generator.cpp ]
     [ run test_string_generator.cpp ]
-    [ run test_random_generator.cpp ]
+    [ run test_random_generator.cpp ../../random/build//boost_random ]
 
     # test tagging an object
     [ run test_tagging.cpp ]
