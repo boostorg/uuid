@@ -8,7 +8,7 @@ Uuid, part of collection of the [Boost C++ Libraries](http://github.com/boostorg
 
 ### More information
 
-* [Documentation](doc/index.html)
+* [Documentation](http://boost.org/libs/uuid)
 * [Ask questions](http://stackoverflow.com/questions/ask?tags=c%2B%2B,boost,boost-uuid)
 * [Report bugs](https://github.com/boostorg/uuid/issues): Be sure to mention Boost version, platform and compiler you're using. A small compilable code sample to reproduce the problem is always good as well.
 * Submit your patches as pull requests against **develop** branch. Note that by submitting patches you agree to license your modifications under the [Boost Software License, Version 1.0](http://www.boost.org/LICENSE_1_0.txt).
