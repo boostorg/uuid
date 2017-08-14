@@ -13,6 +13,7 @@
 #include <boost/uuid/uuid_io.hpp>
 #include <boost/uuid/name_generator.hpp>
 #include <boost/detail/lightweight_test.hpp>
+#include <boost/config.hpp>
 
 int main(int, char*[])
 {
@@ -25,25 +26,38 @@ int main(int, char*[])
     name_generator gen(dns_namespace_uuid);
 
     uuid u = gen("www.widgets.com");
+    BOOST_TEST_EQ(u, correct); // we established u == correct previously, this validates the bullet
+    BOOST_TEST_EQ(u.variant(), boost::uuids::uuid::variant_rfc_4122);
+
+    // RFC 4122 Section 4.3 Bullet 1, same name in same namespace make the same UUID
+    u = gen(std::string("www.widgets.com"));
     BOOST_TEST_EQ(u, correct);
+    BOOST_TEST_EQ(u.variant(), boost::uuids::uuid::variant_rfc_4122);
+
+    // RFC 4122 Section 4.3 Bullet 2, two names in the same namespace make a different UUID
+    uuid u2 = gen("www.wonka.com");
+    BOOST_TEST_NE(u, u2);
     BOOST_TEST_EQ(u.variant(), boost::uuids::uuid::variant_rfc_4122);
 
     u = gen(L"www.widgets.com");
     BOOST_TEST_EQ(u, wcorrect);
     BOOST_TEST_EQ(u.variant(), boost::uuids::uuid::variant_rfc_4122);
 
-    u = gen(std::string("www.widgets.com"));
-    BOOST_TEST_EQ(u, correct);
-    BOOST_TEST_EQ(u.variant(), boost::uuids::uuid::variant_rfc_4122);
-
+#ifndef BOOST_NO_STD_WSTRING
     u = gen(std::wstring(L"www.widgets.com"));
     BOOST_TEST_EQ(u, wcorrect);
     BOOST_TEST_EQ(u.variant(), boost::uuids::uuid::variant_rfc_4122);
+#endif
 
     char name[] = "www.widgets.com";
     u = gen(name, 15);
     BOOST_TEST_EQ(u, correct);
     BOOST_TEST_EQ(u.variant(), boost::uuids::uuid::variant_rfc_4122);
+
+    // generate the same name in a different namespace, per RFC 4122 Section 4.3 Bullet 3 these must be different UUIDs
+    name_generator other(correct);
+    uuid u3 = other("www.widgets.com");
+    BOOST_TEST_NE(u, u3);
 
     return boost::report_errors();
 }
