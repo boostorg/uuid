@@ -14,6 +14,13 @@ Uuid, part of collection of the [Boost C++ Libraries](http://github.com/boostorg
 * Submit your patches as pull requests against **develop** branch. Note that by submitting patches you agree to license your modifications under the [Boost Software License, Version 1.0](http://www.boost.org/LICENSE_1_0.txt).
 * Discussions about the library are held on the [Boost developers mailing list](http://www.boost.org/community/groups.html#main). Be sure to read the [discussion policy](http://www.boost.org/community/policy.html) before posting and add the `[uuid]` tag at the beginning of the subject line.
 
+### Build Status
+
+@               | Build         | Tests coverage | More info
+----------------|-------------- | -------------- |-----------
+[develop branch](https://github.com/boostorg/uuid/tree/develop): | [![Build Status](https://travis-ci.org/jeking3/uuid.svg?branch=develop)](https://travis-ci.org/jeking3/uuid) [![Build status](https://ci.appveyor.com/api/projects/status/dca429e710iop3jh/branch/develop?svg=true)](https://ci.appveyor.com/project/jeking3/uuid/branch/develop) | [![Coverage Status](https://coveralls.io/repos/jeking3/uuid/badge.png?branch=develop)](https://coveralls.io/r/jeking3/uuid?branch=develop)  | [details...](http://www.boost.org/development/tests/develop/developer/uuid.html)
+[master branch](https://github.com/boostorg/uuid/tree/master):  | [![Build Status](https://travis-ci.org/jeking3/uuid.svg?branch=master)](https://travis-ci.org/jeking3/uuid) [![Build status](https://ci.appveyor.com/api/projects/status/dca429e710iop3jh?svg=true)](https://ci.appveyor.com/project/jeking3/uuid/branch/master) | [![Coverage Status](https://coveralls.io/repos/jeking3/uuid/badge.png?branch=master)](https://coveralls.io/r/jeking3/uuid?branch=master)  | [details...](http://www.boost.org/development/tests/master/developer/uuid.html)
+
 ### License
 
 Distributed under the [Boost Software License, Version 1.0](http://www.boost.org/LICENSE_1_0.txt).
