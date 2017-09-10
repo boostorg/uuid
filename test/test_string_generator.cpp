@@ -14,6 +14,7 @@
 #include <boost/uuid/string_generator.hpp>
 #include <boost/detail/lightweight_test.hpp>
 #include <boost/config.hpp>
+#include <stdexcept>
 #include <string>
 
 int main(int, char*[])
@@ -53,6 +54,21 @@ int main(int, char*[])
     u = gen(std::wstring(L"01234567-89ab-cdef-0123-456789abcdef"));
     BOOST_TEST_EQ(u, u_increasing);
 #endif //BOOST_NO_STD_WSTRING
+
+    BOOST_TEST_THROWS(gen("01234567-89ab-cdef-\0123-456789abcdef"), std::invalid_argument);
+
+    BOOST_TEST_THROWS(gen("01234567-89ab-cdef-0123456789abcdef"), std::invalid_argument);
+    BOOST_TEST_THROWS(gen("01234567-89ab-cdef0123-456789abcdef"), std::invalid_argument);
+    BOOST_TEST_THROWS(gen("01234567-89abcdef-0123-456789abcdef"), std::invalid_argument);
+    BOOST_TEST_THROWS(gen("0123456789ab-cdef-0123-456789abcdef"), std::invalid_argument);
+
+    BOOST_TEST_THROWS(gen("{01234567-89AB-CDEF-0123-456789abcdef"), std::invalid_argument);
+    BOOST_TEST_THROWS(gen("01234567-89AB-CDEF-0123-456789abcdef}"), std::invalid_argument);
+
+    BOOST_TEST_THROWS(gen("G1234567-89AB-CDEF-0123-456789abcdef"), std::invalid_argument);
+    BOOST_TEST_THROWS(gen("Have a great big roast-beef sandwich!"), std::invalid_argument);
+
+    BOOST_TEST_THROWS(gen("83f8638b-8dca-4152-zzzz-2ca8b33039b4"), std::invalid_argument);
 
     return boost::report_errors();
 }

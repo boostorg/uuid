@@ -14,6 +14,7 @@
 #include <boost/uuid/uuid_io.hpp>
 #include <boost/detail/lightweight_test.hpp>
 #include <boost/random.hpp>
+#include <boost/random/random_device.hpp>
 
 template <typename RandomUuidGenerator>
 void check_random_generator(RandomUuidGenerator& uuid_gen)
@@ -53,8 +54,8 @@ int main(int, char*[])
     check_random_generator(uuid_gen4);
 
     // random device
-    //basic_random_generator<boost::random_device> uuid_gen5;
-    //check_random_generator(uuid_gen5);
+    basic_random_generator<boost::random::random_device> uuid_gen5;
+    check_random_generator(uuid_gen5);
     
     // there was a bug in basic_random_generator where it did not
     // produce very random numbers.  This checks for that bug.

@@ -81,6 +81,8 @@ information in a distributed environment without significant central
 coordination.  It can be used to tag objects with very short lifetimes, or 
 to reliably identify very persistent objects across a network.
 <p>
+A formal definition for UUID can be found in <A HREF="https://www.ietf.org/rfc/rfc4122.txt">RFC 4122</A>.
+<p>
 UUIDs have many applications.  Some examples follow:  Databases may use UUIDs 
 to identify rows or records in order to ensure that they are unique across 
 different databases, or for publication/subscription services.  Network messages
@@ -474,14 +476,28 @@ struct string_generator {
 </pre>
 
 <h4><a name="String Generator">String Generator</a></h4>
-<p>The <tt>boost::uuids::string_generator</tt> class generates a <b>uuid</b> from a string.
+<p>The <tt>boost::uuids::string_generator</tt> class generates a <b>uuid</b> from a string.  In addition to the standards-defined string
+format in <A HREF="https://www.ietf.org/rfc/rfc4122.txt">RFC 4122</A> (p. 3), the string generator accepts a few variants.  Valid strings
+match the following PCRE regular expression:
+<pre>
+^({)?([0-9a-fA-F]{8})(?<DASH>-)?([0-9a-fA-F]{4})(?(DASH)-)([0-9a-fA-F]{4})(?(DASH)-)([0-9a-fA-F]{4})(?(DASH)-)([0-9a-fA-F]{12})(?(1)})$
+</pre>
+Or more generally, the following formats are accepted as valid string formats, where <tt>h</tt> is hexadecimal, without case sensitivity, and without any leading or trailing whitespace:
+<pre>
+hhhhhhhh-hhhh-hhhh-hhhh-hhhhhhhhhhhh
+{hhhhhhhh-hhhh-hhhh-hhhh-hhhhhhhhhhhh}
+hhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhh
+{hhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhh}
+</pre>
+For example:
 <pre>
 boost::uuids::string_generator gen;
 boost::uuids::uuid u1 = gen("{01234567-89ab-cdef-0123-456789abcdef}");
 boost::uuids::uuid u2 = gen(L"01234567-89ab-cdef-0123-456789abcdef");
 boost::uuids::uuid u3 = gen(std::string("0123456789abcdef0123456789abcdef"));
-boost::uuids::uuid u4 = gen(std::wstring(L"01234567-89ab-cdef-0123-456789abcdef"));
+boost::uuids::uuid u4 = gen(std::wstring(L"01234567-89AB-CDEF-0123-456789ABCDEF"));
 </pre>
+Invalid input will generate a std::invalid_argument exception.
 
 <h3><a name="boost/uuid/name_generator.hpp" href="./../../boost/uuid/name_generator.hpp">boost/uuid/name_generator.hpp</a></h3>
 <h4><a name="Synopsis_name_generator">Synopsis</a></h4>
@@ -586,7 +602,7 @@ std::wstring to_wstring(uuid const&amp; u);
 The standard input and output stream operators <tt>&lt;&lt;</tt> and <tt>&gt;&gt;</tt>
 are provided by including <a href="../../boost/uuid/uuid_io.hpp"><tt>boost/uuid/uuid_io.hpp</tt></a>.
 The string representation of a <b>uuid</b> is <tt>hhhhhhhh-hhhh-hhhh-hhhh-hhhhhhhhhhhh</tt> 
-where <tt>h</tt> is a hexidecimal digit.
+where <tt>h</tt> is hexadecimal.
 <pre>
 boost::uuids::uuid u1; // initialize uuid
 

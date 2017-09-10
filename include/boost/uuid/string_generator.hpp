@@ -81,15 +81,21 @@ struct string_generator {
                 }
             }
             
-            if (has_dashes) {
-                if (i == 6 || i == 8 || i == 10) {
+            // if there are dashes, they must be in every slot
+            else if (i == 6 || i == 8 || i == 10) {
+                if (has_dashes == true) {
                     if (is_dash(c)) {
                         c = get_next_char(begin, end);
                     } else {
                         throw_invalid();
                     }
+                } else {
+                    if (is_dash(c)) {
+                        throw_invalid();
+                    }
                 }
             }
+                
 
             *it_byte = get_value(c);
 
@@ -102,6 +108,11 @@ struct string_generator {
         if (has_open_brace) {
             c = get_next_char(begin, end);
             check_close_brace(c, open_brace_char);
+        }
+
+        // check end of string - any additional data is an invalid uuid
+        if (begin != end) {
+            throw_invalid();
         }
         
         return u;
@@ -118,27 +129,33 @@ private:
     }
 
     unsigned char get_value(char c) const {
-        static char const*const digits_begin = "0123456789abcdefABCDEF";
-        static char const*const digits_end = digits_begin + 22;
+        static char const digits_begin[] = "0123456789abcdefABCDEF";
+        static size_t digits_len = (sizeof(digits_begin) / sizeof(char)) - 1;
+        static char const*const digits_end = digits_begin + digits_len;
 
         static unsigned char const values[] =
-            { 0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,10,11,12,13,14,15
-            , static_cast<unsigned char>(-1) };
+            { 0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,10,11,12,13,14,15 };
 
-        char const* d = std::find(digits_begin, digits_end, c);
-        return values[d - digits_begin];
+        size_t pos = std::find(digits_begin, digits_end, c) - digits_begin;
+        if (pos >= digits_len) {
+            throw_invalid();
+        }
+        return values[pos];
     }
 
     unsigned char get_value(wchar_t c) const {
-        static wchar_t const*const digits_begin = L"0123456789abcdefABCDEF";
-        static wchar_t const*const digits_end = digits_begin + 22;
+        static wchar_t const digits_begin[] = L"0123456789abcdefABCDEF";
+        static size_t digits_len = (sizeof(digits_begin) / sizeof(wchar_t)) - 1;
+        static wchar_t const*const digits_end = digits_begin + digits_len;
         
         static unsigned char const values[] =
-            { 0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,10,11,12,13,14,15
-            , static_cast<unsigned char>(-1) };
+            { 0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,10,11,12,13,14,15 };
 
-        wchar_t const* d = std::find(digits_begin, digits_end, c);
-        return values[d - digits_begin];
+        size_t pos = std::find(digits_begin, digits_end, c) - digits_begin;
+        if (pos >= digits_len) {
+            throw_invalid();
+        }
+        return values[pos];
     }
 
     bool is_dash(char c) const {
@@ -175,7 +192,7 @@ private:
     }
     
     void throw_invalid() const {
-        BOOST_THROW_EXCEPTION(std::runtime_error("invalid uuid string"));
+        BOOST_THROW_EXCEPTION(std::invalid_argument("invalid uuid string"));
     }
 };
 

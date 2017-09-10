@@ -10,7 +10,7 @@
 
 #include <boost/uuid/uuid.hpp>
 #include <boost/uuid/sha1.hpp>
-#include <boost/assert.hpp>
+#include <boost/static_assert.hpp>
 #include <string>
 #include <cstring> // for strlen, wcslen
 
@@ -25,7 +25,7 @@ namespace boost {
 namespace uuids {
 
 // generate a name-based uuid
-// TODO: add in common namesspace uuids
+// TODO: add in common namespace uuids
 class name_generator {
 public:
     typedef uuid result_type;
@@ -34,40 +34,44 @@ public:
         : namespace_uuid(namespace_uuid_)
     {}
 
-    uuid operator()(const char* name) {
-        reset();
-        process_characters(name, std::strlen(name));
-        return sha_to_uuid();
+    uuid operator()(const char* name) const {
+        detail::sha1 sha;
+        sha.process_bytes(namespace_uuid.begin(), namespace_uuid.size());
+        process_characters(sha, name, std::strlen(name));
+        return sha_to_uuid(sha);
     }
 
-    uuid operator()(const wchar_t* name) {
-        reset();
-        process_characters(name, std::wcslen(name));
-        return sha_to_uuid();
+    uuid operator()(const wchar_t* name) const {
+        detail::sha1 sha;
+        sha.process_bytes(namespace_uuid.begin(), namespace_uuid.size());
+        process_characters(sha, name, std::wcslen(name));
+        return sha_to_uuid(sha);
     }
 
     template <typename ch, typename char_traits, typename alloc>
-    uuid operator()(std::basic_string<ch, char_traits, alloc> const& name) {
-        reset();
-        process_characters(name.c_str(), name.length());
-        return sha_to_uuid();
+    uuid operator()(std::basic_string<ch, char_traits, alloc> const& name) const {
+        detail::sha1 sha;
+        sha.process_bytes(namespace_uuid.begin(), namespace_uuid.size());
+        process_characters(sha, name.c_str(), name.length());
+        return sha_to_uuid(sha);
     }
-    
-    uuid operator()(void const* buffer, std::size_t byte_count) {
-        reset();
+
+    uuid operator()(void const* buffer, std::size_t byte_count) const {
+        detail::sha1 sha;
+        sha.process_bytes(namespace_uuid.begin(), namespace_uuid.size());
         sha.process_bytes(buffer, byte_count);
-        return sha_to_uuid();
+        return sha_to_uuid(sha);
     };
 
 private:
     // we convert all characters to uint32_t so that each
-    // character is 4 bytes reguardless of sizeof(char) or
+    // character is 4 bytes regardless of sizeof(char) or
     // sizeof(wchar_t).  We want the name string on any
     // platform / compiler to generate the same uuid
     // except for char
     template <typename char_type>
-    void process_characters(char_type const*const characters, size_t count) {
-        BOOST_ASSERT(sizeof(uint32_t) >= sizeof(char_type));
+    void process_characters(detail::sha1& sha, char_type const*const characters, size_t count) const {
+        BOOST_STATIC_ASSERT(sizeof(uint32_t) >= sizeof(char_type));
 
         for (size_t i=0; i<count; i++) {
             uint32_t c = characters[i];
@@ -77,18 +81,12 @@ private:
             sha.process_byte(static_cast<unsigned char>((c >> 24) & 0xFF));
         }
     }
-    
-    void process_characters(char const*const characters, size_t count) {
+
+    void process_characters(detail::sha1& sha, char const*const characters, size_t count) const {
         sha.process_bytes(characters, count);
     }
 
-    void reset()
-    {
-        sha.reset();
-        sha.process_bytes(namespace_uuid.begin(), namespace_uuid.size());
-    }
-    
-    uuid sha_to_uuid()
+    uuid sha_to_uuid(detail::sha1& sha) const
     {
         unsigned int digest[5];
 
@@ -117,7 +115,6 @@ private:
 
 private:
     uuid namespace_uuid;
-    detail::sha1 sha;
 };
 
 }} // namespace boost::uuids
