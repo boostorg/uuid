@@ -34,7 +34,8 @@ test-suite uuid :
     [ run test_nil_generator.cpp ]
     [ run test_name_generator.cpp ]
     [ run test_string_generator.cpp ]
-    [ run test_random_generator.cpp ]
+    [ run test_random_generator.cpp ../../random/build//boost_random ]
+    # link to boost::random required for the test that uses random_device
 
     # test tagging an object
     [ run test_tagging.cpp ]
@@ -44,18 +45,23 @@ test-suite uuid :
     [ run test_uuid_in_map.cpp ]
 
     # test serializing uuids
-    [ run test_serialization.cpp ../../serialization/build//boost_serialization ]
+    # Serialization tests disabled until serialization issues in develop
+    # are cleaned up; see: https://github.com/boostorg/serialization/pull/60
+    # [ run test_serialization.cpp ../../serialization/build//boost_serialization ]
     # TODO - This test fails to like with boost_wserialization
-    #[ run test_wserialization.cpp
-    #    ../../serialization/build//boost_serialization
-    #    ../../serialization/build//boost_wserialization
-    #    : : : <dependency>../../config/test/all//BOOST_NO_STD_WSTREAMBUF
-    #]
+    # [ run test_wserialization.cpp
+    #     ../../serialization/build//boost_serialization
+    #     ../../serialization/build//boost_wserialization
+    #     : : : <dependency>../../config/test/all//BOOST_NO_STD_WSTREAMBUF
+    # ]
 
     # test sha1 hash function
     [ run test_sha1.cpp ]
     
-    # test MSVC 12 (VS2013) optimizer bug with SIMD operations. See https://svn.boost.org/trac/boost/ticket/8509#comment:3.
+    # test MSVC 12 (VS2013) optimizer bug with SIMD operations.
+    # See https://svn.boost.org/trac/boost/ticket/8509#comment:3
     # Only happens in Release x64 builds.
-    [ run test_msvc_simd_bug981648_main.cpp test_msvc_simd_bug981648_foo.cpp : : : <variant>release <debug-symbols>on : test_msvc_simd_bug981648 ]
+    [ run test_msvc_simd_bug981648_main.cpp
+          test_msvc_simd_bug981648_foo.cpp
+          : : : <variant>release <debug-symbols>on : test_msvc_simd_bug981648 ]
     ;
