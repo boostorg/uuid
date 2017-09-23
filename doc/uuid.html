@@ -70,6 +70,10 @@
             <li><a href="#Serialization">Serialization</a></li>
         </ul>
     </ul>
+    <li><a href="#Concepts">Concepts</a></li>
+    <ul>
+        <li><a href="#Concept:NameHashProvider">NameHashProvider</a></li>
+    </ul>
     <li><a href="#Design notes">Design notes</a></li>
     <li><a href="#History and Acknowledgements">History and Acknowledgements</a></li>
 </ol>
@@ -267,7 +271,7 @@ Typical use is as follows:
 
 <pre>
 boost::uuids::uuid u;
-std::vector&lt;char&gt; v(u.size());
+std::vector&lt;uint8_t&gt; v(u.size());
 std::copy(u.begin(), u.end(), v.begin());
 </pre>
 
@@ -506,11 +510,12 @@ Invalid input will generate a std::invalid_argument exception.
 namespace boost {
 namespace uuids {
 
-class name_generator {
+template&lt;class NameHashProvider&gt;
+class basic_name_generator {
 public:
     typedef uuid result_type;
 
-    explicit name_generator(uuid const&amp; namespace_uuid);
+    explicit basic_name_generator(uuid const&amp; namespace_uuid);
 
     uuid operator()(const char* name) const;
     uuid operator()(const wchar_t* name) const;
@@ -519,13 +524,37 @@ public:
     uuid operator()(void const* buffer, std::size_t byte_count) const;
 };
 
+typedef basic_name_generator&lt;detail::md5&gt; name_generator_md5;
+typedef basic_name_generator&lt;detail::sha1&gt; name_generator_sha1;
+typedef name_generator_sha1 name_generator; // deprecated
+
 }} //namespace boost::uuids
 </pre>
 
 <h4><a name="Name Generator">Name Generator</a></h4>
 <p>
-The <tt>boost::uuids::name_generator</tt> class generates a name based <b>uuid</b> from a
-namespace uuid and a name.  There are four well-known namespaces defined in
+RFC 4122 specifies that a name-based <b>uuid</b> is derived from content in
+a namespace.  A <b>uuid</b> with identical content in an identical namespace shall
+yield the same <b>uuid</b> as long as the same hasing algorithm is used.
+<h5>Hashing Algorithms</h5>
+RFC 4122 defines two hashing mechanisms for <b>uuid</b> generation:
+<ul>
+<li>MD5</li>
+<li>SHA1</li>
+</ul>
+Since RFC 4122 was written, both of these hash algorithms have been rendered
+insecure.  In anticipation of a new RFC for <b>uuid</b> arriving,
+<tt>name_generator</tt> has been deprecated, and replaced with:
+<ul>
+<li><tt>boost::uuids::name_generator_md5</tt></li>
+<li><tt>boost::uuids::name_generator_sha1</tt></li>
+</ul>
+<tt>name_generator</tt>, while deprecated, remains a type alias for
+<tt>name_generator_sha1</tt>.  Consumers are free to use their own hash
+provider as long as it satisfies the
+<tt><A href="#Concept:NameHashProvider">NameHashProvider</A></tt> concept.
+<h5>Namespaces</h5>
+There are four well-known namespaces defined in
 <A HREF="https://tools.ietf.org/html/rfc4122#appendix-C">RFC 4122, Appendix C</A> which
 are defined as:
 <pre>
@@ -537,13 +566,13 @@ boost::uuids::ns::x500dn()  // == {6ba7b814-9dad-11d1-80b4-00c04fd430c8}
 of course, you are free to use your own namespace if you prefer.  Here is an
 example of name generator usage:
 <pre>
-boost::uuids::name_generator gen(boost::uuids::ns::dns());
+boost::uuids::name_generator_sha1 gen(boost::uuids::ns::dns());
 boost::uuids::uuid udoc = gen("boost.org");
-std::cout << "boost.org uuid in dns namespace: " << udoc << std::endl;
+std::cout << "boost.org uuid in dns namespace, sha1 version: " << udoc << std::endl;
 </pre>
 produces the output:
 <pre>
-boost.org uuid in dns namespace: 0043f363-bbb4-5369-840a-322df6ec1926
+boost.org uuid in dns namespace, sha1 version: 0043f363-bbb4-5369-840a-322df6ec1926
 </pre>
 
 <h3><a name="boost/uuid/random_generator.hpp" href="./../../boost/uuid/random_generator.hpp">boost/uuid/random_generator.hpp</a></h3>
@@ -672,6 +701,44 @@ primitive type</a>, thus only the <b>uuid</b> value will be saved to/loaded from
 <p>
 Include <a href="../../boost/uuid/uuid_serialize.hpp"><tt>boost/uuid/uuid_serialize.hpp</tt></a> to enable serialization for <b>uuid</b>s.
 
+<h2><A name="Concepts">Concepts</a></h2>
+This section describes all of the concepts defined by the library.
+<h3><a name="Concept:NameHashProvider">NameHashProvider</a></h3>
+A NameHashProvder type is supplied as a template argument to the <tt>basic_name_generator</tt> class.  It provides
+the hashing function that the name generator uses to generate a <b>uuid</b>.
+<h4>Requirements</h4>
+In this table, <i>G</i> is a type meeting the requirements of NameHashProvider:
+<p><center><table width="85%" summary="Valid expressions">
+<thead>
+<tr bgcolor="lightgray">
+    <th>Expression</th>
+    <th>Semantics, Pre/Post-conditions</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+    <td><tt>typedef G::digest_type</tt></td>
+    <td>A type definition of contiguous raw storage at least 16 bytes in length.</td>
+</tr>
+<tr>
+    <td><tt>void G::process_byte(unsigned char)</tt></td>
+    <td></td>
+</tr>
+<tr>
+    <td><tt>void G::process_bytes(void const*, std::size_t)</tt></td>
+    <td></td>
+</tr>
+<tr>
+    <td><tt>void G::get_digest(typename G::digest_type&amp;)</tt></td>
+    <td>Copies the digest into the supplied parameter.  Called once.</td>
+</tr>
+<tr>
+    <td><tt>unsigned char G::get_version() const</tt></td>
+    <td>Returns the RFC 4122 version for the hashing algorithm (4 bits) in 0x07.</td>
+</tr>
+</tbody>
+</table>
+</center></p>
 <h2><a name="Design notes">Design notes</a></h2>
 <p>
 The document, <a href="http://www.itu.int/ITU-T/studygroups/com17/oid/X.667-E.pdf">
@@ -696,9 +763,6 @@ boost::uuids::basic_random_generator&lt;boost::mt19937&gt; gen(&ran);
 boost::uuids::uuid u = gen();
 </pre>
 
-<p>The <tt>boost::uuids::name_generator</tt> class uses the SHA-1 hash function to
-compute the <b>uuid</b>.
-
 <p>All functions are re-entrant.  Classes are as thread-safe as an int.  That is an
 instance can not be shared between threads without proper synchronization.
 
@@ -707,10 +771,11 @@ instance can not be shared between threads without proper synchronization.
 A number of people on the <a href="http://www.boost.org/">boost.org</a>
 mailing list provided useful comments and greatly helped to shape the library.
 
-<p>Revised&nbsp; February 6, 2010</p>
+<p>Revised September 26, 2017</p>
 
 <hr>
 <p>© Copyright Andy Tompkins, 2006</p>
+<p>© Copyright James E. King, III - 2017</p>
 <p> Distributed under the Boost Software
 License, Version 1.0. (See accompanying file <a href="../../LICENSE_1_0.txt">LICENSE_1_0.txt</a> or copy at <a href="http://www.boost.org/LICENSE_1_0.txt">
 www.boost.org/LICENSE_1_0.txt</a>)</p>

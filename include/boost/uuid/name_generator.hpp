@@ -1,152 +1,32 @@
-// Boost name_generator.hpp header file  ----------------------------------------------//
+// Boost name_generator.hpp header file  -----------------------------//
 
 // Copyright 2010 Andy Tompkins.
+// Copyright 2017 James E. King, III
+
 // Distributed under the Boost Software License, Version 1.0. (See
 // accompanying file LICENSE_1_0.txt or copy at
-// http://www.boost.org/LICENSE_1_0.txt)
+//  http://www.boost.org/LICENSE_1_0.txt)
 
 #ifndef BOOST_UUID_NAME_GENERATOR_HPP
 #define BOOST_UUID_NAME_GENERATOR_HPP
 
-#include <boost/uuid/uuid.hpp>
-#include <boost/uuid/sha1.hpp>
-#include <boost/static_assert.hpp>
-#include <string>
-#include <cstring> // for strlen, wcslen
+#include <boost/config.hpp>
+#include <boost/uuid/name_generator_sha1.hpp>
 
-#ifdef BOOST_NO_STDC_NAMESPACE
-namespace std {
-    using ::strlen;
-    using ::wcslen;
-} //namespace std
-#endif //BOOST_NO_STDC_NAMESPACE
+#ifdef BOOST_HAS_PRAGMA_ONCE
+#pragma once
+#endif
 
 namespace boost {
 namespace uuids {
 
-// generate a name-based uuid
-class name_generator {
-public:
-    typedef uuid result_type;
+//! \deprecated
+//! \brief this provides backwards compatibility with previous boost
+//!        releases however it is now deprecated to ensure that once
+//!        a new hashing algorithm is defined for name generation that
+//!        there is no confusion - at that time this will be removed.
+typedef name_generator_sha1 name_generator;
 
-    explicit name_generator(uuid const& namespace_uuid_)
-        : namespace_uuid(namespace_uuid_)
-    {}
-
-    uuid operator()(const char* name) const {
-        detail::sha1 sha;
-        sha.process_bytes(namespace_uuid.begin(), namespace_uuid.size());
-        process_characters(sha, name, std::strlen(name));
-        return sha_to_uuid(sha);
-    }
-
-    uuid operator()(const wchar_t* name) const {
-        detail::sha1 sha;
-        sha.process_bytes(namespace_uuid.begin(), namespace_uuid.size());
-        process_characters(sha, name, std::wcslen(name));
-        return sha_to_uuid(sha);
-    }
-
-    template <typename ch, typename char_traits, typename alloc>
-    uuid operator()(std::basic_string<ch, char_traits, alloc> const& name) const {
-        detail::sha1 sha;
-        sha.process_bytes(namespace_uuid.begin(), namespace_uuid.size());
-        process_characters(sha, name.c_str(), name.length());
-        return sha_to_uuid(sha);
-    }
-
-    uuid operator()(void const* buffer, std::size_t byte_count) const {
-        detail::sha1 sha;
-        sha.process_bytes(namespace_uuid.begin(), namespace_uuid.size());
-        sha.process_bytes(buffer, byte_count);
-        return sha_to_uuid(sha);
-    };
-
-private:
-    // we convert all characters to uint32_t so that each
-    // character is 4 bytes regardless of sizeof(char) or
-    // sizeof(wchar_t).  We want the name string on any
-    // platform / compiler to generate the same uuid
-    // except for char
-    template <typename char_type>
-    void process_characters(detail::sha1& sha, char_type const*const characters, size_t count) const {
-        BOOST_STATIC_ASSERT(sizeof(uint32_t) >= sizeof(char_type));
-
-        for (size_t i=0; i<count; i++) {
-            uint32_t c = characters[i];
-            sha.process_byte(static_cast<unsigned char>((c >>  0) & 0xFF));
-            sha.process_byte(static_cast<unsigned char>((c >>  8) & 0xFF));
-            sha.process_byte(static_cast<unsigned char>((c >> 16) & 0xFF));
-            sha.process_byte(static_cast<unsigned char>((c >> 24) & 0xFF));
-        }
-    }
-
-    void process_characters(detail::sha1& sha, char const*const characters, size_t count) const {
-        sha.process_bytes(characters, count);
-    }
-
-    uuid sha_to_uuid(detail::sha1& sha) const
-    {
-        unsigned int digest[5];
-
-        sha.get_digest(digest);
-
-        uuid u;
-        for (int i=0; i<4; ++i) {
-            *(u.begin() + i*4+0) = static_cast<uint8_t>((digest[i] >> 24) & 0xFF);
-            *(u.begin() + i*4+1) = static_cast<uint8_t>((digest[i] >> 16) & 0xFF);
-            *(u.begin() + i*4+2) = static_cast<uint8_t>((digest[i] >> 8) & 0xFF);
-            *(u.begin() + i*4+3) = static_cast<uint8_t>((digest[i] >> 0) & 0xFF);
-        }
-
-        // set variant
-        // must be 0b10xxxxxx
-        *(u.begin()+8) &= 0xBF;
-        *(u.begin()+8) |= 0x80;
-
-        // set version
-        // must be 0b0101xxxx
-        *(u.begin()+6) &= 0x5F; //0b01011111
-        *(u.begin()+6) |= 0x50; //0b01010000
-
-        return u;
-    }
-
-private:
-    uuid namespace_uuid;
-};
-
-namespace ns {
-
-static BOOST_FORCEINLINE uuid dns() {
-    uuid result = {
-        0x6b, 0xa7, 0xb8, 0x10, 0x9d, 0xad, 0x11, 0xd1 ,
-        0x80, 0xb4, 0x00, 0xc0, 0x4f, 0xd4, 0x30, 0xc8 };
-    return result;
-}
-
-static BOOST_FORCEINLINE uuid url() {
-    uuid result = {
-        0x6b, 0xa7, 0xb8, 0x11, 0x9d, 0xad, 0x11, 0xd1 ,
-        0x80, 0xb4, 0x00, 0xc0, 0x4f, 0xd4, 0x30, 0xc8 };
-    return result;
-}
-
-static BOOST_FORCEINLINE uuid oid() {
-    uuid result = {
-        0x6b, 0xa7, 0xb8, 0x12, 0x9d, 0xad, 0x11, 0xd1 ,
-        0x80, 0xb4, 0x00, 0xc0, 0x4f, 0xd4, 0x30, 0xc8 };
-    return result;
-}
-
-static BOOST_FORCEINLINE uuid x500dn() {
-    uuid result = {
-        0x6b, 0xa7, 0xb8, 0x14, 0x9d, 0xad, 0x11, 0xd1 ,
-        0x80, 0xb4, 0x00, 0xc0, 0x4f, 0xd4, 0x30, 0xc8 };
-    return result;
-}
-
-} // ns
 } // uuids
 } // boost
 
