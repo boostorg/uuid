@@ -21,10 +21,10 @@ Uuid, part of collection of the [Boost C++ Libraries](http://github.com/boostorg
 
 ### Build Status
 
-@               | Build         | Test coverage | More info
-----------------|-------------- | ------------- |-----------
-[develop branch](https://github.com/boostorg/uuid/tree/develop): | [![Build Status](https://travis-ci.org/jeking3/uuid.svg?branch=develop)](https://travis-ci.org/jeking3/uuid) [![Build status](https://ci.appveyor.com/api/projects/status/dca429e710iop3jh/branch/develop?svg=true)](https://ci.appveyor.com/project/jeking3/uuid/branch/develop) | N/A (header-only) | [details...](http://www.boost.org/development/tests/develop/developer/uuid.html)
-[master branch](https://github.com/boostorg/uuid/tree/master):  | [![Build Status](https://travis-ci.org/jeking3/uuid.svg?branch=master)](https://travis-ci.org/jeking3/uuid) [![Build status](https://ci.appveyor.com/api/projects/status/dca429e710iop3jh?svg=true)](https://ci.appveyor.com/project/jeking3/uuid/branch/master) | N/A (header-only) | [details...](http://www.boost.org/development/tests/master/developer/uuid.html)
+@               | Build         | Test coverage | Regression Test Matrix
+--------------- | ------------- | ------------- | ----------------------
+[develop branch](https://github.com/boostorg/uuid/tree/develop): | [![Build Status](https://travis-ci.org/boostorg/uuid.svg?branch=develop)](https://travis-ci.org/boostorg/uuid) [![Build status](https://ci.appveyor.com/api/projects/status/nuihr6s92fjb9gwy/branch/develop?svg=true)](https://ci.appveyor.com/project/boostorg/uuid/branch/develop) | N/A (header-only) | [details...](http://www.boost.org/development/tests/develop/developer/uuid.html)
+[master branch](https://github.com/boostorg/uuid/tree/master):  | [![Build Status](https://travis-ci.org/boostorg/uuid.svg?branch=master)](https://travis-ci.org/boostorg/uuid) [![Build status](https://ci.appveyor.com/api/projects/status/nuihr6s92fjb9gwy?svg=true)](https://ci.appveyor.com/project/boostorg/uuid/branch/master) | N/A (header-only) | [details...](http://www.boost.org/development/tests/master/developer/uuid.html)
 
 ### License
 
