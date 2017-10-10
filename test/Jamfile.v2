@@ -45,9 +45,7 @@ test-suite uuid :
     [ run test_uuid_in_map.cpp ]
 
     # test serializing uuids
-    # Serialization tests disabled until serialization issues in develop
-    # are cleaned up; see: https://github.com/boostorg/serialization/pull/60
-    # [ run test_serialization.cpp ../../serialization/build//boost_serialization ]
+    [ run test_serialization.cpp ../../serialization/build//boost_serialization ]
     # TODO - This test fails to like with boost_wserialization
     # [ run test_wserialization.cpp
     #     ../../serialization/build//boost_serialization
