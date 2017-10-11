@@ -1,4 +1,5 @@
 # Copyright 2016 Peter Dimov
+# Copyright 2017 James E. King, III
 # Distributed under the Boost Software License, Version 1.0.
 # (See accompanying file LICENSE_1_0.txt or copy at http://boost.org/LICENSE_1_0.txt)
 
@@ -39,6 +40,9 @@ branches:
     - develop
     - master
 
+before_install:
+    - echo -n | openssl s_client -connect scan.coverity.com:443 | sed -ne '/-BEGIN CERTIFICATE-/,/-END CERTIFICATE-/p' | sudo tee -a /etc/ssl/certs/ca-
+
 env:
   global:
     # see: http://www.boost.org/build/doc/html/bbv2/overview/invocation.html#bbv2.overview.invocation.properties
@@ -47,6 +51,9 @@ env:
     # - B2_LINK=link=shared,static
     # - B2_THREADING=threading=multi,single
     - B2_VARIANT=variant=release,debug
+
+    # Coverity Scan
+    - secure: "OykBDSLypnrPcFVZ34v/1uP6o93pOi9hXgNGwLLO2kxzAxwTgRqew1CRW+3I16dy52Zz9VjPO6/Et/QrTCl8823FS7EbTUI4kZvJ18YT8rNryvfUwjzL1t6Fxo9z5A4b+qjHZopMPh18pC9YCJPf3r04h0G9yiwLYpkfPeiuWss="
 
   matrix:
     # This disables all built-in matrix build generation.
@@ -59,6 +66,13 @@ addons:
       - binutils-gold
       - gdb
       - libc6-dbg
+  coverity_scan:
+    project:
+      name: "boostorg/uuid"
+      description: "Boost.Uuid"
+      notification_email: jking@apache.org
+      build_command: "./b2 libs/$SELF/test"
+      branch_pattern: develop
     
 matrix:
   exclude:
