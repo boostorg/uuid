@@ -1,22 +1,52 @@
 # Copyright 2007 Andy Tompkins.
+# Copyright 2017 James E. King, III
 # Distributed under the Boost Software License, Version 1.0. (See
 # accompanying file LICENSE_1_0.txt or copy at
 # http://www.boost.org/LICENSE_1_0.txt)
 
+import path ;
+import regex ;
 import testing ;
 
+# this rule enumerates through all the headers and ensures
+# that inclusion of the header by itself is sufficient to
+# compile successfully, proving the header does not depend
+# on any other headers to be included first - adapted from
+# logic in the winapi test bjam script
+rule test_all
+{
+    local all_rules = ;
+    local file ;
+    local headers_path = [ path.make $(BOOST_ROOT)/libs/uuid/include/boost/uuid ] ;
+    for file in [ path.glob-tree $(headers_path) : *.hpp : uuid ]
+    {
+        local rel_file = [ path.relative-to $(headers_path) $(file) ] ;
+        # Note: The test name starts with '~' in order to group these tests in the test report table, preferably at the end.
+        #       All '/' are replaced with '-' because apparently test scripts have a problem with test names containing slashes.
+        local test_name = [ regex.replace $(rel_file) "/" "-" ] ;
+        local decl_test_name = ~hdr-decl-$(test_name) ;
+        # ECHO $(rel_file) ;
+        all_rules += [ compile compile/decl_header.cpp : <define>"BOOST_UUID_TEST_HEADER=$(rel_file)" <dependency>$(file) : $(decl_test_name) ] ;
+    }
+
+    # make sure compile time options work in isolation
+    all_rules += [ compile compile/decl_header.cpp :
+        <define>"BOOST_UUID_TEST_HEADER=uuid.hpp"
+        <define>"BOOST_UUID_NO_TYPE_TRAITS"
+        <dependency>../include/boost/uuid/uuid.hpp :
+            compile_uuid_no_type_traits ] ;
+    all_rules += [ compile compile/decl_header.cpp :
+        <define>"BOOST_UUID_TEST_HEADER=uuid.hpp"
+        <define>"BOOST_UUID_NO_SIMD"
+        <dependency>../include/boost/uuid/uuid.hpp :
+            compile_uuid_no_simd ] ;
+
+    # ECHO All rules: $(all_rules) ;
+    return $(all_rules) ;
+}
+
 test-suite uuid :
-    # make sure each header file is self-contained
-    [ compile compile_uuid.cpp ]
-    [ compile compile_uuid.cpp : <define>BOOST_UUID_NO_TYPE_TRAITS : compile_uuid_no_type_traits ]
-    [ compile compile_uuid_io.cpp ]
-    [ compile compile_uuid_serialize.cpp ]
-    [ compile compile_uuid_generators.cpp ]
-    [ compile compile_nil_generator.cpp ]
-    [ compile compile_name_generator.cpp ]
-    [ compile compile_string_generator.cpp ]
-    [ compile compile_random_generator.cpp ]
-    [ compile compile_seed_rng.cpp ]
+    [ test_all ]
 
     # test inclucing all .hpp files in 2 translations units
     # to look for issues when using multiple translation units
@@ -45,9 +75,7 @@ test-suite uuid :
     [ run test_uuid_in_map.cpp ]
 
     # test serializing uuids
-    # Serialization tests disabled until serialization issues in develop
-    # are cleaned up; see: https://github.com/boostorg/serialization/pull/60
-    # [ run test_serialization.cpp ../../serialization/build//boost_serialization ]
+    [ run test_serialization.cpp ../../serialization/build//boost_serialization ]
     # TODO - This test fails to like with boost_wserialization
     # [ run test_wserialization.cpp
     #     ../../serialization/build//boost_serialization
@@ -55,9 +83,10 @@ test-suite uuid :
     #     : : : <dependency>../../config/test/all//BOOST_NO_STD_WSTREAMBUF
     # ]
 
-    # test sha1 hash function
+    # test hash functions
+    [ run test_md5.cpp ]
     [ run test_sha1.cpp ]
-    
+
     # test MSVC 12 (VS2013) optimizer bug with SIMD operations.
     # See https://svn.boost.org/trac/boost/ticket/8509#comment:3
     # Only happens in Release x64 builds.
