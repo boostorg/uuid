@@ -5,13 +5,13 @@
  *          http://www.boost.org/LICENSE_1_0.txt)
  */
 /*!
- * \file   uuid/detail/uuid_x86.hpp
+ * \file   uuid/detail/uuid_x86.ipp
  *
  * \brief  This header contains optimized SSE implementation of \c boost::uuid operations.
  */
 
-#ifndef BOOST_UUID_DETAIL_UUID_X86_HPP_INCLUDED_
-#define BOOST_UUID_DETAIL_UUID_X86_HPP_INCLUDED_
+#ifndef BOOST_UUID_DETAIL_UUID_X86_IPP_INCLUDED_
+#define BOOST_UUID_DETAIL_UUID_X86_IPP_INCLUDED_
 
 // MSVC does not always have immintrin.h (at least, not up to MSVC 10), so include the appropriate header for each instruction set
 #if defined(BOOST_UUID_USE_SSE41)
@@ -132,4 +132,4 @@ inline bool operator< (uuid const& lhs, uuid const& rhs) BOOST_NOEXCEPT
 } // namespace uuids
 } // namespace boost
 
-#endif // BOOST_UUID_DETAIL_UUID_X86_HPP_INCLUDED_
+#endif // BOOST_UUID_DETAIL_UUID_X86_IPP_INCLUDED_

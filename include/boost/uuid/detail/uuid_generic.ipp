@@ -5,13 +5,13 @@
  *          http://www.boost.org/LICENSE_1_0.txt)
  */
 /*!
- * \file   uuid/detail/uuid_generic.hpp
+ * \file   uuid/detail/uuid_generic.ipp
  *
  * \brief  This header contains generic implementation of \c boost::uuid operations.
  */
 
-#ifndef BOOST_UUID_DETAIL_UUID_GENERIC_HPP_INCLUDED_
-#define BOOST_UUID_DETAIL_UUID_GENERIC_HPP_INCLUDED_
+#ifndef BOOST_UUID_DETAIL_UUID_GENERIC_IPP_INCLUDED_
+#define BOOST_UUID_DETAIL_UUID_GENERIC_IPP_INCLUDED_
 
 #include <string.h>
 
@@ -48,4 +48,4 @@ inline bool operator< (uuid const& lhs, uuid const& rhs) BOOST_NOEXCEPT
 } // namespace uuids
 } // namespace boost
 
-#endif // BOOST_UUID_DETAIL_UUID_GENERIC_HPP_INCLUDED_
+#endif // BOOST_UUID_DETAIL_UUID_GENERIC_IPP_INCLUDED_
