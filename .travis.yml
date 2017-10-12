@@ -1,9 +1,10 @@
 # Copyright 2016 Peter Dimov
+# Copyright 2017 James E. King, III
 # Distributed under the Boost Software License, Version 1.0.
 # (See accompanying file LICENSE_1_0.txt or copy at http://boost.org/LICENSE_1_0.txt)
 
 #
-# Generic Travis CI build script
+# Generic Travis CI build script for boostorg repositories
 # For instructions on setting up your own fork and running CI builds before submitting
 # your changes into the official repository, see:
 # https://svn.boost.org/trac10/wiki/TravisCoverals
@@ -22,22 +23,14 @@
 # 3. If your project builds a library (is not header-only) you can get coveralls
 #    code coverage analysis by uncommenting the coverage job and copying the
 #    compute/.coveralls.yml file into your repository.
+# 4. If you want to enable Coverity Scan, you need to provide the environment
+#    variables COVERITY_SCAN_TOKEN and COVERITY_SCAN_NOTIFICATION_EMAIL.  
 #
 # That's it - the script will do everything else for you.
 
-language: cpp
-
 sudo: false
 dist: trusty
-
-os:
-  - linux
-  - osx
-
-branches:
-  only:
-    - develop
-    - master
+language: cpp
 
 env:
   global:
@@ -47,111 +40,6 @@ env:
     # - B2_LINK=link=shared,static
     # - B2_THREADING=threading=multi,single
     - B2_VARIANT=variant=release,debug
-
-  matrix:
-    # This disables all built-in matrix build generation.
-    # We'll be specific about compilers and options.
-    - BOGUS_JOB=true
-
-addons:
-  apt:
-    packages:
-      - binutils-gold
-      - gdb
-      - libc6-dbg
-    
-matrix:
-  exclude:
-    - env: BOGUS_JOB=true
-
-  include:
-    # C++03 using ancient compilers
-    - os: linux
-      env: COMMENT="c++03 gcc-4.8" TOOLSET=gcc COMPILER=g++ CXXSTD=c++03
-    - os: linux
-      env: COMMENT="c++03 clang-3.4" TOOLSET=clang COMPILER=clang++ CXXSTD=c++03
-
-    # C++11 using older compilers
-    # - os: linux
-    #   env: COMMENT="c++11 gcc-5" TOOLSET=gcc COMPILER=g++-5 CXXSTD=c++11
-    #   addons:
-    #     apt:
-    #       packages:
-    #         - g++-5
-    #       sources:
-    #         - ubuntu-toolchain-r-test
-    # - os: linux
-    #   env: COMMENT="c++11 clang-3.8" TOOLSET=clang COMPILER=clang++-3.8 CXXSTD=c++11
-    #   addons:
-    #     apt:
-    #       packages:
-    #         - clang-3.8
-    #         - g++-5
-    #       sources:
-    #         - llvm-toolchain-trusty-3.8
-    #         - ubuntu-toolchain-r-test
-
-    # C++14 using recent compilers
-    # - os: linux
-    #   env: COMMENT="c++14 gcc-6" TOOLSET=gcc COMPILER=g++-6 CXXSTD=c++14
-    #   addons:
-    #     apt:
-    #       packages:
-    #         - g++-6
-    #       sources:
-    #         - ubuntu-toolchain-r-test
-    # - os: linux
-    #   env: COMMENT="c++14 clang-4.0" TOOLSET=clang COMPILER=clang++-4.0 CXXSTD=c++14
-    #   addons:
-    #     apt:
-    #       packages:
-    #         - clang-4.0
-    #         - g++-6
-    #       sources:
-    #         - llvm-toolchain-trusty-4.0
-    #         - ubuntu-toolchain-r-test
-
-    # C++17 using the latest compilers
-    - os: linux
-      env: COMMENT="c++17 gcc-7" TOOLSET=gcc COMPILER=g++-7 CXXSTD=c++17
-      addons:
-        apt:
-          packages:
-            - g++-7
-          sources:
-            - ubuntu-toolchain-r-test
-    - os: linux
-      env: COMMENT="c++17 clang-5.0" TOOLSET=clang COMPILER=clang++-5.0 CXXSTD=c++17
-      addons:
-        apt:
-          packages:
-            - clang-5.0
-            - g++-7
-          sources:
-            - llvm-toolchain-trusty-5.0
-            - ubuntu-toolchain-r-test
-
-    # Coverage build - for projects that build a library
-    # - os: linux
-    #   env: COMMENT="code coverage" TOOLSET=gcc COMPILER=g++-6 CXXSTD=c++11 B2_VARIANT="variant=profile cxxflags=--coverage linkflags=--coverage" COVERALL=1
-    #   addons:
-    #     apt:
-    #       packages:
-    #         - g++-6
-    #       sources:
-    #         - ubuntu-toolchain-r-test
-
-    - os: osx
-      env: TOOLSET=clang COMPILER=clang++ CXXSTD=c++03
-
-    # - os: osx
-    #   env: TOOLSET=clang COMPILER=clang++ CXXSTD=c++11
-
-    # - os: osx
-    #   env: TOOLSET=clang COMPILER=clang++ CXXSTD=c++14
-
-    # - os: osx
-    #   env: TOOLSET=clang COMPILER=clang++ CXXSTD=c++1z
 
 install:
   - export SELF=`basename $TRAVIS_BUILD_DIR`
@@ -168,15 +56,115 @@ install:
   - ./bootstrap.sh
   - ./b2 headers
 
+addons:
+  apt:
+    packages:
+      - binutils-gold
+      - gdb
+      - libc6-dbg
+        
+branches:
+  only:
+    - develop
+    - master
+    
 script:
-  - export COMPILER_VERSION=`$COMPILER --version`
   - |-
     echo "using $TOOLSET : : $COMPILER : <cxxflags>-std=$CXXSTD ;" > ~/user-config.jam
-  - |-
-    echo "[**] COMPILER: $COMPILER_VERSION [**]"
-  - |-
-    echo "./b2 libs/$SELF/test toolset=$TOOLSET $B2_ADDRESS_MODEL $B2_LINK $B2_THREADING $B2_VARIANT -j3"
-  - ./b2 libs/$SELF/test toolset=$TOOLSET $B2_ADDRESS_MODEL $B2_LINK $B2_THREADING $B2_VARIANT -j3
+  - ./b2 libs/$SELF/test toolset=$TOOLSET $CXXFLAGS $LINKFLAGS $B2_ADDRESS_MODEL $B2_LINK $B2_THREADING $B2_VARIANT -j3
+
+jobs:
+  include:
+    # C++03 using stock compilers
+    - os: linux
+      env: 
+        - TOOLSET=gcc
+        - CXXSTD=c++03
+    - os: linux
+      env:
+        - TOOLSET=clang
+        - CXXSTD=c++03
+
+    # C++17 using the latest compilers
+    - os: linux
+      env: 
+        - TOOLSET=gcc
+        - COMPILER=g++-7
+        - CXXSTD=c++17
+      addons:
+        apt:
+          packages:
+            - g++-7
+          sources:
+            - ubuntu-toolchain-r-test
+    - os: linux
+      env: 
+        - TOOLSET=clang 
+        - COMPILER=clang++-5.0
+        - CXXSTD=c++17
+      addons:
+        apt:
+          packages:
+            - clang-5.0
+            - g++-7
+          sources:
+            - llvm-toolchain-trusty-5.0
+            - ubuntu-toolchain-r-test
+
+    - os: osx
+      env:
+        - TOOLSET=clang
+        - CXXSTD=c++03
+
+    - os: osx
+      osx_image: xcode9.1
+      env:
+        - TOOLSET=clang
+        - CXXSTD=c++03
+
+    # Coverage build - for projects that build a library
+    # - os: linux
+    #   env: 
+    #     - TOOLSET=gcc
+    #     - CXX=g++-6
+    #     - B2_VARIANT="variant=profile"
+    #     - CXXFLAGS="cxxflags=-std=c++03 cxxflags=--coverage"
+    #     - LINKFLAGS=linkflags=--coverage
+    #     - COVERALL=1
+    #   addons:
+    #     apt:
+    #       packages:
+    #         - g++-6
+    #       sources:
+    #         - ubuntu-toolchain-r-test
+
+    # Coverity Scan - runs on pull requests into master
+    - os: linux
+      if: branch = master
+      script:
+        - echo -n | openssl s_client -connect scan.coverity.com:443 | sed -ne '/-BEGIN CERTIFICATE-/,/-END CERTIFICATE-/p' | sudo tee -a /etc/ssl/certs/ca-
+        - libs/$SELF/covscan.sh
+      env:
+        - COMMENT="Coverity Scan"
+
+    # UBSAN build
+    - os: linux
+      env:
+        - COMMENT="UBSAN"
+        - B2_VARIANT=variant=debug
+        - TOOLSET=clang
+        - COMPILER=clang++-5.0
+        - CXXSTD=c++03
+        - CXXFLAGS="cxxflags=-fno-omit-frame-pointer cxxflags=-fsanitize=undefined cxxflags=-fsanitize=integer"
+        - LINKFLAGS="linkflags=-fsanitize=undefined"
+      addons:
+        apt:
+          packages:
+            - clang-5.0
+            - g++-7
+          sources:
+            - llvm-toolchain-trusty-5.0
+            - ubuntu-toolchain-r-test
 
 after_success:
   # If this is not a profiling build skip the rest...
