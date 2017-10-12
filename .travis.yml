@@ -138,9 +138,9 @@ jobs:
     #       sources:
     #         - ubuntu-toolchain-r-test
 
-    # Coverity Scan - runs on pull requests from develop into master if there is a coverity scan token in the environment
+    # Coverity Scan - runs on pull requests into master
     - os: linux
-      if: env(COVERITY_SCAN_TOKEN) IS present AND branch = master AND head_branch = develop
+      if: branch = master
       script:
         - echo -n | openssl s_client -connect scan.coverity.com:443 | sed -ne '/-BEGIN CERTIFICATE-/,/-END CERTIFICATE-/p' | sudo tee -a /etc/ssl/certs/ca-
         - libs/$SELF/covscan.sh
