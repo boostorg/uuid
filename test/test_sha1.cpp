@@ -52,7 +52,7 @@ void test_sha1_digest_equal_array(char const * file, int line, char const * func
 
 #define BOOST_TEST_SHA1_DIGEST(lhs, rhs) ( test_sha1_digest_equal_array(__FILE__, __LINE__, BOOST_CURRENT_FUNCTION, lhs, rhs) )
 
-void test_sha1(char const*const message, unsigned int length, const unsigned int (&correct_digest)[5])
+void test_sha1(char const*const message, std::size_t length, const unsigned int (&correct_digest)[5])
 {
     boost::uuids::detail::sha1 sha;
     sha.process_bytes(message, length);

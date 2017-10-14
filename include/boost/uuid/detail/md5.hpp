@@ -50,7 +50,7 @@ public:
         MD5_Update(&ctx_, &byte, 1);
     }
 
-    void process_bytes(void const* buffer, uint32_t byte_count)
+    void process_bytes(void const* buffer, std::size_t byte_count)
     {
         MD5_Update(&ctx_, buffer, byte_count);
     }
