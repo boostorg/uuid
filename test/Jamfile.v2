@@ -4,6 +4,14 @@
 # accompanying file LICENSE_1_0.txt or copy at
 # http://www.boost.org/LICENSE_1_0.txt)
 
+project libs/uuid/test
+    : requirements
+
+      # boost::random requires this setting for a warning free build:
+      <toolset>msvc:<define>_SCL_SECURE_NO_WARNINGS
+
+    ;
+
 import path ;
 import regex ;
 import testing ;
