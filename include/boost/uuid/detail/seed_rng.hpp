@@ -48,10 +48,10 @@
 #endif
 
 #if defined(BOOST_WINDOWS)
-#   include <boost/detail/winapi/crypt.hpp> // for CryptAcquireContextA, CryptGenRandom, CryptReleaseContext
-#   include <boost/detail/winapi/timers.hpp>
-#   include <boost/detail/winapi/get_current_process_id.hpp>
-#   include <boost/detail/winapi/get_current_thread_id.hpp>
+#   include <boost/winapi/crypt.hpp> // for CryptAcquireContextA, CryptGenRandom, CryptReleaseContext
+#   include <boost/winapi/timers.hpp>
+#   include <boost/winapi/get_current_process_id.hpp>
+#   include <boost/winapi/get_current_thread_id.hpp>
 #else
 #   include <sys/time.h>  // for gettimeofday
 #   include <sys/types.h> // for pid_t
@@ -96,12 +96,12 @@ public:
         , random_(0)
     {
 #if defined(BOOST_WINDOWS)
-        if (!boost::detail::winapi::CryptAcquireContextW(
+        if (!boost::winapi::CryptAcquireContextW(
                     &random_,
                     NULL,
                     NULL,
-                    boost::detail::winapi::PROV_RSA_FULL_,
-                    boost::detail::winapi::CRYPT_VERIFYCONTEXT_ | boost::detail::winapi::CRYPT_SILENT_))
+                    boost::winapi::PROV_RSA_FULL_,
+                    boost::winapi::CRYPT_VERIFYCONTEXT_ | boost::winapi::CRYPT_SILENT_))
         {
             random_ = 0;
         }
@@ -116,7 +116,7 @@ public:
     {
         if (random_) {
 #if defined(BOOST_WINDOWS)
-            boost::detail::winapi::CryptReleaseContext(random_, 0);
+            boost::winapi::CryptReleaseContext(random_, 0);
 #else
             std::fclose(random_);
 #endif
@@ -164,7 +164,7 @@ private:
             // intentionally left uninitialized
             unsigned char state[ 20 ];
 #if defined(BOOST_WINDOWS)
-            boost::detail::winapi::CryptGenRandom(random_, sizeof(state), state);
+            boost::winapi::CryptGenRandom(random_, sizeof(state), state);
 #else
             ignore_size(std::fread( state, 1, sizeof(state), random_ ));
 #endif
@@ -174,15 +174,15 @@ private:
         {
             // Getting enropy from some system specific sources
 #if defined(BOOST_WINDOWS)
-            boost::detail::winapi::DWORD_ procid = boost::detail::winapi::GetCurrentProcessId();
+            boost::winapi::DWORD_ procid = boost::winapi::GetCurrentProcessId();
             sha.process_bytes( (unsigned char const*)&procid, sizeof( procid ) );
 
-            boost::detail::winapi::DWORD_ threadid = boost::detail::winapi::GetCurrentThreadId();
+            boost::winapi::DWORD_ threadid = boost::winapi::GetCurrentThreadId();
             sha.process_bytes( (unsigned char const*)&threadid, sizeof( threadid ) );
 
-            boost::detail::winapi::LARGE_INTEGER_ ts;
+            boost::winapi::LARGE_INTEGER_ ts;
             ts.QuadPart = 0;
-            boost::detail::winapi::QueryPerformanceCounter( &ts );
+            boost::winapi::QueryPerformanceCounter( &ts );
             sha.process_bytes( (unsigned char const*)&ts, sizeof( ts ) );
 
             std::time_t tm = std::time( 0 );
@@ -244,7 +244,7 @@ private:
     int rd_index_;
 
 #if defined(BOOST_WINDOWS)
-    boost::detail::winapi::HCRYPTPROV_ random_;
+    boost::winapi::HCRYPTPROV_ random_;
 #else
     std::FILE * random_;
 #endif
