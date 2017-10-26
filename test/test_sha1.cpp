@@ -263,39 +263,6 @@ void test_short_messages()
     }
 }
 
-// test long strings of 'a's
-void test_long()
-{
-
-    // test 1 million 'a's
-    struct test_case
-    {
-        unsigned int count;
-        unsigned int digest[5];
-    };
-    test_case cases[] =
-    { { 1000000, { 0x34aa973c, 0xd4c4daa4, 0xf61eeb2b, 0xdbad2731, 0x6534016f } }
-    , { 1000000000, { 0xd0f3e4f2, 0xf31c665a, 0xbbd8f518, 0xe848d5cb, 0x80ca78f7 } }
-    //, { 2000000000, { 0xda19be1b, 0x5ec3bc13, 0xda5533bd, 0x0c225a2f, 0x38da50ed } }
-    //, { 2147483647, { 0x1e5b490b, 0x10255e37, 0xfd96d096, 0x4f2fbfb9, 0x1ed47536 } }
-    //, { 4294967295 /*2^32 - 1*/, { 0xd84b866e, 0x70f6348f, 0xb0ddc21f, 0x373fe956, 0x1bf1005d } }
-    };
-
-    for (size_t iCase=0; iCase<sizeof(cases)/sizeof(cases[0]); iCase++) {
-        test_case const& tc = cases[iCase];
-
-        boost::uuids::detail::sha1 sha;
-        for (size_t i=0; i<tc.count; i++) {
-            sha.process_byte('a');
-        }
-
-        unsigned int digest[5];
-        sha.get_digest(digest);
-
-        BOOST_TEST_SHA1_DIGEST(digest, tc.digest);
-    }
-}
-
 void test_version()
 {
     boost::uuids::detail::sha1 sha;
@@ -306,7 +273,6 @@ int main(int, char*[])
 {
     test_quick();
     test_short_messages();
-    test_long();
     test_version();
 
     return boost::report_errors();
