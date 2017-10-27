@@ -136,10 +136,9 @@ jobs:
       env: 
         - COMMENT=CodeCov
         - TOOLSET=gcc-7
-        - B2_VARIANT=variant=profile
-        - CXXFLAGS=cxxflags=--coverage
-        - LINKFLAGS=linkflags=--coverage
-        - CODECOV=1
+        - B2_VARIANT=variant=debug
+        - CXXFLAGS="cxxflags=-fprofile-arcs cxxflags=-ftest-coverage"
+        - LINKFLAGS="linkflags=-fprofile-arcs linkflags=-ftest-coverage"
       addons:
         apt:
           packages:
