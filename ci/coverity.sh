@@ -6,6 +6,8 @@
 #      http://www.boost.org/LICENSE_1_0.txt)
 #
 # Bash script to run in travis to perform a Coverity Scan build
+# To skip the coverity integration download (which is huge) if
+# you already have it from a previous run, add --skipdownload
 #
 
 #
@@ -18,17 +20,18 @@
 set -ex
 
 pushd /tmp
-rm -rf coverity_tool.tgz cov-analysis*
-wget https://scan.coverity.com/download/linux64 --post-data "token=$COVERITY_SCAN_TOKEN&project=boostorg/$SELF" -O coverity_tool.tgz
-tar xzf coverity_tool.tgz
+if [[ "$1" != "--skipdownload" ]]; then
+  rm -rf coverity_tool.tgz cov-analysis*
+  wget https://scan.coverity.com/download/linux64 --post-data "token=$COVERITY_SCAN_TOKEN&project=boostorg/$SELF" -O coverity_tool.tgz
+  tar xzf coverity_tool.tgz
+fi
 COVBIN=$(echo $(pwd)/cov-analysis*/bin)
 export PATH=$COVBIN:$PATH
 popd
 
-cd libs/$SELF/test
-../../../b2 toolset=gcc clean
+ci/build.sh clean
 rm -rf cov-int/
-cov-build --dir cov-int ../../../b2 toolset=gcc -q -j3
+cov-build --dir cov-int ci/build.sh
 tar cJf cov-int.tar.xz cov-int/
 curl --form token="$COVERITY_SCAN_TOKEN" \
      --form email="$COVERITY_SCAN_NOTIFICATION_EMAIL" \
@@ -36,3 +39,4 @@ curl --form token="$COVERITY_SCAN_TOKEN" \
      --form version="$(git describe --tags)" \
      --form description="boostorg/$SELF" \
      https://scan.coverity.com/builds?project="boostorg/$SELF"
+

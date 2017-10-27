@@ -5,26 +5,21 @@
 
 #
 # Generic Travis CI build script for boostorg repositories
-# For instructions on setting up your own fork and running CI builds before submitting
-# your changes into the official repository, see:
-# https://svn.boost.org/trac10/wiki/TravisCoverals
-#
-# Workflow:
-# Follow the instructions above.
-# Make sure your develop branch is synchronized with upstream.
-# Submit a pull request into your fork's develop.
-# Watch Travis CI build your change under a variety of compilers and language levels.
 #
 # Instructions for customizing this script for your library:
 # 
-# 1. Choose which compiler and language level combinations you want to run and
-#    uncomment them.
-# 2. Update the global B2 environment settings to your liking.
-# 3. If your project builds a library (is not header-only) you can get coveralls
-#    code coverage analysis by uncommenting the coverage job and copying the
-#    compute/.coveralls.yml file into your repository.
-# 4. If you want to enable Coverity Scan, you need to provide the environment
+# 1. Copy the ci/ directory from the same source into your project:
+#    ci/build.sh runs the build
+#    ci/coverity.sh is used to run a coverity build and upload results coverity scan
+#    ci/codecov.sh is used to run a profiling build and upload results to codecov.io
+# 2. Customize the compilers and language levels you want.  Default is C++03.
+# 3. Update the global B2 environment settings to your liking.
+# 4. If you have more than include/, src/, and test/ directories then
+#    add them to the depinst.py line as "--include tools" for tools/ (you
+#    can put multiple --include on the command line).
+# 5. If you want to enable Coverity Scan, you need to provide the environment
 #    variables COVERITY_SCAN_TOKEN and COVERITY_SCAN_NOTIFICATION_EMAIL.  
+# 6. Enable pull request builds in your boostorg/<library> account.
 #
 # That's it - the script will do everything else for you.
 
@@ -34,11 +29,11 @@ language: cpp
 
 env:
   global:
-    # see: http://www.boost.org/build/doc/html/bbv2/overview/invocation.html#bbv2.overview.invocation.properties
-    # to use the default for a given environment, comment it out; recommend you build debug and release however..
-    # - B2_ADDRESS_MODEL=address-model=64,32
-    # - B2_LINK=link=shared,static
-    # - B2_THREADING=threading=multi,single
+  # see: http://www.boost.org/build/doc/html/bbv2/overview/invocation.html#bbv2.overview.invocation.properties
+  # to use the default for a given environment, comment it out; recommend you build debug and release however..
+  # - B2_ADDRESS_MODEL=address-model=64,32
+  # - B2_LINK=link=shared,static
+  # - B2_THREADING=threading=multi,single
     - B2_VARIANT=variant=release,debug
 
 install:
@@ -46,9 +41,9 @@ install:
   - cd ..
   - git clone -b $TRAVIS_BRANCH --depth 1 https://github.com/boostorg/boost.git boost-root
   - cd boost-root
-  - git submodule update --init tools/boostdep
-  - git submodule update --init tools/build
-  - git submodule update --init tools/inspect
+  - git submodule update -q --init tools/boostdep
+  - git submodule update -q --init tools/build
+  - git submodule update -q --init tools/inspect
   - cp -r $TRAVIS_BUILD_DIR/* libs/$SELF
   - export BOOST_ROOT="`pwd`"
   - export PATH="`pwd`":$PATH 
@@ -69,16 +64,27 @@ branches:
     - master
     
 script:
-  - |-
-    echo "./b2 libs/$SELF/test toolset=$TOOLSET cxxstd=$CXXSTD $CXXFLAGS $LINKFLAGS $TESTFLAGS $B2_ADDRESS_MODEL $B2_LINK $B2_THREADING $B2_VARIANT -j3"
-  -       ./b2 libs/$SELF/test toolset=$TOOLSET cxxstd=$CXXSTD $CXXFLAGS $LINKFLAGS $TESTFLAGS $B2_ADDRESS_MODEL $B2_LINK $B2_THREADING $B2_VARIANT -j3
+  - cd libs/$SELF
+  - ci/build.sh
 
 jobs:
   include:
+    #################### Jobs to run on every pull request ####################
     - os: linux
       env: 
+        - COMMENT="C++03"
         - TOOLSET=gcc,gcc-7,clang
-        - CXXSTD=03,11
+      addons:
+        apt:
+          packages:
+            - g++-7
+          sources:
+            - ubuntu-toolchain-r-test
+    - os: linux
+      env: 
+        - COMMENT="C++11"
+        - TOOLSET=gcc,gcc-7,clang
+        - CXXSTD=11
       addons:
         apt:
           packages:
@@ -89,7 +95,7 @@ jobs:
       env: 
         - COMMENT=valgrind
         - TOOLSET=clang 
-        - CXXSTD=03
+        - B2_VARIANT=variant=debug
         - TESTFLAGS=testing.launcher=valgrind
       addons:
         apt:
@@ -101,23 +107,7 @@ jobs:
             - llvm-toolchain-trusty-5.0
             - ubuntu-toolchain-r-test
 
-    # Coverage build - for projects that build a library
-    # - os: linux
-    #   env: 
-    #     - TOOLSET=gcc
-    #     - CXX=g++-6
-    #     - B2_VARIANT="variant=profile"
-    #     - CXXFLAGS="cxxflags=-std=c++03 cxxflags=--coverage"
-    #     - LINKFLAGS=linkflags=--coverage
-    #     - COVERALL=1
-    #   addons:
-    #     apt:
-    #       packages:
-    #         - g++-6
-    #       sources:
-    #         - ubuntu-toolchain-r-test
-
-    # cppcheck build
+  # cppcheck in trusty is VERY old (1.6.2) but acceptable for this project
     - os: linux
       env:
         - COMMENT=cppcheck
@@ -126,17 +116,15 @@ jobs:
           packages:
             - cppcheck
       script:
-        - cppcheck -I. --std=c++03 --enable=all --error-exitcode=7 --quiet --force --error-exitcode=1 libs/$SELF
+        - cppcheck -I. --std=c++03 --enable=all --error-exitcode=1 --quiet --force libs/$SELF
 
-    # UBSAN
     - os: linux
       env:
         - COMMENT=UBSAN
         - B2_VARIANT=variant=debug
         - TOOLSET=gcc-7
-        - CXXSTD=03
         - CXXFLAGS="cxxflags=-fno-omit-frame-pointer cxxflags=-fsanitize=undefined"
-        - LINKFLAGS="linkflags=-fsanitize=undefined"
+        - LINKFLAGS=linkflags=-fsanitize=undefined
       addons:
         apt:
           packages:
@@ -144,39 +132,42 @@ jobs:
           sources:
             - ubuntu-toolchain-r-test
 
-    # Coverity Scan - runs on pull requests into master
     - os: linux
-      if: branch = master
+      env: 
+        - COMMENT=CodeCov
+        - TOOLSET=gcc-7
+        - B2_VARIANT=variant=profile
+        - CXXFLAGS=cxxflags=--coverage
+        - LINKFLAGS=linkflags=--coverage
+        - CODECOV=1
+      addons:
+        apt:
+          packages:
+            - g++-7
+          sources:
+            - ubuntu-toolchain-r-test
       script:
-        - echo -n | openssl s_client -connect scan.coverity.com:443 | sed -ne '/-BEGIN CERTIFICATE-/,/-END CERTIFICATE-/p' | sudo tee -a /etc/ssl/certs/ca-
-        - libs/$SELF/covscan.sh
-      env:
-        - COMMENT="Coverity Scan"
+        - cd libs/$SELF
+        - ci/codecov.sh
 
+  # osx is disabled because it is very slow to start (can delay builds by 30 minutes)
   # - os: osx
   #   osx_image: xcode9
   #   env:
   #     - TOOLSET=clang
   #     - CXXSTD=03,11
 
-after_success:
-  # If this is not a profiling build skip the rest...
-  - if [[ "$COVERALL" -ne "1" ]]; then exit 0; fi
-
-  # Copying Coveralls data to a separate folder
-  - wget https://github.com/linux-test-project/lcov/archive/v1.13.zip
-  - unzip v1.13.zip
-  - LCOV="`pwd`/lcov-1.13/bin/lcov --gcov-tool gcov-6"
-
-  # Preparing Coveralls data
-  - mkdir -p $TRAVIS_BUILD_DIR/coverals
-  - $LCOV --directory bin.v2/libs/$SELF --base-directory libs/$SELF --capture --output-file $TRAVIS_BUILD_DIR/coverals/coverage.info --no-external
-  - $LCOV --remove $TRAVIS_BUILD_DIR/coverals/coverage.info "*/$SELF/test/*" --output-file $TRAVIS_BUILD_DIR/coverals/coverage-filtered.info
-
-  # Sending data to Coveralls
-  - cd $TRAVIS_BUILD_DIR
-  - gem install coveralls-lcov
-  - coveralls-lcov coverals/coverage-filtered.info
+    #################### Jobs to run on master merges only ###################
+ 
+    # Coverity Scan
+    - os: linux
+      if: branch = master
+      env:
+        - COMMENT="Coverity Scan"
+      script:
+        - echo -n | openssl s_client -connect scan.coverity.com:443 | sed -ne '/-BEGIN CERTIFICATE-/,/-END CERTIFICATE-/p' | sudo tee -a /etc/ssl/certs/ca-
+        - cd libs/$SELF
+        - ci/coverity.sh
 
 notifications:
   email:
