@@ -1,0 +1,14 @@
+coverage:
+  range: "85...100"
+
+fixes:
+  - "boost/::include/boost/"
+  - "libs/uuid/::"
+
+parsers:
+  gcov:
+    branch_detection:
+      conditional: yes
+      loop: yes
+      method: no
+      macro: no

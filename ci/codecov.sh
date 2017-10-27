@@ -8,15 +8,33 @@
 # Bash script to run in travis to perform codecov.io integration
 #
 
-# assumes a bjam variant of "profile"
+###
+### NOTE: Make sure you grab and customize .codecov.yml
+###
+
+# assumes cwd is the top level directory of the boost project
+# assumes an environment variable $SELF is the boost project name
 
 set -ex
 
-ci/build.sh
-for filename in `find . -type f -regex '.*..pp$'`; 
-do 
-      gcov -n -o . $filename > /dev/null; 
-done
+B2_VARIANT=debug
+ci/build.sh cxxflags=-fprofile-arcs cxxflags=-ftest-coverage linkflags=-fprofile-arcs linkflags=-ftest-coverage
+
+# get the version of lcov
+lcov --version
+
+# coverage files are in ../../b2 from this location
+lcov --gcov-tool=gcov-7 --base-directory `pwd` --directory "$BOOST_ROOT" --capture --output-file all.info
+
+# all.info contains all the coverage info for all projects - limit to ours
+lcov --gcov-tool=gcov-7 --extract all.info "*/$SELF/*" --output-file coverage.info
+
+# dump a summary just for grins
+lcov --gcov-tool=gcov-7 --list coverage.info
+
+#
+# upload to codecov.io
+#
 curl -s https://codecov.io/bash > .codecov
 chmod +x .codecov
-./.codecov || echo "Codecov did not collect coverage reports"
+./.codecov -f coverage.info -X gcov -x "gcov-7"
