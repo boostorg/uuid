@@ -9,14 +9,22 @@
 #
 
 # assumes a bjam variant of "profile"
+# assumes an environment variable $SELF is the boost project name
 
 set -ex
 
 ci/build.sh
-for filename in `find . -type f -regex '.*..pp$'`; 
-do 
-      gcov -n -o . $filename > /dev/null; 
-done
+
+# coverage files are in ../../b2 from this location
+lcov --base-directory `pwd` --directory ../../bin.v2 --capture --output-file all.info
+
+# all.info contains all the coverage info for all projects - limit to ours
+lcov --extract coverage.info '*/$SELF/*' --output-file coverage.info
+
+# dump a summary just for grins
+lcov --list coverage.info
+
+# upload to codecov.io
 curl -s https://codecov.io/bash > .codecov
 chmod +x .codecov
 ./.codecov || echo "Codecov did not collect coverage reports"
