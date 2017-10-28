@@ -24,7 +24,7 @@ ci/build.sh cxxflags=-fprofile-arcs cxxflags=-ftest-coverage linkflags=-fprofile
 lcov --version
 
 # coverage files are in ../../b2 from this location
-lcov --gcov-tool=gcov-7 --base-directory `pwd` --directory "$BOOST_ROOT" --capture --output-file all.info
+lcov --gcov-tool=gcov-7 --rc lcov_branch_coverage=1 --base-directory `pwd` --directory "$BOOST_ROOT" --capture --output-file all.info
 
 # all.info contains all the coverage info for all projects - limit to ours
 lcov --gcov-tool=gcov-7 --extract all.info "*/$SELF/*" --output-file coverage.info
