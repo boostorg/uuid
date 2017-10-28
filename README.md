@@ -11,10 +11,11 @@ Distributed under the [Boost Software License, Version 1.0](http://www.boost.org
 
 ### Build Status
 
-Branch          | Travis | Appveyor | Coverity | Coveralls | Regression Tests
---------------- | ------ | -------- | -------- | --------- | ----------------
-[develop](https://github.com/boostorg/uuid/tree/develop) | [![Build Status](https://travis-ci.org/boostorg/uuid.svg?branch=develop)](https://travis-ci.org/boostorg/uuid) | [![Build status](https://ci.appveyor.com/api/projects/status/nuihr6s92fjb9gwy/branch/develop?svg=true)](https://ci.appveyor.com/project/boostorg/uuid/branch/develop) | | N/A (Header-only) | [Enter the Matrix](http://www.boost.org/development/tests/develop/developer/uuid.html)
-[master](https://github.com/boostorg/uuid/tree/master) | [![Build Status](https://travis-ci.org/boostorg/uuid.svg?branch=master)](https://travis-ci.org/boostorg/uuid) | [![Build status](https://ci.appveyor.com/api/projects/status/nuihr6s92fjb9gwy?svg=true)](https://ci.appveyor.com/project/boostorg/uuid/branch/master) | [![Coverity Scan Build Status](https://scan.coverity.com/projects/13982/badge.svg)](https://scan.coverity.com/projects/boostorg-uuid) | N/A (Header-only) | [Enter the Matrix](http://www.boost.org/development/tests/master/developer/uuid.html)
+Branch          | Travis | Appveyor | Coverity Scan | codecov.io | Documentation | Regression Tests
+--------------- | ------ | -------- | ------------- | ---------- | ------------- | ----------------
+[master](https://github.com/boostorg/uuid/tree/master) | [![Build Status](https://travis-ci.org/boostorg/uuid.svg?branch=master)](https://travis-ci.org/boostorg/uuid) | [![Build status](https://ci.appveyor.com/api/projects/status/nuihr6s92fjb9gwy?svg=true)](https://ci.appveyor.com/project/boostorg/uuid/branch/master) | [![Coverity Scan Build Status](https://scan.coverity.com/projects/13982/badge.svg)](https://scan.coverity.com/projects/boostorg-uuid) | [![codecov](https://codecov.io/gh/boostorg/uuid/branch/master/graph/badge.svg)](https://codecov.io/gh/boostorg/uuid/branch/master) | [![Documentation](https://img.shields.io/badge/documentation-master-brightgreen.svg)](http://www.boost.org/doc/libs/master/libs/uuid/doc/index.html) | [![Enter the Matrix](https://img.shields.io/badge/matrix-master-brightgreen.svg)](http://www.boost.org/development/tests/master/developer/uuid.html)
+[develop](https://github.com/boostorg/uuid/tree/develop) | [![Build Status](https://travis-ci.org/boostorg/uuid.svg?branch=develop)](https://travis-ci.org/boostorg/uuid) | [![Build status](https://ci.appveyor.com/api/projects/status/nuihr6s92fjb9gwy/branch/develop?svg=true)](https://ci.appveyor.com/project/boostorg/uuid/branch/develop) | | [![codecov](https://codecov.io/gh/boostorg/uuid/branch/develop/graph/badge.svg)](https://codecov.io/gh/boostorg/uuid/branch/develop) | [![Documentation](https://img.shields.io/badge/documentation-develop-brightgreen.svg)](http://www.boost.org/doc/libs/develop/libs/uuid/doc/index.html) | [![Enter the Matrix](https://img.shields.io/badge/matrix-develop-brightgreen.svg)](http://www.boost.org/development/tests/develop/developer/uuid.html)
+
 
 ### Directories
 
