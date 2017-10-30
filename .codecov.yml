@@ -2,8 +2,8 @@ coverage:
   range: "85...100"
 
 fixes:
-  - "*/boost-root/boost/::include/boost/"
-  - "*/boost-root/libs/uuid/::"
+  - "/home/travis/build/*/boost-root/boost/::include/boost/"
+  - "/home/travis/build/*/boost-root/libs/uuid/::"
 
 parsers:
   gcov:
