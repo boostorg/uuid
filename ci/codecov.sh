@@ -37,11 +37,6 @@ lcov --gcov-tool=gcov-7 --extract all.info "*/boost/$SELF/*" --output-file cover
 lcov --gcov-tool=gcov-7 --list coverage.info
 
 #
-# Because we move things around and codecov's script relies on "git rev-parse --show-toplevel"
-# we are going to force it to use the current directory instead using a sed command.
-#
-
-#
 # upload to codecov.io
 #
 curl -s https://codecov.io/bash > .codecov
