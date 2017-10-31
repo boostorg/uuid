@@ -20,6 +20,10 @@ set -ex
 B2_VARIANT=debug
 ci/build.sh cxxflags=-fprofile-arcs cxxflags=-ftest-coverage linkflags=-fprofile-arcs linkflags=-ftest-coverage
 
+# switch back to the original source code directory
+# this ensures codecov doesn't get confused
+cd $TRAVIS_BUILD_DIR
+
 # get the version of lcov
 lcov --version
 
@@ -27,10 +31,15 @@ lcov --version
 lcov --gcov-tool=gcov-7 --rc lcov_branch_coverage=1 --base-directory `pwd` --directory "$BOOST_ROOT" --capture --output-file all.info
 
 # all.info contains all the coverage info for all projects - limit to ours
-lcov --gcov-tool=gcov-7 --extract all.info "*/$SELF/*" --output-file coverage.info
+lcov --gcov-tool=gcov-7 --extract all.info "*/boost/$SELF/*" --output-file coverage.info
 
 # dump a summary just for grins
 lcov --gcov-tool=gcov-7 --list coverage.info
+
+#
+# Because we move things around and codecov's script relies on "git rev-parse --show-toplevel"
+# we are going to force it to use the current directory instead using a sed command.
+#
 
 #
 # upload to codecov.io
