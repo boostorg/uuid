@@ -72,6 +72,7 @@ int main(int, char*[])
     BOOST_TEST_THROWS(gen(std::wstring(L"{01234567-89AB-CDEF-0123-456789abcdef)")), std::invalid_argument);
     BOOST_TEST_THROWS(gen(std::wstring(L"{01234567-89AB-CDEF-0123-456789abcdef")), std::invalid_argument);
     BOOST_TEST_THROWS(gen(std::wstring(L"01234567-89AB-CDEF-0123-456789abcdef}")), std::invalid_argument);
+    BOOST_TEST_THROWS(gen(std::wstring(L"G1234567-89AB-CDEF-0123-456789abcdef}")), std::invalid_argument);
 #endif //BOOST_NO_STD_WSTRING
 
     BOOST_TEST_THROWS(gen("G1234567-89AB-CDEF-0123-456789abcdef"), std::invalid_argument);
