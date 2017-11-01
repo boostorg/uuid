@@ -26,6 +26,7 @@
 #ifndef BOOST_UUID_MD5_HPP
 #define BOOST_UUID_MD5_HPP
 
+#include <boost/cast.hpp>
 #include <boost/config.hpp>
 #include <boost/cstdint.hpp>
 #include <boost/uuid/uuid.hpp> // for version
@@ -52,7 +53,7 @@ public:
 
     void process_bytes(void const* buffer, std::size_t byte_count)
     {
-        MD5_Update(&ctx_, buffer, byte_count);
+        MD5_Update(&ctx_, buffer, boost::numeric_cast<unsigned long>(byte_count));
     }
 
     void get_digest(digest_type& digest)
