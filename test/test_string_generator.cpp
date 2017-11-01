@@ -58,7 +58,12 @@ int main(int, char*[])
     BOOST_TEST_EQ(u, u_increasing);
 #endif //BOOST_NO_STD_WSTRING
 
-    BOOST_TEST_THROWS(gen("01234567-89ab-cdef-\0123-456789abcdef"), std::invalid_argument);
+    const char raw[36] = { '0', '1', '2', '3', '4', '5', '6', '7', '-',
+                           '8', '9', 'a', 'b', '-',
+                           'c', 'd', 'e', 'f', '-',
+                            0 , '1', '2', '3', '-',  // 0x00 character is intentional
+                           '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f' };
+    BOOST_TEST_THROWS(gen(std::string(raw, 36)), std::invalid_argument);
 
     BOOST_TEST_THROWS(gen("01234567-89ab-cdef-0123456789abcdef"), std::invalid_argument);
     BOOST_TEST_THROWS(gen("01234567-89ab-cdef0123-456789abcdef"), std::invalid_argument);

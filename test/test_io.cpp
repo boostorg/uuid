@@ -100,7 +100,13 @@ int main(int, char*[])
     uuroundtrip(u3, L"12345678-90ab-cdef-1234-567890abcdef");
 #endif
 
-    uufail("01234567-89ab-cdef-\0123-456789abcdef");
+    const char raw[36] = { '0', '1', '2', '3', '4', '5', '6', '7', '-',
+        '8', '9', 'a', 'b', '-',
+        'c', 'd', 'e', 'f', '-',
+        0 , '1', '2', '3', '-',  // 0x00 character is intentional
+        '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f' };
+
+    uufail(std::string(raw, 36));
     uufail("01234567-89ab-cdef-0123456789abcdef");
     uufail("01234567-89ab-cdef0123-456789abcdef");
     uufail("01234567-89abcdef-0123-456789abcdef");
@@ -110,7 +116,7 @@ int main(int, char*[])
     uufail("01234567-89AB-CDEF-0123-456789abcdeg");
 
 #ifndef BOOST_NO_STD_WSTRING
-    uufail(L"01234567-89ab-cdef-\0123-456789abcdef");
+    uufail(L"01234567-89ab-cdef-");
     uufail(L"01234567-89ab-cdef-0123456789abcdef");
     uufail(L"01234567-89ab-cdef0123-456789abcdef");
     uufail(L"01234567-89abcdef-0123-456789abcdef");
