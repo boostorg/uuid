@@ -223,7 +223,6 @@ private:
 
             const seed_rng* this_ptr = this;
             sha.process_bytes( (unsigned char const*)&this_ptr, sizeof( this_ptr ) );
-            sha.process_bytes( (unsigned char const*)&std::rand, sizeof( void(*)() ) );
         }
 
         sha.process_bytes( (unsigned char const*)rd_, sizeof( rd_ ) );
