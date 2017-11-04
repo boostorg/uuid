@@ -27,6 +27,11 @@ namespace uuids {
 //!        there is no confusion - at that time this will be removed.
 typedef name_generator_sha1 name_generator;
 
+//! \brief this provides the latest name generator hashing algorithm
+//!        regardless of boost release; if you do not need stable
+//!        name generation across releases then this will suffice
+typedef name_generator_sha1 name_generator_latest;
+
 } // uuids
 } // boost
 

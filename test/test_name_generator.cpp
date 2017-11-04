@@ -90,5 +90,10 @@ int main(int, char*[])
     BOOST_TEST_EQ(md.version(), boost::uuids::uuid::version_name_based_md5);
     BOOST_TEST_EQ(md, correct_md5);
 
+    // latest generator is SHA1 (test will break on change, which is good)
+    name_generator_latest latestgen(ns::dns());
+    uuid latest = latestgen("www.widgets.com");
+    BOOST_TEST_EQ(latest, correct_sha1);
+
     return boost::report_errors();
 }

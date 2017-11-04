@@ -527,6 +527,7 @@ public:
 typedef basic_name_generator&lt;detail::md5&gt; name_generator_md5;
 typedef basic_name_generator&lt;detail::sha1&gt; name_generator_sha1;
 typedef name_generator_sha1 name_generator; // deprecated
+typedef name_generator_sha1 name_generator_latest;
 
 }} //namespace boost::uuids
 </pre>
@@ -546,12 +547,19 @@ Since RFC 4122 was written, both of these hash algorithms have been rendered
 insecure.  In anticipation of a new RFC for <b>uuid</b> arriving,
 <tt>name_generator</tt> has been deprecated, and replaced with:
 <ul>
+<li><tt>boost::uuids::name_generator_latest</tt></li>
 <li><tt>boost::uuids::name_generator_md5</tt></li>
 <li><tt>boost::uuids::name_generator_sha1</tt></li>
 </ul>
 <tt>name_generator</tt>, while deprecated, remains a type alias for
-<tt>name_generator_sha1</tt>.  Consumers are free to use their own hash
-provider as long as it satisfies the
+<tt>name_generator_sha1</tt> so the behavior is identical to previous
+releases.  When the successor to SHA1 is chosen,
+it will be implemented under a new name similar to those above.
+If your application does not rely on stable hashing over time, you can
+use <tt>name_generator_latest</tt> to always use the latest hashing
+algorithm available.
+</p>
+<p>Consumers are free to use their own hash provider as long as it satisfies the
 <tt><A href="#Concept:NameHashProvider">NameHashProvider</A></tt> concept.
 <h5>Namespaces</h5>
 There are four well-known namespaces defined in
