@@ -1,6 +1,6 @@
 #! /bin/bash
 #
-# Copyright 2017 James E. King, III
+# Copyright 2017 James E. King III
 # Distributed under the Boost Software License, Version 1.0.
 # (See accompanying file LICENSE_1_0.txt or copy at
 #      http://www.boost.org/LICENSE_1_0.txt)
@@ -14,6 +14,6 @@ if [[ -z "$CXXSTD" ]]; then
     CXXSTD=03
 fi
 
-echo "$BOOST_ROOT/b2 . toolset=$TOOLSET cxxstd=$CXXSTD $CXXFLAGS $LINKFLAGS $TESTFLAGS $B2_ADDRESS_MODEL $B2_LINK $B2_THREADING $B2_VARIANT -j3 $*"
-      $BOOST_ROOT/b2 . toolset=$TOOLSET cxxstd=$CXXSTD $CXXFLAGS $LINKFLAGS $TESTFLAGS $B2_ADDRESS_MODEL $B2_LINK $B2_THREADING $B2_VARIANT -j3 $*
+echo "$BOOST_ROOT/b2 . toolset=$TOOLSET cxxstd=$CXXSTD $CXXFLAGS $DEFINES $LINKFLAGS $TESTFLAGS $B2_ADDRESS_MODEL $B2_LINK $B2_THREADING $B2_VARIANT -j3 $*"
+      $BOOST_ROOT/b2 . toolset=$TOOLSET cxxstd=$CXXSTD $CXXFLAGS $DEFINES $LINKFLAGS $TESTFLAGS $B2_ADDRESS_MODEL $B2_LINK $B2_THREADING $B2_VARIANT -j3 $*
 

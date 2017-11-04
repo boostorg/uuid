@@ -16,6 +16,7 @@
 #include <boost/uuid/string_generator.hpp>
 #include <boost/detail/lightweight_test.hpp>
 #include <boost/config.hpp>
+#include <boost/predef/library/c/cloudabi.h>
 
 int main(int, char*[])
 {
@@ -72,10 +73,12 @@ int main(int, char*[])
     uuid u3 = other("www.widgets.com");
     BOOST_TEST_NE(u, u3);
 
+#if !BOOST_LIB_C_CLOUDABI
     // used by documentation
     uuid udoc = gen("boost.org");
     std::cout << "boost.org uuid in dns namespace: " << udoc << std::endl;
     // boost.org uuid in dns namespace: 0043f363-bbb4-5369-840a-322df6ec1926
+#endif
 
     // deprecated equality check, make sure boost::uuids::name_generator is a sha1 generator
     name_generator other2(ns::url());

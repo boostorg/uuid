@@ -33,8 +33,8 @@ Branch          | Travis | Appveyor | Coverity Scan | codecov.io | Documentation
 
 ### Code Example - UUID Generation
 
-    // Copyright 2017 James E. King, III
-    // Distributed under the Boost Software License, Version 1.0. 
+    // Copyright 2017 James E. King III
+    // Distributed under the Boost Software License, Version 1.0.
     // (See http://www.boost.org/LICENSE_1_0.txt)
     // mkuuid.cpp example
     
