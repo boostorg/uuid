@@ -96,6 +96,7 @@ jobs:
         - COMMENT=valgrind
         - TOOLSET=clang 
         - B2_VARIANT=variant=debug
+        - DEFINES="define=BOOST_UUID_LIMITED_BENCH"
         - TESTFLAGS=testing.launcher=valgrind
       addons:
         apt:
@@ -124,6 +125,7 @@ jobs:
         - B2_VARIANT=variant=debug
         - TOOLSET=gcc-7
         - CXXFLAGS="cxxflags=-fno-omit-frame-pointer cxxflags=-fsanitize=undefined"
+        - DEFINES="define=BOOST_UUID_LIMITED_BENCH"
         - LINKFLAGS=linkflags=-fsanitize=undefined
       addons:
         apt:
@@ -135,6 +137,7 @@ jobs:
     - os: linux
       env: 
         - COMMENT=CodeCov
+        - DEFINES="define=BOOST_UUID_LIMITED_BENCH"
         - TOOLSET=gcc-7
       addons:
         apt:
