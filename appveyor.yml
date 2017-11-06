@@ -66,8 +66,8 @@ environment:
       ADDPATH: C:\mingw-w64\x86_64-6.3.0-posix-seh-rt_v5-rev1\mingw64\bin;
       TOOLSET: gcc
       CXXFLAGS: cxxflags=-std=c++03
-      MAYFAIL: true
-      COMMENT: serialization and mingw compatibility issues
+  #   MAYFAIL: true
+  #   COMMENT: serialization and mingw compatibility issues
   # - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2013
   #   ADDPATH: C:\mingw-w64\x86_64-6.3.0-posix-seh-rt_v5-rev1\mingw64\bin;
   #   TOOLSET: gcc

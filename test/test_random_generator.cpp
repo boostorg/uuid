@@ -9,12 +9,14 @@
 
 //  libs/uuid/test/test_random_generator.cpp  -------------------------------//
 
-#include <boost/uuid/uuid.hpp>
-#include <boost/uuid/random_generator.hpp>
-#include <boost/uuid/uuid_io.hpp>
+#include <boost/core/ignore_unused.hpp>
 #include <boost/detail/lightweight_test.hpp>
 #include <boost/random.hpp>
-#include <boost/random/random_device.hpp>
+#include <boost/uuid/detail/random/random_device_wincrypt.hpp>
+#include <boost/uuid/entropy_error.hpp>
+#include <boost/uuid/random_generator.hpp>
+#include <boost/uuid/uuid_io.hpp>
+#include <boost/uuid/uuid.hpp>
 
 template <typename RandomUuidGenerator>
 void check_random_generator(RandomUuidGenerator& uuid_gen)
@@ -29,6 +31,38 @@ void check_random_generator(RandomUuidGenerator& uuid_gen)
 
     // version
     BOOST_TEST_EQ(u1.version(), boost::uuids::uuid::version_random_number_based);
+}
+
+// This is the example block from the documentation - ensure it works!
+void test_examples()
+{
+    // the default behavior of random_generator favors creation
+    // of a small number of uuids from a single instance of a
+    // generator as it has a low setup cost:
+    boost::uuids::uuid id = boost::uuids::random_generator()();
+
+    // to make a large number of uuids in a more efficient but
+    // less secure manner, use random_generator_mt19937 instead.
+    // there is a test (test_bench_random) that determines the
+    // cut-off point where it is more wall-time efficient to 
+    // use mt19937 over standard.
+    boost::uuids::random_generator_mt19937 bulkgen;
+    for (size_t i = 0; i < 100; ++i)
+    {
+        boost::uuids::uuid u = bulkgen();
+        // do something with u
+        boost::ignore_unused(u);
+    }
+
+    // you can also use a different random number generator - pass
+    // either a reference or a pointer to the random number generator
+    boost::random::lagged_fibonacci607 ran; // seed it yourself
+    boost::uuids::basic_random_generator
+        <boost::random::lagged_fibonacci607> genfib(&ran);
+    boost::uuids::uuid r = genfib();
+
+    boost::ignore_unused(id);
+    boost::ignore_unused(r);
 }
 
 int main(int, char*[])
@@ -53,10 +87,15 @@ int main(int, char*[])
     basic_random_generator<boost::lagged_fibonacci607> uuid_gen4(&lagged_fibonacci607_gen);
     check_random_generator(uuid_gen4);
 
-    // random device
-    basic_random_generator<boost::random::random_device> uuid_gen5;
-    check_random_generator(uuid_gen5);
-    
+    // pseudo
+    random_generator_mt19937 bulkgen;
+    check_random_generator(bulkgen);
+
+    // make sure default construction seeding is happening
+    random_generator_mt19937 b1;
+    random_generator_mt19937 b2;
+    BOOST_TEST_NE(b1(), b2());
+
     // there was a bug in basic_random_generator where it did not
     // produce very random numbers.  This checks for that bug.
     uuid u = random_generator()();
@@ -66,6 +105,15 @@ int main(int, char*[])
          (u.data[10] == u.data[14]) )
     {
         BOOST_ERROR("basic_random_generator is not producing random uuids");
+    }
+
+    // The example code snippet in the documentation
+    test_examples();
+
+    // dump 10 of them to cout for observation
+    for (size_t i = 0; i < 10; ++i)
+    {
+        std::cout << random_generator()() << std::endl;
     }
 
     return boost::report_errors();

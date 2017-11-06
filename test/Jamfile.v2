@@ -7,10 +7,15 @@
 project libs/uuid/test
     : requirements
 
-      # boost::random requires this setting for a warning free build:
+      # BOOST_AUTO_LINK does not work outside of MSVC on Windows so:
+	  <toolset>gcc,<target-os>windows:<linkflags>-lbcrypt 
+
+      # boost::random needs this setting for a warning free build:
       <toolset>msvc:<define>_SCL_SECURE_NO_WARNINGS
 
-    ;
+	  # link static for easier debugging
+	  <link>static
+;
 
 import path ;
 import regex ;
@@ -72,8 +77,7 @@ test-suite uuid :
     [ run test_nil_generator.cpp ]
     [ run test_name_generator.cpp ]
     [ run test_string_generator.cpp ]
-    [ run test_random_generator.cpp ../../random/build//boost_random ]
-    # link to boost::random required for the test that uses random_device
+    [ run test_random_generator.cpp ]
 
     # test tagging an object
     [ run test_tagging.cpp ]
@@ -101,4 +105,76 @@ test-suite uuid :
     [ run test_msvc_simd_bug981648_main.cpp
           test_msvc_simd_bug981648_foo.cpp
           : : : <variant>release <debug-symbols>on : test_msvc_simd_bug981648 ]
+
+    # a small benchmark test for random generation
+    [ run test_bench_random.cpp ../../timer/build//boost_timer ]
+
+### tests for the the header-only random_device implementation
+    [ run test_detail_random_device.cpp ]
+
+## BCrypt
+    # missing the link library, should fail:
+# the following is disabled because of https://github.com/boostorg/build/issues/259
+#   [ link-fail test_detail_random_device_bcrypt.cpp 
+#     : 
+#       <define>BOOST_UUID_RANDOM_DEVICE_NO_LIB
+#       <define>WINAPI_FAMILY=WINAPI_FAMILY_PC_APP
+#     : test_detail_random_device_bcrypt_fail_link ]    
+
+    # happy path - using the real platform implementation
+    [ run test_detail_random_device_bcrypt.cpp 
+      : : : 
+        <define>WINAPI_FAMILY=WINAPI_FAMILY_PC_APP
+      : test_detail_random_device_bcrypt_happy_path ]   
+
+    # sad path - we mock the bcrypt APIs to force every error handling path,
+    # we define BOOST_SYMBOL_IMPORT and _EXPORT to nothing, and use locally 
+    # defined replacements - this technique only works with _MSC_VER without 
+	# warnings because of the definitions that Boost.Config makes for gcc/clang
+	# so the sad path is not tested on cygwin or MinGW, for example
+    [ run test_detail_random_device_bcrypt.cpp
+      : : : 
+        <toolset>msvc,<target-os>windows:<define>BOOST_SYMBOL_IMPORT=
+        <toolset>msvc,<target-os>windows:<define>BOOST_SYMBOL_EXPORT=
+        <define>BOOST_UUID_RANDOM_DEVICE_NO_LIB
+        <define>BOOST_UUID_TESTSTUBS
+        <define>WINAPI_FAMILY=WINAPI_FAMILY_PC_APP
+      : test_detail_random_device_bcrypt_sad_path ]
+
+## CloudABI based (cloudabi_sys_random_get)
+    [ run test_detail_random_device_cloudabi.cpp ]
+
+## File based (urandom)
+    [ run test_detail_random_device_file.cpp ]
+
+## Wincrypt
+    # missing the link library, should fail:
+# the following is disabled because of https://github.com/boostorg/build/issues/259
+#   [ link-fail test_detail_random_device_wincrypt.cpp 
+#     : 
+#       <define>BOOST_UUID_RANDOM_DEVICE_NO_LIB
+#       <define>WINAPI_FAMILY=WINAPI_FAMILY_DESKTOP_APP
+#     : test_detail_random_device_wincrypt_fail_link ]    
+
+    # happy path - using the real platform implementation
+    [ run test_detail_random_device_wincrypt.cpp 
+	  ../../timer/build//boost_timer
+	  : : : 
+        <define>WINAPI_FAMILY=WINAPI_FAMILY_DESKTOP_APP
+      : test_detail_random_device_wincrypt_happy_path ]   
+
+    # sad path - we mock the wincrypt APIs to force every error handling path,
+    # we define BOOST_SYMBOL_IMPORT and _EXPORT to nothing, and use locally 
+    # defined replacements - this technique only works with _MSC_VER without 
+	# warnings because of the definitions that Boost.Config makes for gcc/clang
+	# so the sad path is not tested on cygwin or MinGW, for example
+    [ run test_detail_random_device_wincrypt.cpp
+      : : : 
+        <toolset>msvc,<target-os>windows:<define>BOOST_SYMBOL_IMPORT=
+        <toolset>msvc,<target-os>windows:<define>BOOST_SYMBOL_EXPORT=
+        <define>BOOST_UUID_RANDOM_DEVICE_NO_LIB
+        <define>BOOST_UUID_TESTSTUBS
+        <define>WINAPI_FAMILY=WINAPI_FAMILY_DESKTOP_APP
+      : test_detail_random_device_wincrypt_sad_path ]
+
     ;
