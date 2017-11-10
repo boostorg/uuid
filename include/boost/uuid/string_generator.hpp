@@ -89,10 +89,6 @@ struct string_generator {
                     } else {
                         throw_invalid();
                     }
-                } else {
-                    if (is_dash(c)) {
-                        throw_invalid();
-                    }
                 }
             }
                 
@@ -192,7 +188,7 @@ private:
     }
     
     void throw_invalid() const {
-        BOOST_THROW_EXCEPTION(std::invalid_argument("invalid uuid string"));
+        BOOST_THROW_EXCEPTION(std::runtime_error("invalid uuid string"));
     }
 };
 

@@ -501,7 +501,7 @@ boost::uuids::uuid u2 = gen(L"01234567-89ab-cdef-0123-456789abcdef");
 boost::uuids::uuid u3 = gen(std::string("0123456789abcdef0123456789abcdef"));
 boost::uuids::uuid u4 = gen(std::wstring(L"01234567-89AB-CDEF-0123-456789ABCDEF"));
 </pre>
-Invalid input will generate a std::invalid_argument exception.
+Invalid input will generate a <tt>std::runtime_error</tt> exception.
 
 <h3><a name="boost/uuid/name_generator.hpp" href="./../../boost/uuid/name_generator.hpp">boost/uuid/name_generator.hpp</a></h3>
 <h4><a name="Synopsis_name_generator">Synopsis</a></h4>
