@@ -63,27 +63,27 @@ int main(int, char*[])
                            'c', 'd', 'e', 'f', '-',
                             0 , '1', '2', '3', '-',  // 0x00 character is intentional
                            '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f' };
-    BOOST_TEST_THROWS(gen(std::string(raw, 36)), std::invalid_argument);
+    BOOST_TEST_THROWS(gen(std::string(raw, 36)), std::runtime_error);
 
-    BOOST_TEST_THROWS(gen("01234567-89ab-cdef-0123456789abcdef"), std::invalid_argument);
-    BOOST_TEST_THROWS(gen("01234567-89ab-cdef0123-456789abcdef"), std::invalid_argument);
-    BOOST_TEST_THROWS(gen("01234567-89abcdef-0123-456789abcdef"), std::invalid_argument);
-    BOOST_TEST_THROWS(gen("0123456789ab-cdef-0123-456789abcdef"), std::invalid_argument);
+    BOOST_TEST_THROWS(gen("01234567-89ab-cdef-0123456789abcdef"), std::runtime_error);
+    BOOST_TEST_THROWS(gen("01234567-89ab-cdef0123-456789abcdef"), std::runtime_error);
+    BOOST_TEST_THROWS(gen("01234567-89abcdef-0123-456789abcdef"), std::runtime_error);
+    BOOST_TEST_THROWS(gen("0123456789ab-cdef-0123-456789abcdef"), std::runtime_error);
 
-    BOOST_TEST_THROWS(gen("{01234567-89AB-CDEF-0123-456789abcdef)"), std::invalid_argument);
-    BOOST_TEST_THROWS(gen("{01234567-89AB-CDEF-0123-456789abcdef"), std::invalid_argument);
-    BOOST_TEST_THROWS(gen("01234567-89AB-CDEF-0123-456789abcdef}"), std::invalid_argument);
+    BOOST_TEST_THROWS(gen("{01234567-89AB-CDEF-0123-456789abcdef)"), std::runtime_error);
+    BOOST_TEST_THROWS(gen("{01234567-89AB-CDEF-0123-456789abcdef"), std::runtime_error);
+    BOOST_TEST_THROWS(gen("01234567-89AB-CDEF-0123-456789abcdef}"), std::runtime_error);
 #ifndef BOOST_NO_STD_WSTRING
-    BOOST_TEST_THROWS(gen(std::wstring(L"{01234567-89AB-CDEF-0123-456789abcdef)")), std::invalid_argument);
-    BOOST_TEST_THROWS(gen(std::wstring(L"{01234567-89AB-CDEF-0123-456789abcdef")), std::invalid_argument);
-    BOOST_TEST_THROWS(gen(std::wstring(L"01234567-89AB-CDEF-0123-456789abcdef}")), std::invalid_argument);
-    BOOST_TEST_THROWS(gen(std::wstring(L"G1234567-89AB-CDEF-0123-456789abcdef}")), std::invalid_argument);
+    BOOST_TEST_THROWS(gen(std::wstring(L"{01234567-89AB-CDEF-0123-456789abcdef)")), std::runtime_error);
+    BOOST_TEST_THROWS(gen(std::wstring(L"{01234567-89AB-CDEF-0123-456789abcdef")), std::runtime_error);
+    BOOST_TEST_THROWS(gen(std::wstring(L"01234567-89AB-CDEF-0123-456789abcdef}")), std::runtime_error);
+    BOOST_TEST_THROWS(gen(std::wstring(L"G1234567-89AB-CDEF-0123-456789abcdef}")), std::runtime_error);
 #endif //BOOST_NO_STD_WSTRING
 
-    BOOST_TEST_THROWS(gen("G1234567-89AB-CDEF-0123-456789abcdef"), std::invalid_argument);
-    BOOST_TEST_THROWS(gen("Have a great big roast-beef sandwich!"), std::invalid_argument);
+    BOOST_TEST_THROWS(gen("G1234567-89AB-CDEF-0123-456789abcdef"), std::runtime_error);
+    BOOST_TEST_THROWS(gen("Have a great big roast-beef sandwich!"), std::runtime_error);
 
-    BOOST_TEST_THROWS(gen("83f8638b-8dca-4152-zzzz-2ca8b33039b4"), std::invalid_argument);
+    BOOST_TEST_THROWS(gen("83f8638b-8dca-4152-zzzz-2ca8b33039b4"), std::runtime_error);
 
     return boost::report_errors();
 }
