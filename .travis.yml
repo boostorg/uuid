@@ -1,5 +1,5 @@
 # Copyright 2016 Peter Dimov
-# Copyright 2017 James E. King, III
+# Copyright 2017 James E. King III
 # Distributed under the Boost Software License, Version 1.0.
 # (See accompanying file LICENSE_1_0.txt or copy at http://boost.org/LICENSE_1_0.txt)
 
@@ -96,6 +96,7 @@ jobs:
         - COMMENT=valgrind
         - TOOLSET=clang 
         - B2_VARIANT=variant=debug
+        - DEFINES="define=BOOST_UUID_LIMITED_BENCH"
         - TESTFLAGS=testing.launcher=valgrind
       addons:
         apt:
@@ -124,6 +125,7 @@ jobs:
         - B2_VARIANT=variant=debug
         - TOOLSET=gcc-7
         - CXXFLAGS="cxxflags=-fno-omit-frame-pointer cxxflags=-fsanitize=undefined"
+        - DEFINES="define=BOOST_UUID_LIMITED_BENCH"
         - LINKFLAGS=linkflags=-fsanitize=undefined
       addons:
         apt:
@@ -135,6 +137,7 @@ jobs:
     - os: linux
       env: 
         - COMMENT=CodeCov
+        - DEFINES="define=BOOST_UUID_LIMITED_BENCH"
         - TOOLSET=gcc-7
       addons:
         apt:
@@ -148,7 +151,7 @@ jobs:
         - cd libs/$SELF
         - ci/codecov.sh
 
-  # osx is disabled because it is very slow to start (can delay builds by 30 minutes)
+  # osx was disabled because it is very slow to start (can delay builds by 30 minutes)
   # - os: osx
   #   osx_image: xcode9
   #   env:

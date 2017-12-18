@@ -12,11 +12,14 @@
 #include <boost/uuid/uuid.hpp>
 #include <boost/uuid/uuid_io.hpp>
 #include <boost/detail/lightweight_test.hpp>
-
-#include <boost/lexical_cast.hpp>
+#include <boost/predef/library/c/cloudabi.h>
 #include <string>
 #include <sstream>
 #include <iomanip>
+
+#if !BOOST_LIB_C_CLOUDABI
+#include <boost/lexical_cast.hpp>
+#endif
 
 using namespace boost::uuids;
 
@@ -126,6 +129,8 @@ int main(int, char*[])
     uufail(L"01234567-89AB-CDEF-0123-456789abcdeg");
 #endif
 
+#if !BOOST_LIB_C_CLOUDABI
+    // lexical_cast depends on sprintf which is not available in cloudlibc
     BOOST_TEST(boost::lexical_cast<std::string>(u1) == std::string("00000000-0000-0000-0000-000000000000"));
     BOOST_TEST(boost::lexical_cast<uuid>("00000000-0000-0000-0000-000000000000") == u1);
 
@@ -138,6 +143,8 @@ int main(int, char*[])
 
     BOOST_TEST(boost::lexical_cast<std::wstring>(u3) == std::wstring(L"12345678-90ab-cdef-1234-567890abcdef"));
     BOOST_TEST(boost::lexical_cast<uuid>(L"12345678-90ab-cdef-1234-567890abcdef") == u3);
+#endif
+
 #endif
 
     BOOST_TEST(to_string(u1) == std::string("00000000-0000-0000-0000-000000000000"));

@@ -1,6 +1,6 @@
 //  libs/uuid/test/test_md5.cpp  --------------------------------//
 
-// (C) Copyright 2017 James E. King, III
+// (C) Copyright 2017 James E. King III
 
 // Distributed under the Boost Software License, Version 1.0. (See
 // accompanying file LICENSE_1_0.txt or copy at
