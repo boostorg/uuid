@@ -13,6 +13,7 @@
 */
 
 #include <boost/core/ignore_unused.hpp>
+#include <boost/numeric/conversion/cast.hpp>
 #include <boost/winapi/crypt.hpp>
 #include <boost/winapi/get_last_error.hpp>
 #include <boost/throw_exception.hpp>
@@ -63,7 +64,8 @@ class random_provider_base
     //! \param[in]  siz  the number of bytes to acquire
     void get_random_bytes(void *buf, size_t siz)
     {
-        if (!boost::winapi::CryptGenRandom(hProv_, siz, 
+        if (!boost::winapi::CryptGenRandom(hProv_, 
+                    boost::numeric_cast<boost::winapi::DWORD_>(siz), 
                     static_cast<boost::winapi::BYTE_ *>(buf)))
         {
             boost::winapi::DWORD_ err = boost::winapi::GetLastError();

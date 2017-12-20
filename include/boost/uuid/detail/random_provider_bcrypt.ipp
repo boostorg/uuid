@@ -9,6 +9,7 @@
 //
 
 #include <boost/core/ignore_unused.hpp>
+#include <boost/numeric/conversion/cast.hpp>
 #include <boost/winapi/bcrypt.hpp>
 #include <boost/winapi/get_last_error.hpp>
 #include <boost/throw_exception.hpp>
@@ -60,7 +61,7 @@ class random_provider_base
             boost::winapi::BCryptGenRandom(
                 hProv_,
                 static_cast<boost::winapi::PUCHAR_>(buf),
-                siz,
+                boost::numeric_cast<boost::winapi::ULONG_>(siz),
                 0);
 
         if (status)
