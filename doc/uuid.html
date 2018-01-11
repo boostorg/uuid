@@ -7,7 +7,7 @@
 </style>
 </head>
 <body>
-<h1><img src="../../boost.png" alt="Boost" WIDTH="277" HEIGHT="86">Uuid</h1>
+<h1><img src="../../../boost.png" alt="Boost" WIDTH="277" HEIGHT="86">Uuid</h1>
 
 <h2><a name="Contents">Contents</a></h2>
 
@@ -143,10 +143,10 @@ By default the library attempts to detect the availability of SIMD extensions in
 <h3><a name="Tagging">Tagging</a></h3>
 <pre>
 // example of tagging an object with a uuid
-// see <a href="./test/test_tagging.cpp"><tt>boost/libs/uuid/test/test_tagging.cpp</tt></a>
+// see <a href="../test/test_tagging.cpp"><tt>boost/libs/uuid/test/test_tagging.cpp</tt></a>
 
-#include &lt;<a href="./../../boost/uuid/uuid.hpp"><tt>boost/uuid/uuid.hpp</tt></a>&gt;
-#include &lt;<a href="./../../boost/uuid/uuid_generators.hpp"><tt>boost/uuid/uuid_generators.hpp</tt></a>&gt;
+#include &lt;<a href="../../../boost/uuid/uuid.hpp"><tt>boost/uuid/uuid.hpp</tt></a>&gt;
+#include &lt;<a href="../../../boost/uuid/uuid_generators.hpp"><tt>boost/uuid/uuid_generators.hpp</tt></a>&gt;
 
 class object
 {
@@ -207,14 +207,14 @@ the defined mechanisms.
 <p>
 Note that <tt>boost::is_pod</tt> is specialized for <tt>boost::uuids::uuid</tt>
 and depends on <a href="http://www.boost.org/libs/type_traits">Boost.TypeTraits</a>.
-Define <tt>BOOST_UUID_NO_TYPE_TRAITS</tt> before including <a href="./../../boost/uuid/uuid.hpp"><tt>boost/uuid/uuid.hpp</tt></a>
+Define <tt>BOOST_UUID_NO_TYPE_TRAITS</tt> before including <a href="../../../boost/uuid/uuid.hpp"><tt>boost/uuid/uuid.hpp</tt></a>
 to remove the dependency on <a href="http://www.boost.org/libs/type_traits">Boost.TypeTraits</a>.
 <pre>
 // example using memcpy and aggregate initializers
-// example of a class uuid see <a href="./test/test_uuid_class.cpp"><tt>boost/libs/uuid/test/test_uuid_class.cpp</tt></a>
+// example of a class uuid see <a href="../test/test_uuid_class.cpp"><tt>boost/libs/uuid/test/test_uuid_class.cpp</tt></a>
 
-#include &lt;<a href="./../../boost/uuid/uuid.hpp"><tt>boost/uuid/uuid.hpp</tt></a>&gt;
-#include &lt;<a href="./../../boost/uuid/uuid_generators.hpp"><tt>boost/uuid/uuid_generators.hpp</tt></a>&gt;
+#include &lt;<a href="../../../boost/uuid/uuid.hpp"><tt>boost/uuid/uuid.hpp</tt></a>&gt;
+#include &lt;<a href="../../../boost/uuid/uuid_generators.hpp"><tt>boost/uuid/uuid_generators.hpp</tt></a>&gt;
 
 { // example using memcpy
     unsigned char uuid_data[16];
@@ -278,7 +278,7 @@ std::copy(u.begin(), u.end(), v.begin());
 <p>Note: <tt>boost::uuids::uuid::size()</tt> always returns 16.
 
 <h2><a name="Reference">Reference</a></h2>
-<h3><a name="boost/uuid/uuid.hpp" href="./../../boost/uuid/uuid.hpp">boost/uuid/uuid.hpp</a></h3>
+<h3><a name="boost/uuid/uuid.hpp" href="../../../boost/uuid/uuid.hpp">boost/uuid/uuid.hpp</a></h3>
 <h4><a name="Synopsis">Synopsis</a></h4>
 <pre>
 namespace boost {
@@ -424,17 +424,17 @@ boost::hash&lt;boost::uuids::uuid&gt; uuid_hasher;
 std::size_t uuid_hash_value = uuid_hasher(boost::uuids::uuid());
 </pre>
 
-<h3><a name="boost/uuid/uuid_generators.hpp" href="./../../boost/uuid/uuid_generators.hpp">boost/uuid/uuid_generators.hpp</a></h3>
+<h3><a name="boost/uuid/uuid_generators.hpp" href="../../../boost/uuid/uuid_generators.hpp">boost/uuid/uuid_generators.hpp</a></h3>
 <h4><a name="Synopsis_generators">Synopsis</a></h4>
 This file includes all the <b>uuid</b> generators for convenience.
 <pre>
-#include &lt;<a href="./../../boost/uuid/nil_generator.hpp"><tt>boost/uuid/nil_generator.hpp</tt></a>&gt;
-#include &lt;<a href="./../../boost/uuid/string_generator.hpp"><tt>boost/uuid/string_generator.hpp</tt></a>&gt;
-#include &lt;<a href="./../../boost/uuid/name_generator.hpp"><tt>boost/uuid/name_generator.hpp</tt></a>&gt;
-#include &lt;<a href="./../../boost/uuid/random_generator.hpp"><tt>boost/uuid/random_generator.hpp</tt></a>&gt;
+#include &lt;<a href="../../../boost/uuid/nil_generator.hpp"><tt>boost/uuid/nil_generator.hpp</tt></a>&gt;
+#include &lt;<a href="../../../boost/uuid/string_generator.hpp"><tt>boost/uuid/string_generator.hpp</tt></a>&gt;
+#include &lt;<a href="../../../boost/uuid/name_generator.hpp"><tt>boost/uuid/name_generator.hpp</tt></a>&gt;
+#include &lt;<a href="../../../boost/uuid/random_generator.hpp"><tt>boost/uuid/random_generator.hpp</tt></a>&gt;
 </pre>
 
-<h3><a name="boost/uuid/nil_generator.hpp" href="./../../boost/uuid/nil_generator.hpp">boost/uuid/nil_generator.hpp</a></h3>
+<h3><a name="boost/uuid/nil_generator.hpp" href="../../../boost/uuid/nil_generator.hpp">boost/uuid/nil_generator.hpp</a></h3>
 <h4><a name="Synopsis_nil_generator">Synopsis</a></h4>
 <pre>
 namespace boost {
@@ -462,7 +462,7 @@ boost::uuids::uuid u = boost::uuids::nil_uuid();
 assert(u.is_nil() == true);
 </pre>
 
-<h3><a name="boost/uuid/string_generator.hpp" href="./../../boost/uuid/string_generator.hpp">boost/uuid/string_generator.hpp</a></h3>
+<h3><a name="boost/uuid/string_generator.hpp" href="../../../boost/uuid/string_generator.hpp">boost/uuid/string_generator.hpp</a></h3>
 <h4><a name="Synopsis_string_generator">Synopsis</a></h4>
 
 <pre>
@@ -503,7 +503,7 @@ boost::uuids::uuid u4 = gen(std::wstring(L"01234567-89AB-CDEF-0123-456789ABCDEF"
 </pre>
 Invalid input will generate a <tt>std::runtime_error</tt> exception.
 
-<h3><a name="boost/uuid/name_generator.hpp" href="./../../boost/uuid/name_generator.hpp">boost/uuid/name_generator.hpp</a></h3>
+<h3><a name="boost/uuid/name_generator.hpp" href="../../../boost/uuid/name_generator.hpp">boost/uuid/name_generator.hpp</a></h3>
 <h4><a name="Synopsis_name_generator">Synopsis</a></h4>
 
 <pre>
@@ -583,7 +583,7 @@ produces the output:
 boost.org uuid in dns namespace, sha1 version: 0043f363-bbb4-5369-840a-322df6ec1926
 </pre>
 
-<h3><a name="boost/uuid/random_generator.hpp" href="./../../boost/uuid/random_generator.hpp">boost/uuid/random_generator.hpp</a></h3>
+<h3><a name="boost/uuid/random_generator.hpp" href="../../../boost/uuid/random_generator.hpp">boost/uuid/random_generator.hpp</a></h3>
 <h4><a name="Synopsis_random_generator">Synopsis</a></h4>
 
 <pre>
@@ -709,7 +709,7 @@ for (size_t i = 0; i < 1000; ++i)
 }
 </pre>
 
-<h3><a name="boost/uuid/uuid_io.hpp" href="./../../boost/uuid/uuid_io.hpp">boost/uuid/uuid_io.hpp</a></h3>
+<h3><a name="boost/uuid/uuid_io.hpp" href="../../../boost/uuid/uuid_io.hpp">boost/uuid/uuid_io.hpp</a></h3>
 <h4><a name="Synopsis_io">Synopsis</a></h4>
 <pre>
 namespace boost {
@@ -730,7 +730,7 @@ std::wstring to_wstring(uuid const&amp; u);
 <h4><a name="Stream_operators">Stream Operators</a></h4>
 <p>
 The standard input and output stream operators <tt>&lt;&lt;</tt> and <tt>&gt;&gt;</tt>
-are provided by including <a href="../../boost/uuid/uuid_io.hpp"><tt>boost/uuid/uuid_io.hpp</tt></a>.
+are provided by including <a href="../../../boost/uuid/uuid_io.hpp"><tt>boost/uuid/uuid_io.hpp</tt></a>.
 The string representation of a <b>uuid</b> is <tt>hhhhhhhh-hhhh-hhhh-hhhh-hhhhhhhhhhhh</tt>
 where <tt>h</tt> is hexadecimal.
 <pre>
@@ -769,7 +769,7 @@ std::string s1 = to_string(u);
 std::wstring s2 = to_wstring(u);
 </pre>
 
-<h3><a name="boost/uuid/uuid_serialize.hpp" href="./../../boost/uuid/uuid_serialize.hpp">boost/uuid/uuid_serialize.hpp</a></h3>
+<h3><a name="boost/uuid/uuid_serialize.hpp" href="../../../boost/uuid/uuid_serialize.hpp">boost/uuid/uuid_serialize.hpp</a></h3>
 <h4><a name="Synopsis_serialize">Synopsis</a></h4>
 <pre>
 namespace boost {
@@ -787,7 +787,7 @@ Boost Serialization</a> library.  A <b>uuid</b> is serialized as a
 <a href="http://www.boost.org/libs/serialization/doc/serialization.html#primitiveoperators">
 primitive type</a>, thus only the <b>uuid</b> value will be saved to/loaded from an archive.
 <p>
-Include <a href="../../boost/uuid/uuid_serialize.hpp"><tt>boost/uuid/uuid_serialize.hpp</tt></a> to enable serialization for <b>uuid</b>s.
+Include <a href="../../../boost/uuid/uuid_serialize.hpp"><tt>boost/uuid/uuid_serialize.hpp</tt></a> to enable serialization for <b>uuid</b>s.
 
 <h2><A name="Concepts">Concepts</a></h2>
 This section describes all of the concepts defined by the library.
@@ -847,7 +847,7 @@ mailing list provided useful comments and greatly helped to shape the library.
 <p>© Copyright Andy Tompkins, 2006</p>
 <p>© Copyright 2017 James E. King III</p>
 <p> Distributed under the Boost Software
-License, Version 1.0. (See accompanying file <a href="../../LICENSE_1_0.txt">LICENSE_1_0.txt</a> or copy at <a href="http://www.boost.org/LICENSE_1_0.txt">
+License, Version 1.0. (See accompanying file <a href="../../../LICENSE_1_0.txt">LICENSE_1_0.txt</a> or copy at <a href="http://www.boost.org/LICENSE_1_0.txt">
 www.boost.org/LICENSE_1_0.txt</a>)</p>
 </body>
 </html>
