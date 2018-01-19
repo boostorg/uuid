@@ -25,6 +25,7 @@ project libs/uuid/test
 
 ;
 
+import os ;
 import path ;
 import regex ;
 import testing ;
@@ -66,6 +67,22 @@ rule test_all
     return $(all_rules) ;
 }
 
+# disabled in UBSAN builds due to issues in Boost.Serialization
+if ! [ os.environ UBSAN_OPTIONS ]
+{
+test-suite uuid-serialization :
+    # test serializing uuids
+    [ run test_serialization.cpp ../../serialization/build//boost_serialization ]
+
+    # TODO - This test fails to like with boost_wserialization
+    # [ run test_wserialization.cpp
+    #     ../../serialization/build//boost_serialization
+    #     ../../serialization/build//boost_wserialization
+    #     : : : <dependency>../../config/test/all//BOOST_NO_STD_WSTREAMBUF
+    # ]
+    ;
+}
+
 test-suite uuid :
     [ test_all ]
 
@@ -93,15 +110,6 @@ test-suite uuid :
     # test use cases
     [ run test_uuid_class.cpp ]
     [ run test_uuid_in_map.cpp ]
-
-    # test serializing uuids
-    [ run test_serialization.cpp ../../serialization/build//boost_serialization ]
-    # TODO - This test fails to like with boost_wserialization
-    # [ run test_wserialization.cpp
-    #     ../../serialization/build//boost_serialization
-    #     ../../serialization/build//boost_wserialization
-    #     : : : <dependency>../../config/test/all//BOOST_NO_STD_WSTREAMBUF
-    # ]
 
     # test hash functions
     [ run test_md5.cpp ]
