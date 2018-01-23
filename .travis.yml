@@ -156,11 +156,11 @@ jobs:
   #     - TOOLSET=clang
   #     - CXXSTD=03,11
 
-    #################### Jobs to run on master merges only ###################
- 
+    #################### Jobs to run on pushes to master, develop ###################
+
     # Coverity Scan
     - os: linux
-      if: branch = master
+      if: (branch IN (develop, master)) AND (type IN (cron, push))
       env:
         - COMMENT="Coverity Scan"
         - TOOLSET=gcc
