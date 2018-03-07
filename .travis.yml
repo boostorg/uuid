@@ -142,10 +142,10 @@ jobs:
           packages:
             - gcc-7
             - g++-7
-            - lcov
           sources:
             - ubuntu-toolchain-r-test
       script:
+        - pushd /tmp && git clone https://github.com/linux-test-project/lcov.git && cd lcov && sudo make install && which lcov && lcov --version && popd
         - cd libs/$SELF
         - ci/codecov.sh
 
