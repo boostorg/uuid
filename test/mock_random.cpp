@@ -56,7 +56,7 @@ BOOST_SYMBOL_EXPORT bool provider_acquires_context()
 extern "C" {
 
 BOOST_SYMBOL_EXPORT
-boost::winapi::BOOL_ WINAPI
+boost::winapi::BOOL_ BOOST_WINAPI_WINAPI_CC
 CryptAcquireContextW(
     boost::winapi::HCRYPTPROV_ *phProv,
     boost::winapi::LPCWSTR_ szContainer,
@@ -76,7 +76,7 @@ CryptAcquireContextW(
 }
 
 BOOST_SYMBOL_EXPORT
-boost::winapi::BOOL_ WINAPI
+boost::winapi::BOOL_ BOOST_WINAPI_WINAPI_CC
 CryptGenRandom(
     boost::winapi::HCRYPTPROV_ hProv,
     boost::winapi::DWORD_ dwLen,
@@ -94,7 +94,7 @@ CryptGenRandom(
 // the implementation ignores the result of close because it
 // happens in a destructor
 BOOST_SYMBOL_EXPORT
-boost::winapi::BOOL_ WINAPI
+boost::winapi::BOOL_ BOOST_WINAPI_WINAPI_CC
 CryptReleaseContext(
     boost::winapi::HCRYPTPROV_ hProv,
 #if defined(_MSC_VER) && (_MSC_VER+0) >= 1500 && (_MSC_VER+0) < 1900 && BOOST_USE_NTDDI_VERSION < BOOST_WINAPI_NTDDI_WINXP
