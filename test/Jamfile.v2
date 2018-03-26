@@ -132,12 +132,14 @@ test-suite uuid :
     # and to make sure we test all the error handling code paths
     [ run test_detail_random_provider.cpp 
       : : :
+        <define>_WIN32_WINNT=0x0600                                     # will force bcrypt over wincrypt (on windows)
       : test_detail_random_provider_happy ]
     
     [ run test_detail_random_provider.cpp
       : : :
         <define>BOOST_UUID_RANDOM_PROVIDER_NO_LIB                       # disable any auto-linking
         <define>BOOST_UUID_TEST_RANDOM_MOCK                             # mock default provider to force error path testing
+        <define>_WIN32_WINNT=0x0600                                     # will force bcrypt over wincrypt (on windows)
       :
         test_detail_random_provider_sad ]
 

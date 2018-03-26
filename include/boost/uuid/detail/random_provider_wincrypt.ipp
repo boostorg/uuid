@@ -37,7 +37,7 @@ class random_provider_base
 {
   public:
     random_provider_base()
-        : hProv_(NULL)
+        : hProv_(0)
     {
         if (!boost::winapi::CryptAcquireContextW(
             &hProv_,
