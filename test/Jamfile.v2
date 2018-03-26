@@ -55,12 +55,12 @@ rule test_all
     all_rules += [ compile compile/decl_header.cpp :
         <define>"BOOST_UUID_TEST_HEADER=uuid.hpp"
         <define>"BOOST_UUID_NO_TYPE_TRAITS"
-        <dependency>../include/boost/uuid/uuid.hpp :
+        <dependency>$(BOOST_ROOT)/boost/uuid/uuid.hpp :
             compile_uuid_no_type_traits ] ;
     all_rules += [ compile compile/decl_header.cpp :
         <define>"BOOST_UUID_TEST_HEADER=uuid.hpp"
         <define>"BOOST_UUID_NO_SIMD"
-        <dependency>../include/boost/uuid/uuid.hpp :
+        <dependency>$(BOOST_ROOT)/boost/uuid/uuid.hpp :
             compile_uuid_no_simd ] ;
 
     # ECHO All rules: $(all_rules) ;
