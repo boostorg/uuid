@@ -88,7 +88,7 @@ bool provider_acquires_context()
     return true;
 }
 
-boost::winapi::NTSTATUS_ WINAPI
+boost::winapi::NTSTATUS_ BOOST_WINAPI_WINAPI_CC
 BCryptOpenAlgorithmProvider(
     boost::winapi::BCRYPT_ALG_HANDLE_ *phAlgorithm,
     boost::winapi::LPCWSTR_           pszAlgId,
@@ -106,7 +106,7 @@ BCryptOpenAlgorithmProvider(
     return result;
 }
 
-boost::winapi::NTSTATUS_ WINAPI
+boost::winapi::NTSTATUS_ BOOST_WINAPI_WINAPI_CC
 BCryptGenRandom(
     boost::winapi::BCRYPT_ALG_HANDLE_ hAlgorithm,
     boost::winapi::PUCHAR_            pbBuffer,
@@ -126,7 +126,7 @@ BCryptGenRandom(
 
 // the implementation ignores the result of close because it
 // happens in a destructor
-boost::winapi::NTSTATUS_ WINAPI
+boost::winapi::NTSTATUS_ BOOST_WINAPI_WINAPI_CC
 BCryptCloseAlgorithmProvider(
     boost::winapi::BCRYPT_ALG_HANDLE_ hAlgorithm,
     boost::winapi::ULONG_             dwFlags
