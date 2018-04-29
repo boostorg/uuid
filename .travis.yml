@@ -122,7 +122,7 @@ jobs:
         - B2_VARIANT=variant=debug
         - TOOLSET=gcc-7
         - CXXFLAGS="cxxflags=-fno-omit-frame-pointer cxxflags=-fsanitize=undefined cxxflags=-fno-sanitize-recover=undefined"
-        - LINKFLAGS="linkflags=-fsanitize=undefined linkflags=-fno-sanitize-recover=undefined"
+        - LINKFLAGS="linkflags=-fsanitize=undefined linkflags=-fno-sanitize-recover=undefined linkflags=-fuse-ld=gold"
         - DEFINES="define=BOOST_UUID_LIMITED_BENCH"
         - UBSAN_OPTIONS=print_stacktrace=1
       addons:
