@@ -12,11 +12,9 @@ project libs/uuid
       <warnings>all
 
       <toolset>clang:<cxxflags>-Wextra
-      <toolset>clang:<cxxflags>-ansi
       <toolset>clang:<cxxflags>-pedantic
 
       <toolset>gcc:<cxxflags>-Wextra
-      <toolset>gcc:<cxxflags>-ansi
       <toolset>gcc:<cxxflags>-pedantic
     ;
 
