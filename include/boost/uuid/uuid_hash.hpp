@@ -29,7 +29,7 @@ namespace std
     template<>
     struct hash<boost::uuids::uuid>
     {
-        std::size_t operator () (const boost::uuids::uuid& value) const noexcept
+        std::size_t operator () (const boost::uuids::uuid& value) const BOOST_NOEXCEPT
         {
             return boost::hash_value(to_string(value));
         }
