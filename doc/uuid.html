@@ -608,7 +608,7 @@ public:
     result_type operator()();
 };
 
-    typedef basic_random_generator&lt;boost::mt19937&gt; random_generator_mt19937;
+typedef basic_random_generator&lt;boost::mt19937&gt; random_generator_mt19937;
 
 }} // namespace boost::uuids
 </pre>
@@ -642,13 +642,14 @@ public:
             <li>CloudABI</li>
             <li>Unix
                 <ul>
-                    <li>OpenBSD: <tt>use <a href="https://man.openbsd.org/arc4random.3">arc4random(3)</a></tt></li>
-                    <li>Linux with glibc 2.25 or later: use <tt>getentropy(3)</tt></li>
+                    <li>OpenBSD: use <a href="https://man.openbsd.org/arc4random.3"><tt>arc4random(3)</tt></a></li>
+                    <li>Linux 3.17 or later: use <a href="http://man7.org/linux/man-pages/man2/getrandom.2.html"><tt>getrandom(2)</tt></a></li>
+                    <li>Other systems with glibc 2.25 or later: use <tt>getentropy(3)</tt></li>
                     <li>All other cases: use <tt>/dev/urandom</tt></li>
                 </ul>
             </li>
             <li>Windows (UWP Compatible): use BCrypt if available, otherwise use Wincrypt
-</ul>
+        </ul>
     </p>
 
 <h5>Preprocessor Macros</h5>
@@ -656,7 +657,7 @@ public:
         <ul>
             <li>
                 <tt>BOOST_UUID_RANDOM_PROVIDER_FORCE_POSIX</tt>: on Unix this will force the
-                selection of <tt>/dev/*random</tt> over <tt>getentropy(3)</tt>.
+                selection of <tt>/dev/*random</tt> over <tt>getrandom(2)</tt> or <tt>getentropy(3)</tt>.
             </li>
             <li>
                 <tt>BOOST_UUID_RANDOM_PROVIDER_FORCE_WINCRYPT</tt>: on Windows this will force the
