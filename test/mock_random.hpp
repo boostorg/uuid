@@ -137,7 +137,46 @@ BCryptCloseAlgorithmProvider(
     return 0;
 }
 
-#elif defined(BOOST_UUID_RANDOM_PROVIDER_GETENTROPY) 
+#elif defined(BOOST_UUID_RANDOM_PROVIDER_GETRANDOM)
+
+#include <deque>
+#include <unistd.h>
+std::deque<bool> getrandom_next_result;
+
+bool expectations_capable()
+{
+    return true;
+}
+
+bool expectations_met()
+{
+    return getrandom_next_result.empty();
+}
+
+void expect_next_call_success(bool success)
+{
+    getrandom_next_result.push_back(success);
+}
+
+bool provider_acquires_context()
+{
+    return false;
+}
+
+ssize_t mock_getrandom(void *buffer, size_t length, unsigned int flags)
+{
+    boost::ignore_unused(buffer);
+    boost::ignore_unused(length);
+    boost::ignore_unused(flags);
+
+    bool success = getrandom_next_result.front();
+    getrandom_next_result.pop_front();
+    return success ? static_cast< ssize_t >(length) : static_cast< ssize_t >(-1);
+}
+
+#define BOOST_UUID_RANDOM_PROVIDER_GETRANDOM_IMPL_GETRANDOM ::mock_getrandom
+
+#elif defined(BOOST_UUID_RANDOM_PROVIDER_GETENTROPY)
 
 //
 // This stubbing technique works on unix because of how the loader resolves

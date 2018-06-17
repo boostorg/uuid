@@ -179,22 +179,39 @@ test-suite uuid :
         <target-os>windows:<build>yes                                   # except for windows
       : test_detail_random_provider_sad_wincrypt ]
 
-    # CI builds in travis will eventually select getentropy when they move
+    # CI builds in travis will eventually select getrandom/getentropy when they move
     # to a version of ubuntu with glibc-2.25 on it, so when that happens keep 
     # testing the posix provider:
-    [ run test_detail_random_provider.cpp 
+    [ run test_detail_random_provider.cpp
       : : :
-        <define>BOOST_UUID_RANDOM_PROVIDER_FORCE_POSIX                  # will force POSIX over getentropy
+        <define>BOOST_UUID_RANDOM_PROVIDER_FORCE_POSIX                  # will force POSIX over getrandom/getentropy
         <target-os>windows:<build>no                                    # do not bother running on windows
         <toolset>clang-cloudabi:<build>no                               # no need to build under cloudabi
       : test_detail_random_provider_happy_posix ]
 
-    [ run test_detail_random_provider.cpp 
+    [ run test_detail_random_provider.cpp
       : : :
-        <define>BOOST_UUID_RANDOM_PROVIDER_FORCE_POSIX                  # will force POSIX over getentropy
+        <define>BOOST_UUID_RANDOM_PROVIDER_FORCE_POSIX                  # will force POSIX over getrandom/getentropy
         <define>BOOST_UUID_TEST_RANDOM_MOCK                             # redirect code to use mock system calls
         <target-os>windows:<build>no                                    # do not bother running on windows
         <toolset>clang-cloudabi:<build>no                               # no need to build under cloudabi
       : test_detail_random_provider_sad_posix ]
+
+    # Force running tests for getentropy despite it's not going to be used on Linux. getentropy
+    # may be used on systems other than Linux, which are not part of the CI testers pool.
+    [ run test_detail_random_provider.cpp
+      : : :
+        <define>BOOST_UUID_RANDOM_PROVIDER_DISABLE_GETRANDOM            # will force getentropy over getrandom
+        <build>no
+        <target-os>linux:<build>yes                                     # build only on linux (or any other systems that support getentropy)
+      : test_detail_random_provider_happy_getentropy ]
+
+    [ run test_detail_random_provider.cpp
+      : : :
+        <define>BOOST_UUID_RANDOM_PROVIDER_DISABLE_GETRANDOM            # will force getentropy over getrandom
+        <define>BOOST_UUID_TEST_RANDOM_MOCK                             # redirect code to use mock system calls
+        <build>no
+        <target-os>linux:<build>yes                                     # build only on linux (or any other systems that support getentropy)
+      : test_detail_random_provider_sad_getentropy ]
 
     ;
