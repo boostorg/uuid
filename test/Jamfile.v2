@@ -51,6 +51,16 @@ rule test_all
         all_rules += [ compile compile/decl_header.cpp : <define>"BOOST_UUID_TEST_HEADER=$(rel_file)" <dependency>$(file) : $(decl_test_name) ] ;
     }
 
+    local tests_path = [ path.make $(BOOST_ROOT)/libs/uuid/test/compile-fail ] ;
+    for file in [ path.glob-tree $(tests_path) : *.cpp ]
+    {
+        local rel_file = [ path.relative-to $(tests_path) $(file) ] ;
+        local test_name = [ regex.replace [ regex.replace $(rel_file) "/" "-" ] ".cpp" "" ] ;
+        local decl_test_name = cf-$(test_name) ;
+        # ECHO $(rel_file) ;
+        all_rules += [ compile-fail $(file) : : $(decl_test_name) ] ;
+    }
+
     # make sure compile time options work in isolation
     all_rules += [ compile compile/decl_header.cpp :
         <define>"BOOST_UUID_TEST_HEADER=uuid.hpp"
