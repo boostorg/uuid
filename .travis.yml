@@ -8,20 +8,17 @@
 #
 # Instructions for customizing this script for your library:
 # 
-# 1. Copy the ci/ directory from the same source into your project:
-#    ci/build.sh runs the build
-#    ci/codecov.sh is used to run a profiling build and upload results to codecov.io
-#    ci/coverity.sh is used to run a coverity build and upload results to coverity scan
-# 2. Customize the compilers and language levels you want.  Default is C++03.
-# 3. Update the global B2 environment settings to your liking.
-# 4. If you have more than include/, src/, and test/ directories then
-#    add them to the depinst.py line as "--include tools" for tools/ (you
-#    can put multiple --include on the command line).
-# 5. If you want to enable Coverity Scan, you need to provide the environment
+# 1. Customize the compilers and language levels you want.
+# 2. If you have move than include/, src/, test/, example/, examples/, or
+#    tools/ directories, modify your Travis CI project and add the environment
+#    variable DEPINST.  For example if your build uses code in "bench/" and
+#    "fog/" directories, then set DEPINST to the following:
+#        --include bench --include fog
+# 3. If you want to enable Coverity Scan, you need to provide the environment
 #    variables COVERITY_SCAN_TOKEN and COVERITY_SCAN_NOTIFICATION_EMAIL in
 #    your github settings.
-# 6. Enable pull request builds in your boostorg/<library> account.
-# 7. Change the default C++ version in ci/*.sh (search for CXXSTD)
+# 4. Enable pull request builds in your boostorg/<library> account.
+# 5. Change the default C++ version in ci/travis/*.sh (search for CXXSTD) if needed.
 #
 # That's it - the scripts will do everything else for you.
 
@@ -39,19 +36,9 @@ env:
     - B2_VARIANT=variant=release,debug
 
 install:
-  - export SELF=`basename $TRAVIS_BUILD_DIR`
-  - cd ..
-  - git clone -b $TRAVIS_BRANCH --depth 1 https://github.com/boostorg/boost.git boost-root
-  - cd boost-root
-  - git submodule update -q --init tools/boostdep
-  - git submodule update -q --init tools/build
-  - git submodule update -q --init tools/inspect
-  - cp -r $TRAVIS_BUILD_DIR/* libs/$SELF
-  - export BOOST_ROOT="`pwd`"
-  - export PATH="`pwd`":$PATH 
-  - python tools/boostdep/depinst/depinst.py $SELF
-  - ./bootstrap.sh
-  - ./b2 headers
+  - git clone https://github.com/jeking3/boost-ci.git boost-ci
+  - cp -pr boost-ci/ci boost-ci/.codecov.yml .
+  - source ci/travis/install.sh
 
 addons:
   apt:
@@ -66,8 +53,8 @@ branches:
     - master
     
 script:
-  - cd libs/$SELF
-  - ci/build.sh
+  - cd $BOOST_ROOT/libs/$SELF
+  - ci/travis/build.sh
 
 jobs:
   include:
@@ -98,7 +85,6 @@ jobs:
         - COMMENT=valgrind
         - TOOLSET=clang 
         - B2_VARIANT=variant=debug
-        - DEFINES="define=BOOST_UUID_LIMITED_BENCH"
         - TESTFLAGS=testing.launcher=valgrind
         - VALGRIND_OPTS=--error-exitcode=1
       addons:
@@ -115,7 +101,8 @@ jobs:
       env:
         - COMMENT=cppcheck
       script:
-        - libs/$SELF/ci/cppcheck.sh
+        - cd $BOOST_ROOT/libs/$SELF
+        - ci/travis/cppcheck.sh
 
     - os: linux
       env:
@@ -124,7 +111,6 @@ jobs:
         - TOOLSET=gcc-7
         - CXXFLAGS="cxxflags=-fno-omit-frame-pointer cxxflags=-fsanitize=undefined cxxflags=-fno-sanitize-recover=undefined"
         - LINKFLAGS="linkflags=-fsanitize=undefined linkflags=-fno-sanitize-recover=undefined linkflags=-fuse-ld=gold"
-        - DEFINES="define=BOOST_UUID_LIMITED_BENCH"
         - UBSAN_OPTIONS=print_stacktrace=1
       addons:
         apt:
@@ -136,7 +122,6 @@ jobs:
     - os: linux
       env: 
         - COMMENT=CodeCov
-        - DEFINES="define=BOOST_UUID_LIMITED_BENCH"
         - TOOLSET=gcc-7
       addons:
         apt:
@@ -147,10 +132,12 @@ jobs:
             - ubuntu-toolchain-r-test
       script:
         - pushd /tmp && git clone https://github.com/linux-test-project/lcov.git && cd lcov && sudo make install && which lcov && lcov --version && popd
-        - cd libs/$SELF
-        - ci/codecov.sh
+        - cd $BOOST_ROOT/libs/$SELF
+        - ci/travis/codecov.sh
 
-  # osx was disabled because it is very slow to start (can delay builds by 30 minutes)
+  # does not work with sourced install shell yet: see 
+  # https://travis-ci.org/jeking3/tokenizer/jobs/384903189
+  # for a typical failure
   # - os: osx
   #   osx_image: xcode9
   #   env:
@@ -161,14 +148,14 @@ jobs:
 
     # Coverity Scan
     - os: linux
-      if: (branch IN (develop, master)) AND (type IN (cron, push))
+      if: (env(COVERITY_SCAN_NOTIFICATION_EMAIL) IS present) AND (branch IN (develop, master)) AND (type IN (cron, push))
       env:
         - COMMENT="Coverity Scan"
         - TOOLSET=gcc
       script:
         - echo -n | openssl s_client -connect scan.coverity.com:443 | sed -ne '/-BEGIN CERTIFICATE-/,/-END CERTIFICATE-/p' | sudo tee -a /etc/ssl/certs/ca-
-        - cd libs/$SELF
-        - ci/coverity.sh
+        - cd $BOOST_ROOT/libs/$SELF
+        - ci/travis/coverity.sh
 
 notifications:
   email:
