@@ -228,7 +228,7 @@ ssize_t mockread(int fd, void *buf, size_t siz)
 
     bool success = posix_next_result.front();
     posix_next_result.pop_front();
-    return success ? 1 : 0;
+    return success ? 1 : -1;
 }
 
 #define BOOST_UUID_RANDOM_PROVIDER_POSIX_IMPL_OPEN mockopen

@@ -17,6 +17,7 @@
 #include <boost/uuid/random_generator.hpp>
 #include <boost/uuid/uuid_io.hpp>
 #include <boost/uuid/uuid.hpp>
+#include <boost/move/utility_core.hpp>
 
 template <typename RandomUuidGenerator>
 void check_random_generator(RandomUuidGenerator& uuid_gen)
@@ -85,6 +86,30 @@ int main(int, char*[])
     boost::lagged_fibonacci607 lagged_fibonacci607_gen;
     basic_random_generator<boost::lagged_fibonacci607> uuid_gen4(&lagged_fibonacci607_gen);
     check_random_generator(uuid_gen4);
+
+    // check move construction
+    {
+        random_generator uuid_gen1;
+        random_generator uuid_gen2(boost::move(uuid_gen1));
+        boost::ignore_unused(uuid_gen2);
+    }
+    {
+        basic_random_generator<boost::rand48> uuid_gen1;
+        basic_random_generator<boost::rand48> uuid_gen2(boost::move(uuid_gen1));
+        boost::ignore_unused(uuid_gen2);
+    }
+
+    // check move assignment
+    {
+        random_generator uuid_gen1, uuid_gen2;
+        uuid_gen2 = boost::move(uuid_gen1);
+        boost::ignore_unused(uuid_gen2);
+    }
+    {
+        basic_random_generator<boost::rand48> uuid_gen1, uuid_gen2;
+        uuid_gen2 = boost::move(uuid_gen1);
+        boost::ignore_unused(uuid_gen2);
+    }
 
     // there was a bug in basic_random_generator where it did not
     // produce very random numbers.  This checks for that bug.
