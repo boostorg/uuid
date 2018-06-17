@@ -85,6 +85,7 @@ jobs:
         - COMMENT=valgrind
         - TOOLSET=clang 
         - B2_VARIANT=variant=debug
+        - DEFINES="define=BOOST_UUID_LIMITED_BENCH"
         - TESTFLAGS=testing.launcher=valgrind
         - VALGRIND_OPTS=--error-exitcode=1
       addons:
@@ -111,6 +112,7 @@ jobs:
         - TOOLSET=gcc-7
         - CXXFLAGS="cxxflags=-fno-omit-frame-pointer cxxflags=-fsanitize=undefined cxxflags=-fno-sanitize-recover=undefined"
         - LINKFLAGS="linkflags=-fsanitize=undefined linkflags=-fno-sanitize-recover=undefined linkflags=-fuse-ld=gold"
+        - DEFINES="define=BOOST_UUID_LIMITED_BENCH"
         - UBSAN_OPTIONS=print_stacktrace=1
       addons:
         apt:
@@ -122,6 +124,7 @@ jobs:
     - os: linux
       env: 
         - COMMENT=CodeCov
+        - DEFINES="define=BOOST_UUID_LIMITED_BENCH"
         - TOOLSET=gcc-7
       addons:
         apt:
