@@ -134,7 +134,7 @@ jobs:
           sources:
             - ubuntu-toolchain-r-test
       script:
-        - pushd /tmp && git clone https://github.com/linux-test-project/lcov.git && cd lcov && sudo make install && which lcov && lcov --version && popd
+        - pushd /tmp && git clone https://github.com/linux-test-project/lcov.git && export PATH=/tmp/lcov/bin:$PATH && which lcov && lcov --version && popd
         - cd $BOOST_ROOT/libs/$SELF
         - ci/travis/codecov.sh
 
@@ -156,7 +156,6 @@ jobs:
         - COMMENT="Coverity Scan"
         - TOOLSET=gcc
       script:
-        - echo -n | openssl s_client -connect scan.coverity.com:443 | sed -ne '/-BEGIN CERTIFICATE-/,/-END CERTIFICATE-/p' | sudo tee -a /etc/ssl/certs/ca-
         - cd $BOOST_ROOT/libs/$SELF
         - ci/travis/coverity.sh
 
