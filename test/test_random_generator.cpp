@@ -70,22 +70,37 @@ int main(int, char*[])
     using namespace boost::uuids;
 
     // default random number generator
-    random_generator uuid_gen1;
-    check_random_generator(uuid_gen1);
+    {
+        random_generator uuid_gen1;
+        check_random_generator(uuid_gen1);
+#if !BOOST_LIB_C_CLOUDABI
+        // dump 10 of them to cout for observation
+        for (size_t i = 0; i < 10; ++i)
+        {
+            std::cout << uuid_gen1() << std::endl;
+        }
+#endif
+    }
     
     // specific random number generator
-    basic_random_generator<boost::rand48> uuid_gen2;
-    check_random_generator(uuid_gen2);
-    
+    {
+        basic_random_generator<boost::rand48> uuid_gen2;
+        check_random_generator(uuid_gen2);
+    }
+
     // pass by reference
-    boost::ecuyer1988 ecuyer1988_gen;
-    basic_random_generator<boost::ecuyer1988> uuid_gen3(ecuyer1988_gen);
-    check_random_generator(uuid_gen3);
+    {
+        boost::ecuyer1988 ecuyer1988_gen;
+        basic_random_generator<boost::ecuyer1988> uuid_gen3(ecuyer1988_gen);
+        check_random_generator(uuid_gen3);
+    }
 
     // pass by pointer
-    boost::lagged_fibonacci607 lagged_fibonacci607_gen;
-    basic_random_generator<boost::lagged_fibonacci607> uuid_gen4(&lagged_fibonacci607_gen);
-    check_random_generator(uuid_gen4);
+    {
+        boost::lagged_fibonacci607 lagged_fibonacci607_gen;
+        basic_random_generator<boost::lagged_fibonacci607> uuid_gen4(&lagged_fibonacci607_gen);
+        check_random_generator(uuid_gen4);
+    }
 
     // check move construction
     {
@@ -113,34 +128,30 @@ int main(int, char*[])
 
     // there was a bug in basic_random_generator where it did not
     // produce very random numbers.  This checks for that bug.
-    random_generator_mt19937 bulkgen;
-    uuid u = bulkgen();
-    if ((u.data[4] == u.data[12]) &&
-        (u.data[5] == u.data[9] && u.data[5] == u.data[13]) &&
-        (u.data[7] == u.data[11] && u.data[7] == u.data[15]) &&
-        (u.data[10] == u.data[14]))
     {
-        BOOST_ERROR("basic_random_generator is not producing random uuids");
+        random_generator_mt19937 bulkgen;
+        uuid u = bulkgen();
+        if ((u.data[4] == u.data[12]) &&
+            (u.data[5] == u.data[9] && u.data[5] == u.data[13]) &&
+            (u.data[7] == u.data[11] && u.data[7] == u.data[15]) &&
+            (u.data[10] == u.data[14]))
+        {
+            BOOST_ERROR("basic_random_generator is not producing random uuids");
+        }
+
+        // pseudo
+        check_random_generator(bulkgen);
     }
 
-    // pseudo
-    check_random_generator(bulkgen);
-
     // make sure default construction seeding is happening for PRNGs
-    random_generator_mt19937 gen1;
-    random_generator_mt19937 gen2;
-    BOOST_TEST_NE(gen1(), gen2());
+    {
+        random_generator_mt19937 gen1;
+        random_generator_mt19937 gen2;
+        BOOST_TEST_NE(gen1(), gen2());
+    }
 
     // The example code snippet in the documentation
     test_examples();
-
-#if !BOOST_LIB_C_CLOUDABI
-    // dump 10 of them to cout for observation
-    for (size_t i = 0; i < 10; ++i)
-    {
-        std::cout << uuid_gen1() << std::endl;
-    }
-#endif
 
     return boost::report_errors();
 }
