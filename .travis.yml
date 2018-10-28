@@ -8,8 +8,8 @@
 #
 # Instructions for customizing this script for your library:
 # 
-# 1. Customize the compilers and language levels you want.
-# 2. If you have move than include/, src/, test/, example/, examples/, or
+# 1. Customize the compilers and language levels you want in the 'jobs'.
+# 2. If you have more than include/, src/, test/, example/, examples/, or
 #    tools/ directories, modify your Travis CI project and add the environment
 #    variable DEPINST.  For example if your build uses code in "bench/" and
 #    "fog/" directories, then set DEPINST to the following:
@@ -18,7 +18,6 @@
 #    variables COVERITY_SCAN_TOKEN and COVERITY_SCAN_NOTIFICATION_EMAIL in
 #    your github settings.
 # 4. Enable pull request builds in your boostorg/<library> account.
-# 5. Change the default C++ version in ci/travis/*.sh (search for CXXSTD) if needed.
 #
 # That's it - the scripts will do everything else for you.
 
@@ -56,47 +55,63 @@ script:
   - cd $BOOST_ROOT/libs/$SELF
   - ci/travis/build.sh
 
+#
+# Default toolsets in Ubuntu
+#
+#       trusty xenial bionic
+#        14.04  16.04  18.04
+#       ------ ------ ------
+# clang    3.4    3.8    6.0
+#   gcc  4.8.2  5.3.1  7.3.0
+#
+
+anchors:
+  clang-34: &clang-34 { apt: { packages: [ "clang-3.4" ], sources: [ "llvm-toolchain-trusty-3.4" ] } }
+  clang-38: &clang-38 { apt: { packages: [ "clang-3.8" ], sources: [ "llvm-toolchain-trusty-3.8" ] } }
+  clang-4:  &clang-4  { apt: { packages: [ "clang-4.0" ], sources: [ "llvm-toolchain-trusty-4.0" ] } }
+  clang-5:  &clang-5  { apt: { packages: [ "clang-5.0" ], sources: [ "llvm-toolchain-trusty-5.0" ] } }
+  clang-6:  &clang-6  { apt: { packages: [ "clang-6.0",
+                                           "libstdc++-7-dev",
+                                           "valgrind"  ], sources: [ "llvm-toolchain-trusty-6.0",
+                                                                     "ubuntu-toolchain-r-test"   ] } }
+  gcc-44:   &gcc-44   { apt: { packages: [ "g++-4.4"   ], sources: [ "ubuntu-toolchain-r-test"   ] } }
+  gcc-46:   &gcc-46   { apt: { packages: [ "g++-4.6"   ], sources: [ "ubuntu-toolchain-r-test"   ] } }
+  gcc-48:   &gcc-48   { apt: { packages: [ "g++-4.8"   ], sources: [ "ubuntu-toolchain-r-test"   ] } }
+  gcc-5:    &gcc-5    { apt: { packages: [ "g++-5"     ], sources: [ "ubuntu-toolchain-r-test"   ] } }
+  gcc-6:    &gcc-6    { apt: { packages: [ "g++-6"     ], sources: [ "ubuntu-toolchain-r-test"   ] } }
+  gcc-7:    &gcc-7    { apt: { packages: [ "g++-7"     ], sources: [ "ubuntu-toolchain-r-test"   ] } }
+  gcc-8:    &gcc-8    { apt: { packages: [ "g++-8"     ], sources: [ "ubuntu-toolchain-r-test"   ] } }
+
 jobs:
   include:
-    #################### Jobs to run on every pull request ####################
+    # libstdc++
+    - { os: "linux", env: [ "TOOLSET=gcc-4.4",   "CXXSTD=98,0x"          ], addons: *gcc-44    }
+    - { os: "linux", env: [ "TOOLSET=gcc-4.6",   "CXXSTD=03,0x"          ], addons: *gcc-46    }
+    - { os: "linux", env: [ "TOOLSET=gcc-4.8",   "CXXSTD=03,11"          ], addons: *gcc-48    }
+    - { os: "linux", env: [ "TOOLSET=gcc-5",     "CXXSTD=03,11"          ], addons: *gcc-5     }
+    - { os: "linux", env: [ "TOOLSET=gcc-6",     "CXXSTD=03,11,14"       ], addons: *gcc-6     }
+    - { os: "linux", env: [ "TOOLSET=gcc-7",     "CXXSTD=03,11,14,17"    ], addons: *gcc-7     }
+    - { os: "linux", env: [ "TOOLSET=gcc-8",     "CXXSTD=03,11,14,17,2a" ], addons: *gcc-8     }
+    - { os: "linux", env: [ "TOOLSET=clang-3.4", "CXXSTD=03,11,14"       ], addons: *clang-34  }
+    - { os: "linux", env: [ "TOOLSET=clang-3.8", "CXXSTD=03,11,14"       ], addons: *clang-38  }
+    - { os: "linux", env: [ "TOOLSET=clang-4.0", "CXXSTD=03,11,14"       ], addons: *clang-4   }
+    - { os: "linux", env: [ "TOOLSET=clang-5.0", "CXXSTD=03,11,14,17"    ], addons: *clang-5   }
+    - { os: "linux", env: [ "TOOLSET=clang-6.0", "CXXSTD=03,11,14,17,2a" ], addons: *clang-6   }
+    # libc++
+  # the rvm environment on osx is taking over basic commands like "cd" and breaking things
+  # - { os: "osx"  , env: [ "COMMENT=libc++",
+  #                         "TOOLSET=clang",     "CXXSTD=03,11,14"       ]                     }
+
     - os: linux
       env: 
-        - COMMENT="C++03"
-        - TOOLSET=gcc,gcc-7,clang
-      addons:
-        apt:
-          packages:
-            - g++-7
-          sources:
-            - ubuntu-toolchain-r-test
-    - os: linux
-      env: 
-        - COMMENT="C++11"
-        - TOOLSET=gcc,gcc-7,clang
-        - CXXSTD=11
-      addons:
-        apt:
-          packages:
-            - g++-7
-          sources:
-            - ubuntu-toolchain-r-test
-    - os: linux
-      env: 
-        - COMMENT=valgrind
-        - TOOLSET=clang 
-        - B2_VARIANT=variant=debug
+        - COMMENT=codecov.io
+        - TOOLSET=gcc-7
         - DEFINES="define=BOOST_UUID_LIMITED_BENCH"
-        - TESTFLAGS=testing.launcher=valgrind
-        - VALGRIND_OPTS=--error-exitcode=1
-      addons:
-        apt:
-          packages:
-            - clang-5.0
-            - libstdc++-7-dev
-            - valgrind
-          sources:
-            - llvm-toolchain-trusty-5.0
-            - ubuntu-toolchain-r-test
+      addons: *gcc-7
+      script:
+        - pushd /tmp && git clone https://github.com/linux-test-project/lcov.git && export PATH=/tmp/lcov/bin:$PATH && which lcov && lcov --version && popd
+        - cd $BOOST_ROOT/libs/$SELF
+        - ci/travis/codecov.sh
 
     - os: linux
       env:
@@ -107,45 +122,25 @@ jobs:
 
     - os: linux
       env:
-        - COMMENT=UBSAN
+        - COMMENT=ubsan
         - B2_VARIANT=variant=debug
-        - TOOLSET=gcc-7
+        - TOOLSET=gcc-8
+        - DEFINES="define=BOOST_UUID_LIMITED_BENCH"
         - CXXFLAGS="cxxflags=-fno-omit-frame-pointer cxxflags=-fsanitize=undefined cxxflags=-fno-sanitize-recover=undefined"
         - LINKFLAGS="linkflags=-fsanitize=undefined linkflags=-fno-sanitize-recover=undefined linkflags=-fuse-ld=gold"
-        - DEFINES="define=BOOST_UUID_LIMITED_BENCH"
         - UBSAN_OPTIONS=print_stacktrace=1
-      addons:
-        apt:
-          packages:
-            - g++-7
-          sources:
-            - ubuntu-toolchain-r-test
+      addons: *gcc-8
 
     - os: linux
-      env: 
-        - COMMENT=CodeCov
+      env:
+        - COMMENT=valgrind
+        - TOOLSET=clang-6.0
+        - CXXSTD=03
+        - B2_VARIANT=variant=debug
+        - TESTFLAGS=testing.launcher=valgrind
         - DEFINES="define=BOOST_UUID_LIMITED_BENCH"
-        - TOOLSET=gcc-7
-      addons:
-        apt:
-          packages:
-            - gcc-7
-            - g++-7
-          sources:
-            - ubuntu-toolchain-r-test
-      script:
-        - pushd /tmp && git clone https://github.com/linux-test-project/lcov.git && export PATH=/tmp/lcov/bin:$PATH && which lcov && lcov --version && popd
-        - cd $BOOST_ROOT/libs/$SELF
-        - ci/travis/codecov.sh
-
-  # does not work with sourced install shell yet: see 
-  # https://travis-ci.org/jeking3/tokenizer/jobs/384903189
-  # for a typical failure
-  # - os: osx
-  #   osx_image: xcode9
-  #   env:
-  #     - TOOLSET=clang
-  #     - CXXSTD=03,11
+        - VALGRIND_OPTS=--error-exitcode=1
+      addons: *clang-6
 
     #################### Jobs to run on pushes to master, develop ###################
 
@@ -154,7 +149,8 @@ jobs:
       if: (env(COVERITY_SCAN_NOTIFICATION_EMAIL) IS present) AND (branch IN (develop, master)) AND (type IN (cron, push))
       env:
         - COMMENT="Coverity Scan"
-        - TOOLSET=gcc
+        - TOOLSET=gcc-7
+      addons: *gcc-7
       script:
         - cd $BOOST_ROOT/libs/$SELF
         - ci/travis/coverity.sh
