@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2017 James E. King III
+// Copyright (c) 2017, 2018 James E. King III
 //
 // Distributed under the Boost Software License, Version 1.0.
 // (See accompanying file LICENSE_1_0.txt or copy at
@@ -17,8 +17,8 @@
 #include <iostream>
 #include <limits>
 
-#if defined(BOOST_UUID_LIMITED_BENCH)
-// must be a Valgrind, UBsan, or other stressful check job
+#if !defined(BOOST_NO_STRESS_TEST)
+// must be a Valgrind, UBsan, or other stressful job
 #define AVG_LOOPS 1
 #define GEN_LOOPS 10
 #define REUSE_LOOPS 100
@@ -83,7 +83,7 @@ int main(int, char*[])
     std::cout << "Operating system entropy provider: "
               << boost::uuids::detail::random_provider().name() << std::endl;
 
-#if !defined(BOOST_UUID_LIMITED_BENCH)
+#if !defined(BOOST_NO_STRESS_TEST)
 
     //
     // Determine the cutoff point where it is more wall-clock efficient to
