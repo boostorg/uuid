@@ -30,6 +30,7 @@
 #include <boost/config.hpp>
 #include <boost/cstdint.hpp>
 #include <boost/uuid/uuid.hpp> // for version
+#include <boost/predef/other/endian.h>
 #include <string.h>
 
 namespace boost {
@@ -293,6 +294,25 @@ private:
         (dst)[2] = (unsigned char)((src) >> 16); \
         (dst)[3] = (unsigned char)((src) >> 24);
 
+/* 
+ * The md5 results are read 4 bytes at a time in hash_to_uuid() from
+ * basic_name_generator.hpp, so the endian must be considered here
+ */
+
+#if !BOOST_ENDIAN_BIG_BYTE
+    #define BOOST_UUID_DETAIL_MD5_BYTE_OUT(dst, src) \
+        (dst)[0] = (unsigned char)(src); \
+        (dst)[1] = (unsigned char)((src) >> 8); \
+        (dst)[2] = (unsigned char)((src) >> 16); \
+        (dst)[3] = (unsigned char)((src) >> 24);
+#else
+    #define BOOST_UUID_DETAIL_MD5_BYTE_OUT(dst, src) \
+        (dst)[0] = (unsigned char)((src) >> 24); \
+        (dst)[1] = (unsigned char)((src) >> 16); \
+        (dst)[2] = (unsigned char)((src) >> 8); \
+        (dst)[3] = (unsigned char)(src);
+#endif
+
     void MD5_Final(unsigned char *result, MD5_CTX *ctx)
     {
         unsigned long used, available;
@@ -318,10 +338,10 @@ private:
 
         body(ctx, ctx->buffer, 64);
 
-        BOOST_UUID_DETAIL_MD5_OUT(&result[0], ctx->a)
-        BOOST_UUID_DETAIL_MD5_OUT(&result[4], ctx->b)
-        BOOST_UUID_DETAIL_MD5_OUT(&result[8], ctx->c)
-        BOOST_UUID_DETAIL_MD5_OUT(&result[12], ctx->d)
+        BOOST_UUID_DETAIL_MD5_BYTE_OUT(&result[0], ctx->a)
+        BOOST_UUID_DETAIL_MD5_BYTE_OUT(&result[4], ctx->b)
+        BOOST_UUID_DETAIL_MD5_BYTE_OUT(&result[8], ctx->c)
+        BOOST_UUID_DETAIL_MD5_BYTE_OUT(&result[12], ctx->d)
 
         memset(ctx, 0, sizeof(*ctx));
     }
