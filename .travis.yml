@@ -102,6 +102,10 @@ jobs:
       - COPY="all the environment settings from your job"
 
   include:
+    # to enable Intel ICC define INTEL_ICC_SERIAL_NUMBER and the following:
+    - { os: "linux", env: [ "B2_TOOLSET=intel-linux", "B2_CXXSTD=11,14,17" ], addons: *gcc-7,
+        script: cd $BOOST_ROOT/libs/$SELF && ci/travis/intelicc.sh                               }
+
     # libstdc++
     - { os: "linux", env: [ "B2_TOOLSET=gcc-4.8",     "B2_CXXSTD=03,11"    ], addons: *gcc-48    }
     - { os: "linux", env: [ "B2_TOOLSET=gcc-5",       "B2_CXXSTD=11"       ], addons: *gcc-5     }
@@ -119,10 +123,6 @@ jobs:
     - { os: "linux", env: [ "B2_TOOLSET=clang-6.0",   "B2_CXXSTD=03,11,14,17,2a",
                             "B2_CXXFLAGS=-stdlib=libc++"                   ], addons: *clang-6   }
     - { os: "osx"  , env: [ "B2_TOOLSET=clang",       "B2_CXXSTD=03,11,17" ]                     }
-
-    # to enable Intel ICC define INTEL_ICC_SERIAL_NUMBER and the following:
-    # - { os: "linux", env: [ "B2_TOOLSET=intel-linux", "B2_CXXSTD=11,14,17" ], addons: *gcc-7,
-    #     script: cd $BOOST_ROOT/libs/$SELF && ci/travis/intelicc.sh                               }
 
     - os: linux
       env:
