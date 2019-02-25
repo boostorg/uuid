@@ -73,7 +73,7 @@ class basic_name_generator
         hash.process_bytes(namespace_uuid.begin(), namespace_uuid.size());
         hash.process_bytes(buffer, byte_count);
         return hash_to_uuid(hash);
-    };
+    }
 
 private:
     // we convert all characters to uint32_t so that each
