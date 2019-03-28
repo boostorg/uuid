@@ -19,9 +19,13 @@
 
 #if defined(BOOST_UUID_FORCE_AUTO_LINK) || (!defined(BOOST_ALL_NO_LIB) && !defined(BOOST_UUID_RANDOM_PROVIDER_NO_LIB))
 #   define BOOST_LIB_NAME "bcrypt"
-#   define BOOST_AUTO_LINK_NOMANGLE
-#   include <boost/config/auto_link.hpp>
-#   undef BOOST_AUTO_LINK_NOMANGLE
+#   if defined(BOOST_AUTO_LINK_NOMANGLE)
+#      include <boost/config/auto_link.hpp>
+#   else
+#      define BOOST_AUTO_LINK_NOMANGLE
+#      include <boost/config/auto_link.hpp>
+#      undef BOOST_AUTO_LINK_NOMANGLE
+#   endif
 #endif
 
 namespace boost {
