@@ -27,9 +27,13 @@
 #   else
 #      define BOOST_LIB_NAME "advapi32"
 #   endif
-#   define BOOST_AUTO_LINK_NOMANGLE
-#   include <boost/config/auto_link.hpp>
-#   undef BOOST_AUTO_LINK_NOMANGLE
+#   if defined(BOOST_AUTO_LINK_NOMANGLE)
+#      include <boost/config/auto_link.hpp>
+#   else
+#      define BOOST_AUTO_LINK_NOMANGLE
+#      include <boost/config/auto_link.hpp>
+#      undef BOOST_AUTO_LINK_NOMANGLE
+#   endif
 #endif
 
 namespace boost {
