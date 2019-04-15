@@ -30,7 +30,7 @@ namespace std
         std::size_t operator () (const boost::uuids::uuid& value) const BOOST_NOEXCEPT
         {
             std::size_t seed = 0;
-            for(uuid::const_iterator i=u.begin(), e=u.end(); i != e; ++i)
+            for(uuid::const_iterator i=value.begin(), e=value.end(); i != e; ++i)
             {
                 seed ^= static_cast<std::size_t>(*i) + 0x9e3779b9 + (seed << 6) + (seed >> 2);
             }
