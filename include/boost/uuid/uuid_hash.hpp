@@ -13,7 +13,7 @@
 
 #include <boost/config.hpp>
 #include <boost/container_hash/hash.hpp>
-#include <boost/uuid/uuid_io.hpp>
+#include <boost/uuid/uuid.hpp>
 
 #ifdef BOOST_HAS_PRAGMA_ONCE
 #pragma once
@@ -31,7 +31,7 @@ namespace std
     {
         std::size_t operator () (const boost::uuids::uuid& value) const BOOST_NOEXCEPT
         {
-            return boost::hash_value(to_string(value));
+            return boost::uuids::hash_value(value);
         }
     };
 }
