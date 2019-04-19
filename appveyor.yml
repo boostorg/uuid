@@ -45,6 +45,14 @@ environment:
     B2_VARIANT: variant=release,debug
 
   matrix:
+    - FLAVOR: Visual Studio 2019
+      APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2019
+      B2_ADDRESS_MODEL: address-model=64
+      B2_CXXFLAGS: cxxflags=-permissive-
+      B2_CXXSTD: latest # 2a
+      B2_TOOLSET: msvc-14.2
+      MAYFAIL: true
+
     - FLAVOR: Visual Studio 2017 C++2a Strict
       APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2017
       B2_ADDRESS_MODEL: address-model=64
