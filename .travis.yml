@@ -175,8 +175,7 @@ jobs:
       if: (env(COVERITY_SCAN_NOTIFICATION_EMAIL) IS present) AND (branch IN (develop, master)) AND (type IN (cron, push))
       env:
         - COMMENT="Coverity Scan"
-        - B2_TOOLSET=gcc-7
-      addons: *gcc-7
+        - B2_TOOLSET=gcc
       script:
         - cd $BOOST_ROOT/libs/$SELF
         - ci/travis/coverity.sh
