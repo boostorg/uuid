@@ -76,6 +76,12 @@ environment:
       B2_ADDRESS_MODEL: address-model=64,32
       B2_TOOLSET: msvc-14.1
 
+    - FLAVOR: clang-cl
+      APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2017
+      B2_ADDRESS_MODEL: address-model=64
+      B2_CXXSTD: 11
+      B2_TOOLSET: clang-win
+
     - FLAVOR: Visual Studio 2015 C++14 (Default)
       APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2015
       B2_ADDRESS_MODEL: address-model=64,32
