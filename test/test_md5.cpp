@@ -9,18 +9,6 @@
 #include <boost/cstdint.hpp>
 #include <boost/detail/lightweight_test.hpp>
 #include <boost/uuid/detail/md5.hpp>
-#include <boost/predef/other/endian.h>
-
-/* the endian was updated in MD5_Final() from md5.hpp */
-
-#if !BOOST_ENDIAN_BIG_BYTE
-#define ntohl(x)        (x)
-#else
-#define ntohl(x)        ((((x) & 0x000000ff) << 24) |   \
-                         (((x) & 0x0000ff00) <<  8) |   \
-                         (((x) & 0x00ff0000) >>  8) |   \
-                         (((x) & 0xff000000) >> 24))
-#endif
 
 int main(int, char**)
 {
@@ -49,9 +37,6 @@ int main(int, char**)
         hash.process_bytes(expectations[i].data, expectations[i].len);
         boost::uuids::detail::md5::digest_type result;
         hash.get_digest(result);
-        for (boost::uint32_t j = 0; j < 4; ++j) {
-            result[j] = ntohl(result[j]);
-        }
         BOOST_TEST_EQ(0, memcmp(result, expectations[i].expected,
             sizeof(boost::uuids::detail::md5::digest_type)));
         BOOST_TEST_EQ(hash.get_version(), 0x03);
