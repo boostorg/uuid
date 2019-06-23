@@ -44,6 +44,10 @@ addons:
       - binutils-gold
       - gdb
       - libc6-dbg
+      - qemu-user-static
+
+services:
+  - docker
 
 branches:
   only:
@@ -130,7 +134,7 @@ jobs:
                             "B2_CXXFLAGS=-stdlib=libc++"                   ], addons: *clang-6   }
     - { os: "osx"  , env: [ "B2_TOOLSET=clang",       "B2_CXXSTD=03,11,17" ]                     }
 
-    # to enable Intel ICC define INTEL_ICC_SERIAL_NUMBER and the following:
+    # to enable Intel ICC define INTEL_ICC_SERIAL_NUMBER and the following (under development):
     # - { os: "linux", env: [ "B2_TOOLSET=intel-linux", "B2_CXXSTD=11,14,17" ], addons: *gcc-7,
     #     script: cd $BOOST_ROOT/libs/$SELF && ci/travis/intelicc.sh                               }
 
@@ -144,6 +148,18 @@ jobs:
       script:
         - cd $BOOST_ROOT/libs/$SELF
         - ci/travis/codecov.sh
+
+    - os: linux
+      env:
+        - COMMENT=big-endian
+        - B2_CXXSTD=03
+        - B2_TOOLSET=gcc
+        - B2_DEFINES="define=BOOST_NO_STRESS_TEST=1"
+        - BDDE_OS=red
+        - BDDE_ARCH=ppc64
+      script:
+        - cd $BOOST_ROOT/libs/$SELF
+        - ci/travis/bdde.sh
 
     - os: linux
       env:
