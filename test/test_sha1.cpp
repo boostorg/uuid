@@ -2,7 +2,9 @@
 //  distribute this software is granted provided this copyright notice appears
 //  in all copies. This software is provided "as is" without express or implied
 //  warranty, and with no claim as to its suitability for any purpose.
-
+//
+// Copyright (C) 2019 James E. King III
+//
 // Distributed under the Boost Software License, Version 1.0. (See
 // accompanying file LICENSE_1_0.txt or copy at
 // https://www.boost.org/LICENSE_1_0.txt)
@@ -15,6 +17,8 @@
 #include <cstring>
 #include <cstddef>
 
+#include "digestutils.hpp"
+
 #ifdef BOOST_NO_STDC_NAMESPACE
 namespace std {
   using ::strlen;
@@ -22,66 +26,41 @@ namespace std {
 } //namespace std
 #endif
 
-void test_sha1_digest_equal_array(char const * file, int line, char const * function,
-                          const unsigned int (&lhs)[5], const unsigned int (&rhs)[5])
-{
-    for (size_t i=0; i<5; i++) {
-        if ( lhs[i] != rhs[i]) {
-            std::cerr << file << "(" << line << "): sha1 digest [";
-            for (size_t l=0; l<5; l++) {
-                if (l != 0) {
-                    std::cerr << " ";
-                }
-                std::cerr << std::hex << (int)lhs[l];
-            }
-
-            std::cerr << "] not equal [";
-            for (size_t r=0; r<5; r++) {
-                if (r != 0) {
-                    std::cerr << " ";
-                }
-                std::cerr << std::hex << (int)rhs[r];
-            }
-            std::cerr << "] in function '" << function << "'" << std::endl;
-            ++boost::detail::test_errors();
-            return;
-        }
-    }
-}
-
-
-#define BOOST_TEST_SHA1_DIGEST(lhs, rhs) ( test_sha1_digest_equal_array(__FILE__, __LINE__, BOOST_CURRENT_FUNCTION, lhs, rhs) )
-
-void test_sha1(char const*const message, std::size_t length, const unsigned int (&correct_digest)[5])
-{
-    boost::uuids::detail::sha1 sha;
-    sha.process_bytes(message, length);
-
-    unsigned int digest[5];
-    sha.get_digest(digest);
-
-    BOOST_TEST_SHA1_DIGEST(digest, correct_digest);
-}
+#define BOOST_TEST_SHA1_DIGEST(lhs, rhs) \
+    ( boost::uuids::test::test_digest_equal_array(__FILE__, __LINE__, BOOST_CURRENT_FUNCTION, (lhs), (rhs), 20) )
 
 void test_quick()
 {
-    struct test_case
+    typedef struct
     {
-        char const* message;
-        unsigned int digest[5];
-    };
-    test_case cases[] =
-    { { "",
-        { 0xda39a3ee, 0x5e6b4b0d, 0x3255bfef, 0x95601890, 0xafd80709 } }
-    , { "The quick brown fox jumps over the lazy dog",
-        { 0x2fd4e1c6, 0x7a2d28fc, 0xed849ee1, 0xbb76e739, 0x1b93eb12 } }
-    , { "The quick brown fox jumps over the lazy cog",
-        { 0xde9f2c7f, 0xd25e1b3a, 0xfad3e85a, 0x0bd17d9b, 0x100db4b3 } }
+        const char * data;
+        boost::uint32_t len;
+        unsigned char expected[20];
+    } Expectation;
+
+    /* http://www.febooti.com/products/filetweak/members/hash-and-crc/test-vectors/ */
+    Expectation expectations[3] = {
+        { "The quick brown fox jumps over the lazy dog", 43,
+          { 0x2f, 0xd4, 0xe1, 0xc6, 0x7a, 0x2d, 0x28, 0xfc, 0xed, 0x84,
+            0x9e, 0xe1, 0xbb, 0x76, 0xe7, 0x39, 0x1b, 0x93, 0xeb, 0x12 }},
+        { "Test vector from febooti.com", 28,
+          { 0xa7, 0x63, 0x17, 0x95, 0xf6, 0xd5, 0x9c, 0xd6, 0xd1, 0x4e,
+            0xbd, 0x00, 0x58, 0xa6, 0x39, 0x4a, 0x4b, 0x93, 0xd8, 0x68 }},
+        { "", 0,
+          { 0xda, 0x39, 0xa3, 0xee, 0x5e, 0x6b, 0x4b, 0x0d, 0x32, 0x55,
+            0xbf, 0xef, 0x95, 0x60, 0x18, 0x90, 0xaf, 0xd8, 0x07, 0x09 }}
     };
 
-    for (int i=0; i!=sizeof(cases)/sizeof(cases[0]); ++i) {
-        test_case const& tc = cases[i];
-        test_sha1(tc.message, std::strlen(tc.message), tc.digest);
+    for (boost::uint32_t i = 0; i < 3; ++i) {
+        boost::uuids::detail::sha1 hash;
+        hash.process_bytes(expectations[i].data, expectations[i].len);
+        boost::uuids::detail::sha1::digest_type result;
+        hash.get_digest(result);
+        unsigned char raw_result[20];
+        boost::uuids::test::copy_raw_digest(raw_result, result, 5);
+        BOOST_TEST_SHA1_DIGEST(raw_result, expectations[i].expected);
+        BOOST_TEST_EQ(0, memcmp(raw_result, expectations[i].expected, 20));
+        BOOST_TEST_EQ(hash.get_version(), 0x05);
     }
 }
 
@@ -259,7 +238,8 @@ void test_short_messages()
         unsigned int digest[5];
         sha.get_digest(digest);
 
-        BOOST_TEST_SHA1_DIGEST(digest, tc.digest);
+        BOOST_TEST_SHA1_DIGEST(reinterpret_cast<const unsigned char *>(&digest[0]),
+                               reinterpret_cast<const unsigned char *>(&tc.digest[0]));
     }
 }
 
