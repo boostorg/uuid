@@ -10,7 +10,9 @@
 #include <boost/detail/lightweight_test.hpp>
 #include <boost/uuid/detail/md5.hpp>
 
+#if !(defined(BOOST_UUID_COMPAT_PRE_1_71_MD5) && BOOST_ENDIAN_LITTLE_BYTE)
 #include "digestutils.hpp"
+#endif
 
 #define BOOST_TEST_MD5_DIGEST(lhs, rhs) \
     ( boost::uuids::test::test_digest_equal_array(__FILE__, __LINE__, BOOST_CURRENT_FUNCTION, (lhs), (rhs), 16) )
@@ -42,9 +44,15 @@ int main(int, char**)
         hash.process_bytes(expectations[i].data, expectations[i].len);
         boost::uuids::detail::md5::digest_type result;
         hash.get_digest(result);
+#if defined(BOOST_UUID_COMPAT_PRE_1_71_MD5) && BOOST_ENDIAN_LITTLE_BYTE
+        // this is the original, incorrect behavior from pre-1.71
+        BOOST_TEST_EQ(0, memcmp(result, expectations[i].expected,
+            sizeof(boost::uuids::detail::md5::digest_type)));
+#else
         unsigned char raw_result[16];
         boost::uuids::test::copy_raw_digest(raw_result, result, 4);
         BOOST_TEST_MD5_DIGEST(raw_result, expectations[i].expected);
+#endif
         BOOST_TEST_EQ(hash.get_version(), 0x03);
 
     }

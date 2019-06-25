@@ -295,7 +295,28 @@ private:
         (dst)[2] = (unsigned char)((src) >> 16); \
         (dst)[3] = (unsigned char)((src) >> 24);
 
-    // When we copy into a byte buffer, take endianness into account
+    //
+    // A big-endian issue with MD5 results was resolved
+    // in boost 1.71.  If you generated md5 name-based uuids
+    // with boost 1.66 through 1.70 and stored them, then
+    // set the following compatibility flag to ensure that
+    // your hash generation remains consistent.
+    //
+#if defined(BOOST_UUID_COMPAT_PRE_1_71_MD5)
+    #define BOOST_UUID_DETAIL_MD5_BYTE_OUT(dst, src) \
+        BOOST_UUID_DETAIL_MD5_OUT(dst, src)
+#else
+    //
+    // We're copying into a byte buffer which is actually
+    // backed by an unsigned int array, which later on
+    // is then swabbed one more time by the basic name
+    // generator.  Therefore the logic here is reversed.
+    // This was done to minimize the impact to existing
+    // name-based hash generation.  The correct fix would
+    // be to make this and name generation endian-correct
+    // but that would even break previously generated sha1
+    // hashes too.
+    //
 #if BOOST_ENDIAN_LITTLE_BYTE
     #define BOOST_UUID_DETAIL_MD5_BYTE_OUT(dst, src) \
         (dst)[0] = (unsigned char)((src) >> 24); \
@@ -309,6 +330,7 @@ private:
         (dst)[2] = (unsigned char)((src) >> 16); \
         (dst)[3] = (unsigned char)((src) >> 24);
 #endif
+#endif // BOOST_UUID_COMPAT_PRE_1_71_MD5
 
     void MD5_Final(unsigned char *result, MD5_CTX *ctx)
     {
