@@ -111,6 +111,7 @@ test-suite uuid :
     # test generators
     [ run test_nil_generator.cpp ]
     [ run test_name_generator.cpp ]
+    [ run test_name_generator.cpp : : : <define>BOOST_UUID_COMPAT_PRE_1_71_MD5 : test_name_generator_pre_1_71_compat ]
     [ run test_string_generator.cpp ]
     [ run test_random_generator.cpp ]
 
@@ -124,6 +125,7 @@ test-suite uuid :
     # test hash functions
     [ run test_hash.cpp ]
     [ run test_md5.cpp ]
+    [ run test_md5.cpp : : : <define>BOOST_UUID_COMPAT_PRE_1_71_MD5 : test_md5_pre_1_71_compat ]
     [ run test_sha1.cpp ]
 
     # test MSVC 12 (VS2013) optimizer bug with SIMD operations.
