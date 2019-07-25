@@ -18,13 +18,11 @@
 #include <boost/throw_exception.hpp>
 
 #if defined(BOOST_UUID_FORCE_AUTO_LINK) || (!defined(BOOST_ALL_NO_LIB) && !defined(BOOST_UUID_RANDOM_PROVIDER_NO_LIB))
-#   define BOOST_LIB_NAME "bcrypt"
-#   if defined(BOOST_AUTO_LINK_NOMANGLE)
-#      include <boost/config/auto_link.hpp>
-#   else
-#      define BOOST_AUTO_LINK_NOMANGLE
-#      include <boost/config/auto_link.hpp>
-#      undef BOOST_AUTO_LINK_NOMANGLE
+#   if defined(BOOST_MSVC) \
+     || defined(__BORLANDC__) \
+     || (defined(__MWERKS__) && defined(_WIN32) && (__MWERKS__ >= 0x3000)) \
+     || (defined(__ICL) && defined(_MSC_EXTENSIONS) && (_MSC_VER >= 1200))
+#      pragma comment(lib, "bcrypt.lib")
 #   endif
 #endif
 
