@@ -39,6 +39,10 @@ extern "C" void _ReadWriteBarrier(void);
 #endif
 #endif
 
+#include <boost/config.hpp>
+#include <boost/cstdint.hpp>
+#include <boost/uuid/uuid.hpp>
+
 namespace boost {
 namespace uuids {
 namespace detail {
