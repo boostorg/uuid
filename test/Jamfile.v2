@@ -216,4 +216,11 @@ test-suite uuid :
         <target-os>linux:<build>yes                                     # build only on linux (or any other systems that support getentropy)
       : test_detail_random_provider_sad_getentropy ]
 
+    [ run test_detail_random_provider.cpp
+      : : :
+        <define>BOOST_UUID_RANDOM_PROVIDER_GETRANDOM_DISABLE_LIBC_WRAPPER   # will disable getrandom libc wrapper
+        <build>no
+        <target-os>linux:<build>yes                                         # build only on linux
+      : test_detail_random_provider_happy_getrandom_syscall ]
+
     ;
