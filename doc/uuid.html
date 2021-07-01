@@ -667,6 +667,10 @@ typedef basic_random_generator&lt;boost::mt19937&gt; random_generator_mt19937;
             <li>
                 <tt>BOOST_UUID_RANDOM_PROVIDER_NO_LIB</tt> (or <tt>BOOST_ALL_NO_LIB</tt>): disable Windows auto linking.
             </li>
+            <li>
+                <tt>BOOST_UUID_RANDOM_PROVIDER_GETRANDOM_DISABLE_LIBC_WRAPPER</tt>: disable <tt>getrandom(2)</tt>
+                on Linux even if it's available.
+            </li>
         </ul>
     </p>
 
