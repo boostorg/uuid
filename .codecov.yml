@@ -12,6 +12,14 @@ codecov:
     after_n_builds: 1
     wait_for_ci: yes
 
+parsers:
+  gcov:
+    branch_detection:
+      conditional: yes
+      loop: yes
+      method: no
+      macro: no
+
 # Change how pull request comments look
 comment:
   layout: "reach,diff,flags,files,footer"
@@ -19,5 +27,4 @@ comment:
 # Ignore specific files or folders. Glob patterns are supported.
 # See https://docs.codecov.com/docs/ignoring-paths
 ignore:
-  - extra/**/*
-  - test/**/*
+  - libs/uuid/test
