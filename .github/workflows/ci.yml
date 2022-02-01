@@ -29,7 +29,78 @@ env:
   CODECOV_NAME: Github Actions
 
 jobs:
+  multiarch:
+    defaults:
+      run:
+        shell: bash
+
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - { distro: fedora, edition: 34, arch: s390x, toolset: clang }
+
+    timeout-minutes: 120
+    runs-on: ubuntu-20.04
+
+    steps:
+      - name: Setup environment
+        run: |
+            if [ -f "/etc/debian_version" ]; then
+                echo "DEBIAN_FRONTEND=noninteractive" >> ${GITHUB_ENV}
+                export DEBIAN_FRONTEND=noninteractive
+            fi
+            git config --global pack.threads 0
+
+      - name: Setup multiarch
+        run: |
+          sudo apt-get update
+          sudo apt-get install --no-install-recommends -y binfmt-support qemu-user-static
+          sudo docker run --rm --privileged multiarch/qemu-user-static --reset -p yes
+
+      - uses: actions/checkout@v2
+
+      - name: Fetch BDDE
+        uses: actions/checkout@v2
+        with:
+          repository: jeking3/bdde
+          ref: main
+          path: bdde
+
+      - name: Install BDDE
+        run: echo "$(pwd)/bdde/bin/linux" >> ${GITHUB_PATH}
+
+      - name: Setup boost-root
+        run: |
+          SELF=$(echo ${GITHUB_REPOSITORY} | cut -d'/' -f2)
+          cd ..
+          git clone -b ${GITHUB_BASE_REF##*/} --depth 1 https://github.com/boostorg/boost.git boost-root
+          cd boost-root
+          export BOOST_ROOT="$(pwd)"
+          echo "BOOST_ROOT=${BOOST_ROOT}" >> ${GITHUB_ENV}
+          git submodule update -q --init tools/boostdep
+          mkdir -p libs/${SELF}
+          cp -pr "${GITHUB_WORKSPACE//\\//}"/* libs/$SELF
+          python3 tools/boostdep/depinst/depinst.py --include benchmark --include example --include examples --include tools $SELF
+  
+      - name: Bootstrap
+        working-directory: ${{ env.BOOST_ROOT }}
+        run: |
+          sudo chmod -R 777 ./
+          bdde bootstrap.sh --with-toolset=${{ matrix.toolset }}
+        env:
+          BDDE_DISTRO: ${{ matrix.distro }}
+          BDDE_EDITION: ${{ matrix.edition }}
+          BDDE_ARCH: ${{ matrix.arch }}
+
+      - name: Build
+        working-directory: ${{ env.BOOST_ROOT }}
+        run: |
+          SELF=$(echo ${GITHUB_REPOSITORY} | cut -d'/' -f2)
+          bdde b2 libs/${SELF}/test
+
   posix:
+    if: false
     defaults:
       run:
         shell: bash
@@ -187,6 +258,7 @@ jobs:
         run: ci/codecov.sh "upload"
 
   windows:
+    if: false
     defaults:
       run:
         shell: cmd
