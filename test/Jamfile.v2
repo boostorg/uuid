@@ -1,5 +1,5 @@
 # Copyright 2007 Andy Tompkins.
-# Copyright 2017 - 2018 James E. King III
+# Copyright 2017 - 2022 James E. King III
 # Distributed under the Boost Software License, Version 1.0. (See
 # accompanying file LICENSE_1_0.txt or copy at
 # https://www.boost.org/LICENSE_1_0.txt)
@@ -39,7 +39,7 @@ rule test_all
 {
     local all_rules = ;
     local file ;
-    local headers_path = [ path.make $(BOOST_ROOT)/libs/uuid/include/boost/uuid ] ;
+    local headers_path = [ path.make ../include/boost/uuid ] ;
     for file in [ path.glob-tree $(headers_path) : *.hpp : uuid ]
     {
         local rel_file = [ path.relative-to $(headers_path) $(file) ] ;
@@ -51,7 +51,7 @@ rule test_all
         all_rules += [ compile compile/decl_header.cpp : <define>"BOOST_UUID_TEST_HEADER=$(rel_file)" <dependency>$(file) : $(decl_test_name) ] ;
     }
 
-    local tests_path = [ path.make $(BOOST_ROOT)/libs/uuid/test/compile-fail ] ;
+    local tests_path = [ path.make compile-fail ] ;
     for file in [ path.glob-tree $(tests_path) : *.cpp ]
     {
         local rel_file = [ path.relative-to $(tests_path) $(file) ] ;
@@ -65,12 +65,12 @@ rule test_all
     all_rules += [ compile compile/decl_header.cpp :
         <define>"BOOST_UUID_TEST_HEADER=uuid.hpp"
         <define>"BOOST_UUID_NO_TYPE_TRAITS"
-        <dependency>$(BOOST_ROOT)/boost/uuid/uuid.hpp :
+        <dependency>../include/boost/uuid/uuid.hpp :
             compile_uuid_no_type_traits ] ;
     all_rules += [ compile compile/decl_header.cpp :
         <define>"BOOST_UUID_TEST_HEADER=uuid.hpp"
         <define>"BOOST_UUID_NO_SIMD"
-        <dependency>$(BOOST_ROOT)/boost/uuid/uuid.hpp :
+        <dependency>../include/boost/uuid/uuid.hpp :
             compile_uuid_no_simd ] ;
 
     # ECHO All rules: $(all_rules) ;
