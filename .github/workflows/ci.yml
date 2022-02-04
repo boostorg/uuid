@@ -1,10 +1,11 @@
 # Copyright 2020-2021 Peter Dimov
 # Copyright 2021 Andrey Semashev
 # Copyright 2021 Alexander Grund
+# Copyright 2022 James E. King III
 #
 # Distributed under the Boost Software License, Version 1.0.
 # (See accompanying file LICENSE_1_0.txt or copy at http://boost.org/LICENSE_1_0.txt)
-
+---
 name: CI
 
 on:
@@ -54,7 +55,7 @@ jobs:
           - { name: GCC w/ sanitizers, sanitize: yes,
               compiler: gcc-11,    cxxstd: '03,11,14,17,20', os: ubuntu-20.04 }
           - { name: Collect coverage, coverage: yes,
-              compiler: gcc-8,     cxxstd: '03,11',          os: ubuntu-20.04, install: 'g++-8-multilib', address-model: '32,64' }
+              compiler: gcc-10,    cxxstd: '03,11',          os: ubuntu-20.04, install: 'g++-10-multilib', address-model: '32,64' }
 
           # Linux, clang
           - { compiler: clang-3.5, cxxstd: '03,11',          os: ubuntu-20.04, container: 'ubuntu:16.04' }
@@ -66,13 +67,13 @@ jobs:
           - { compiler: clang-5.0, cxxstd: '03,11,14,1z',    os: ubuntu-18.04 }
           - { compiler: clang-6.0, cxxstd: '03,11,14,17',    os: ubuntu-18.04 }
           - { compiler: clang-7,   cxxstd: '03,11,14,17',    os: ubuntu-18.04 }
-            # Note: clang-8 does not fully support C++20, so it is not compatible with some libstdc++ versions in this mode
+          # Note: clang-8 does not fully support C++20, so it is not compatible with some libstdc++ versions in this mode
           - { compiler: clang-8,   cxxstd: '03,11,14,17,2a', os: ubuntu-18.04, install: 'clang-8 g++-7', gcc_toolchain: 7 }
           - { compiler: clang-9,   cxxstd: '03,11,14,17,2a', os: ubuntu-20.04 }
           - { compiler: clang-10,  cxxstd: '03,11,14,17,20', os: ubuntu-20.04 }
           - { compiler: clang-11,  cxxstd: '03,11,14,17,20', os: ubuntu-20.04 }
           - { compiler: clang-12,  cxxstd: '03,11,14,17,20', os: ubuntu-20.04 }
-            # libc++
+          # libc++
           - { compiler: clang-6.0, cxxstd: '03,11,14',       os: ubuntu-18.04, stdlib: libc++, install: 'clang-6.0 libc++-dev libc++abi-dev' }
           - { compiler: clang-12,  cxxstd: '03,11,14,17,20', os: ubuntu-20.04, stdlib: libc++, install: 'clang-12 libc++-12-dev libc++abi-12-dev' }
           - { name: Clang w/ sanitizers, sanitize: yes,
@@ -80,6 +81,16 @@ jobs:
 
           # OSX, clang
           - { compiler: clang,     cxxstd: '03,11,14,17,2a', os: macos-10.15, sanitize: yes }
+
+          # Coverity Scan
+          # requires two github secrets in repo to activate; see ci/github/coverity.sh
+          # does not run on pull requests, only on pushes into develop and master
+          - { name: Coverity, coverity: yes,
+              compiler: clang-10,  cxxstd: '17',             os: ubuntu-20.04, ccache: no }
+
+          # multiarch (bigendian testing) - does not support coverage yet
+          - { name: Big-endian, multiarch: yes,
+              compiler: clang,     cxxstd: '17',             os: ubuntu-20.04, ccache: no, distro: fedora, edition: 34, arch: s390x }
 
     timeout-minutes: 120
     runs-on: ${{matrix.os}}
@@ -101,17 +112,20 @@ jobs:
                 apt-get -o Acquire::Retries=$NET_RETRY_COUNT update
                 apt-get -o Acquire::Retries=$NET_RETRY_COUNT install -y g++ python libpython-dev git
             fi
+            # multiple job types are not compatible with ccache, they use "ccache: no" in the matrix
+            if [[ "${{ matrix.ccache }}" == "no" ]]; then
+                echo "B2_USE_CCACHE=0" >> $GITHUB_ENV
+            fi
             git config --global pack.threads 0
 
       - uses: actions/checkout@v2
-        if: '!matrix.coverage'
-      - uses: actions/checkout@v2
-        if: 'matrix.coverage'
         with:
-          fetch-depth: 0
+          # For coverage builds fetch the whole history, else only 1 commit using a 'fake ternary'
+          fetch-depth: ${{ matrix.coverage && '0' || '1' }}
 
       - name: Cache ccache
         uses: actions/cache@v2
+        if: env.B2_USE_CCACHE
         with:
           path: ~/.ccache
           key: ${{matrix.os}}-${{matrix.container}}-${{matrix.compiler}}
@@ -166,6 +180,18 @@ jobs:
             mkdir -p "$GCC_TOOLCHAIN_ROOT/lib/gcc/$MULTIARCH_TRIPLET"
             ln -s "/usr/lib/gcc/$MULTIARCH_TRIPLET/${{matrix.gcc_toolchain}}" "$GCC_TOOLCHAIN_ROOT/lib/gcc/$MULTIARCH_TRIPLET/${{matrix.gcc_toolchain}}"
 
+      - name: Setup multiarch
+        if: matrix.multiarch
+        run: |
+          sudo apt-get install --no-install-recommends -y binfmt-support qemu-user-static
+          sudo docker run --rm --privileged multiarch/qemu-user-static --reset -p yes
+          git clone https://github.com/jeking3/bdde.git
+          echo "$(pwd)/bdde/bin/linux" >> ${GITHUB_PATH}
+          echo "BDDE_DISTRO=${{ matrix.distro }}" >> ${GITHUB_ENV}
+          echo "BDDE_EDITION=${{ matrix.edition }}" >> ${GITHUB_ENV}
+          echo "BDDE_ARCH=${{ matrix.arch }}" >> ${GITHUB_ENV}
+          echo "B2_WRAPPER=bdde" >> ${GITHUB_ENV}
+
       - name: Setup Boost
         env:
           B2_ADDRESS_MODEL: ${{matrix.address-model}}
@@ -180,11 +206,19 @@ jobs:
         run: ci/github/codecov.sh "setup"
 
       - name: Run tests
+        if: '!matrix.coverity'
         run: ci/build.sh
 
       - name: Upload coverage
         if: matrix.coverage
         run: ci/codecov.sh "upload"
+
+      - name: Run coverity
+        if: matrix.coverity && github.event_name == 'push' && (github.ref_name == 'develop' || github.ref_name == 'master')
+        run: ci/github/coverity.sh
+        env:
+          COVERITY_SCAN_NOTIFICATION_EMAIL: ${{ secrets.COVERITY_SCAN_NOTIFICATION_EMAIL }}
+          COVERITY_SCAN_TOKEN: ${{ secrets.COVERITY_SCAN_TOKEN }}
 
   windows:
     defaults:
@@ -194,9 +228,9 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - { toolset: msvc-14.2, cxxstd: '14,17,20',       addrmd: 32,64, os: windows-2019 }
-          - { toolset: msvc-14.3, cxxstd: '14,17,20',       addrmd: 32,64, os: windows-2022 }
-          - { toolset: gcc,       cxxstd: '03,11,14,17,2a', addrmd: 64,    os: windows-2019 }
+          - { toolset: msvc-14.2, cxxstd: '14,17,20',       addrmd: '32,64', os: windows-2019 }
+          - { toolset: msvc-14.3, cxxstd: '14,17,20',       addrmd: '32,64', os: windows-2022 }
+          - { toolset: gcc,       cxxstd: '03,11,14,17,2a', addrmd: '64',    os: windows-2019 }
 
     runs-on: ${{matrix.os}}
 
@@ -225,3 +259,46 @@ jobs:
           B2_CXXSTD: ${{matrix.cxxstd}}
           B2_ADDRESS_MODEL: ${{matrix.addrmd}}
 
+  CMake:
+    defaults:
+      run:
+        shell: bash
+
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - { os: ubuntu-20.04, build_shared: ON,  build_type: Release, generator: 'Unix Makefiles' }
+          - { os: ubuntu-20.04, build_shared: OFF, build_type: Debug, generator: 'Unix Makefiles' }
+          - { os: windows-2019, build_shared: ON,  build_type: Release, generator: 'Visual Studio 16 2019' }
+          - { os: windows-2019, build_shared: OFF, build_type: Debug, generator: 'Visual Studio 16 2019' }
+
+    timeout-minutes: 120
+    runs-on: ${{matrix.os}}
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Fetch Boost.CI
+        uses: actions/checkout@v2
+        with:
+          repository: boostorg/boost-ci
+          ref: master
+          path: boost-ci-cloned
+
+      - name: Get CI scripts folder
+        run: |
+            # Copy ci folder if not testing Boost.CI
+            [[ "$GITHUB_REPOSITORY" =~ "boost-ci" ]] || cp -r boost-ci-cloned/ci .
+            rm -rf boost-ci-cloned
+
+      - name: Setup Boost
+        env: {B2_DONT_BOOTSTRAP: 1}
+        run: source ci/github/install.sh
+
+      - name: Run CMake
+        run: |
+            cd "$BOOST_ROOT"
+            mkdir __build_cmake_test__ && cd __build_cmake_test__
+            cmake -G "${{matrix.generator}}" -DCMAKE_BUILD_TYPE=${{matrix.build_type}} -DBOOST_INCLUDE_LIBRARIES=$SELF -DBUILD_SHARED_LIBS=${{matrix.build_shared}} -DBUILD_TESTING=ON -DBoost_VERBOSE=ON ..
+            cmake --build . --config ${{matrix.build_type}}
