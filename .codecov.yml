@@ -9,7 +9,7 @@ codecov:
   require_ci_to_pass: yes
   notify:
     # Increase this if you have multiple coverage collection jobs
-    after_n_builds: 1
+    after_n_builds: 2
     wait_for_ci: yes
 
 parsers:
