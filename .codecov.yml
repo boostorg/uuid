@@ -28,4 +28,4 @@ comment:
 # See https://docs.codecov.com/docs/ignoring-paths
 ignore:
   - libs/uuid/test
-  - test/**/*
+  - test/
