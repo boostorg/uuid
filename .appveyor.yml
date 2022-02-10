@@ -84,6 +84,7 @@ environment:
       ADDPATH: C:\cygwin\bin;
       B2_ADDRESS_MODEL: 32
       B2_CXXSTD: 03,11,14,1z
+      B2_THREADING: threadapi=pthread
       B2_TOOLSET: gcc
 
     - FLAVOR: cygwin (64-bit)
@@ -91,6 +92,7 @@ environment:
       ADDPATH: C:\cygwin64\bin;
       B2_ADDRESS_MODEL: 64
       B2_CXXSTD: 03,11,14,1z
+      B2_THREADING: threadapi=pthread
       B2_TOOLSET: gcc
 
     - FLAVOR: mingw64
