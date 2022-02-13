@@ -73,6 +73,8 @@ jobs:
           - { compiler: clang-10,  cxxstd: '03,11,14,17,20', os: ubuntu-20.04 }
           - { compiler: clang-11,  cxxstd: '03,11,14,17,20', os: ubuntu-20.04 }
           - { compiler: clang-12,  cxxstd: '03,11,14,17,20', os: ubuntu-20.04 }
+          - { name: Clang w/ valgrind, valgrind: yes,
+              compiler: clang-12,  cxxstd: '03,11,14,17,20', os: ubuntu-20.04, install: 'valgrind' }
           # libc++
           - { compiler: clang-6.0, cxxstd: '03,11,14',       os: ubuntu-18.04, stdlib: libc++, install: 'clang-6.0 libc++-dev libc++abi-dev' }
           - { compiler: clang-12,  cxxstd: '03,11,14,17,20', os: ubuntu-20.04, stdlib: libc++, install: 'clang-12 libc++-12-dev libc++abi-12-dev' }
@@ -115,6 +117,12 @@ jobs:
             # multiple job types are not compatible with ccache, they use "ccache: no" in the matrix
             if [[ "${{ matrix.ccache }}" == "no" ]]; then
                 echo "B2_USE_CCACHE=0" >> $GITHUB_ENV
+            fi
+            if [[ "${{ matrix.valgrind }}" == "yes" ]]; then
+                echo "B2_DEFINES=BOOST_NO_STRESS_TEST=1" >> $GITHUB_ENV
+                echo "B2_TESTFLAGS=testing.launcher=valgrind" >> $GITHUB_ENV
+                echo "B2_FLAGS=define=BOOST_USE_VALGRIND=1" >> $GITHUB_ENV
+                echo "VALGRIND_OPTS=--error-exitcode=1" >> $GITHUB_ENV
             fi
             git config --global pack.threads 0
 
@@ -190,6 +198,7 @@ jobs:
           echo "BDDE_DISTRO=${{ matrix.distro }}" >> ${GITHUB_ENV}
           echo "BDDE_EDITION=${{ matrix.edition }}" >> ${GITHUB_ENV}
           echo "BDDE_ARCH=${{ matrix.arch }}" >> ${GITHUB_ENV}
+          echo "B2_DEFINES=BOOST_NO_STRESS_TEST=1" >> ${GITHUB_ENV}
           echo "B2_WRAPPER=bdde" >> ${GITHUB_ENV}
 
       - name: Setup Boost
