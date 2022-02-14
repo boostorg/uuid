@@ -72,7 +72,6 @@ jobs:
           - { compiler: clang-9,   cxxstd: '03,11,14,17,2a', os: ubuntu-20.04 }
           - { compiler: clang-10,  cxxstd: '03,11,14,17,20', os: ubuntu-20.04 }
           - { compiler: clang-11,  cxxstd: '03,11,14,17,20', os: ubuntu-20.04 }
-          - { compiler: clang-12,  cxxstd: '03,11,14,17,20', os: ubuntu-20.04 }
           - { name: Clang w/ valgrind, valgrind: yes,
               compiler: clang-12,  cxxstd: '03,11,14,17,20', os: ubuntu-20.04, install: 'valgrind' }
           # libc++
