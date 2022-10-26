@@ -1,5 +1,5 @@
 /*
- *            Copyright Andrey Semashev 2013.
+ *          Copyright Andrey Semashev 2013, 2022.
  * Distributed under the Boost Software License, Version 1.0.
  *    (See accompanying file LICENSE_1_0.txt or copy at
  *          https://www.boost.org/LICENSE_1_0.txt)
@@ -22,7 +22,7 @@
 #include <emmintrin.h>
 #endif
 
-#if defined(BOOST_MSVC) && defined(_M_X64) && !defined(BOOST_UUID_USE_SSE3) && (BOOST_MSVC < 1900 /* Fixed in Visual Studio 2015 */ )
+#if defined(BOOST_MSVC) && defined(_M_X64) && (BOOST_MSVC < 1900 /* Fixed in Visual Studio 2015 */ )
 // At least MSVC 9 (VS2008) and 12 (VS2013) have an optimizer bug that sometimes results in incorrect SIMD code
 // generated in Release x64 mode. In particular, it affects operator==, where the compiler sometimes generates
 // pcmpeqd with a memory opereand instead of movdqu followed by pcmpeqd. The problem is that uuid can be
@@ -45,7 +45,13 @@ namespace detail {
 
 BOOST_FORCEINLINE __m128i load_unaligned_si128(const uint8_t* p) BOOST_NOEXCEPT
 {
-#if defined(BOOST_UUID_USE_SSE3)
+#if defined(BOOST_UUID_USE_SSE41) && !defined(BOOST_UUID_DETAIL_MSVC_BUG981648)
+    // lddqu is not necessary on post-NetBurst Intel CPUs that support SSE4.1 and later.
+    // With AVX, vmovdqu is also better than vlddqu as it has lower latency on Skylake and
+    // later Intel CPUs and has the potential to be merged into the following instruction
+    // as a memory operand.
+    return _mm_loadu_si128(reinterpret_cast< const __m128i* >(p));
+#elif defined(BOOST_UUID_USE_SSE3)
     return _mm_lddqu_si128(reinterpret_cast< const __m128i* >(p));
 #elif !defined(BOOST_UUID_DETAIL_MSVC_BUG981648)
     return _mm_loadu_si128(reinterpret_cast< const __m128i* >(p));
