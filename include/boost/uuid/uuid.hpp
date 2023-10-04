@@ -50,6 +50,11 @@
 #pragma warning(disable : 4996) // Disable deprecated std::swap_ranges, std::equal
 #endif
 
+#if BOOST_UUID_THREEWAY_COMPARE
+#include <compare>
+#include <cstring>
+#endif
+
 #ifdef BOOST_NO_STDC_NAMESPACE
 namespace std {
     using ::size_t;
@@ -169,6 +174,19 @@ inline bool operator>=(uuid const& lhs, uuid const& rhs) BOOST_NOEXCEPT
 {
     return !(lhs < rhs);
 }
+
+#if BOOST_UUID_THREEWAY_COMPARE
+inline std::strong_ordering operator<=>(const uuid &lhs, const uuid &rhs)
+{
+    int compare = std::memcmp(lhs.data, rhs.data, sizeof(lhs.data));
+
+    if (compare < 0)
+        return std::strong_ordering::less;
+    if (compare == 0)
+        return std::strong_ordering::equal;
+    return std::strong_ordering::greater;
+}
+#endif
 
 inline void swap(uuid& lhs, uuid& rhs) BOOST_NOEXCEPT
 {
