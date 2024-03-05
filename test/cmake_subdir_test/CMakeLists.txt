@@ -20,7 +20,7 @@ container_hash
 core
 io
 move
-numeric~conversion
+numeric/conversion
 predef
 random
 static_assert

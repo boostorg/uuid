@@ -15,7 +15,7 @@ set(BOOST_TEST_LINK_LIBRARIES Boost::uuid Boost::core)
 boost_test(TYPE run SOURCES test_uuid.cpp)
 boost_test(TYPE run SOURCES test_uuid_no_simd.cpp)
 
-boost_test(TYPE run SOURCES test_io.cpp)
+boost_test(TYPE run SOURCES test_io.cpp LINK_LIBRARIES Boost::lexical_cast)
 
 boost_test(TYPE run SOURCES test_nil_generator.cpp)
 boost_test(TYPE run SOURCES test_name_generator.cpp)
