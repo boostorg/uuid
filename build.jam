@@ -1,0 +1,33 @@
+# Copyright René Ferdinand Rivera Morell 2023
+# Distributed under the Boost Software License, Version 1.0.
+# (See accompanying file LICENSE_1_0.txt or copy at
+# http://www.boost.org/LICENSE_1_0.txt)
+
+import project ;
+
+project /boost/uuid
+    : common-requirements
+        <source>/boost/assert//boost_assert
+        <source>/boost/config//boost_config
+        <source>/boost/container_hash//boost_container_hash
+        <source>/boost/core//boost_core
+        <source>/boost/io//boost_io
+        <source>/boost/move//boost_move
+        <source>/boost/numeric_conversion//boost_numeric_conversion
+        <source>/boost/predef//boost_predef
+        <source>/boost/random//boost_random
+        <source>/boost/static_assert//boost_static_assert
+        <source>/boost/throw_exception//boost_throw_exception
+        <source>/boost/tti//boost_tti
+        <source>/boost/type_traits//boost_type_traits
+        <source>/boost/winapi//boost_winapi
+        <include>include
+    ;
+
+explicit
+    [ alias boost_uuid ]
+    [ alias all : boost_uuid test ]
+    ;
+
+call-if : boost-library uuid
+    ;
