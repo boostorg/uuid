@@ -84,6 +84,14 @@
 #define BOOST_UUID_NO_SIMD
 #endif
 
+#if !defined(BOOST_UUID_THREEWAY_COMPARE)
+#if __cpp_impl_three_way_comparison >= 201907L
+#define BOOST_UUID_THREEWAY_COMPARE 1
+#else
+#define BOOST_UUID_THREEWAY_COMPARE 0
+#endif
+#endif
+
 #endif // !defined(BOOST_UUID_NO_SIMD)
 
 #endif // BOOST_UUID_DETAIL_CONFIG_HPP_INCLUDED_

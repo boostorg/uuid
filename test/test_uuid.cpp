@@ -182,6 +182,27 @@ int main(int, char*[])
         BOOST_TEST(u3 >= u3);
         BOOST_TEST(u2 >= u1);
         BOOST_TEST(u3 >= u1);
+
+#if BOOST_UUID_THREEWAY_COMPARE
+        BOOST_TEST(u1 <=> u2 == std::strong_ordering::less);
+        BOOST_TEST(u2 <=> u3 == std::strong_ordering::less);
+        BOOST_TEST(u1 <=> u4 == std::strong_ordering::less);
+        BOOST_TEST(u1 <=> u5 == std::strong_ordering::less);
+        BOOST_TEST(u4 <=> u5 == std::strong_ordering::less);
+        BOOST_TEST(u4 <=> u2 == std::strong_ordering::less);
+        BOOST_TEST(u5 <=> u2 == std::strong_ordering::less);
+
+        BOOST_TEST(u1 <=> u1 == std::strong_ordering::equal);
+        BOOST_TEST(u2 <=> u2 == std::strong_ordering::equal);
+        BOOST_TEST(u3 <=> u3 == std::strong_ordering::equal);
+        BOOST_TEST(u4 <=> u4 == std::strong_ordering::equal);
+        BOOST_TEST(u5 <=> u5 == std::strong_ordering::equal);
+
+        BOOST_TEST(u2 <=> u1 == std::strong_ordering::greater);
+        BOOST_TEST(u3 <=> u1 == std::strong_ordering::greater);
+        BOOST_TEST(u2 <=> u1 == std::strong_ordering::greater);
+        BOOST_TEST(u3 <=> u1 == std::strong_ordering::greater);
+#endif
     }
 
     { // ticket 10510
