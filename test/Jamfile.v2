@@ -82,21 +82,11 @@ rule test_all
     return $(all_rules) ;
 }
 
-# disabled in UBSAN builds due to issues in Boost.Serialization
-if ! [ os.environ UBSAN_OPTIONS ]
-{
 test-suite uuid-serialization :
     # test serializing uuids
-    [ run test_serialization.cpp ../../serialization/build//boost_serialization ]
-
-    # TODO - This test fails to like with boost_wserialization
-    # [ run test_wserialization.cpp
-    #     ../../serialization/build//boost_serialization
-    #     ../../serialization/build//boost_wserialization
-    #     : : : <dependency>../../config/test/all//BOOST_NO_STD_WSTREAMBUF
-    # ]
+    [ run test_serialization.cpp /boost//serialization ]
+    #[ run test_wserialization.cpp /boost//serialization /boost//wserialization ]
     ;
-}
 
 test-suite uuid :
     [ test_all ]
