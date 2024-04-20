@@ -6,9 +6,9 @@
 // accompanying file LICENSE_1_0.txt or copy at
 // https://www.boost.org/LICENSE_1_0.txt)
 
-#include <boost/cstdint.hpp>
-#include <boost/detail/lightweight_test.hpp>
 #include <boost/uuid/detail/md5.hpp>
+#include <boost/core/lightweight_test.hpp>
+#include <cstdint>
 
 #if !(defined(BOOST_UUID_COMPAT_PRE_1_71_MD5) && BOOST_ENDIAN_LITTLE_BYTE)
 #include "digestutils.hpp"
@@ -22,7 +22,7 @@ int main(int, char**)
     typedef struct
     {
         const char * data;
-        boost::uint32_t len;
+        std::uint32_t len;
         unsigned char expected[16];
     } Expectation;
 
@@ -39,7 +39,7 @@ int main(int, char**)
             0xe9, 0x80, 0x09, 0x98, 0xec, 0xf8, 0x42, 0x7e }}
     };
 
-    for (boost::uint32_t i = 0; i < 3; ++i) {
+    for (std::uint32_t i = 0; i < 3; ++i) {
         boost::uuids::detail::md5 hash;
         hash.process_bytes(expectations[i].data, expectations[i].len);
         boost::uuids::detail::md5::digest_type result;

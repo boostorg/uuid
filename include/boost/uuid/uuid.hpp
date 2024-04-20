@@ -1,3 +1,6 @@
+#ifndef BOOST_UUID_HPP_INCLUDED
+#define BOOST_UUID_HPP_INCLUDED
+
 // Boost uuid.hpp header file  ----------------------------------------------//
 
 // Copyright 2006 Andy Tompkins.
@@ -30,12 +33,9 @@
 //  02 Dec 2009 - removed BOOST_STATIC_CONSTANT - not all compilers like it
 //  29 Apr 2013 - added support for noexcept and constexpr, added optimizations for SSE/AVX
 
-#ifndef BOOST_UUID_HPP
-#define BOOST_UUID_HPP
-
-#include <cstddef>
-#include <boost/cstdint.hpp>
 #include <boost/uuid/detail/config.hpp>
+#include <cstddef>
+#include <cstdint>
 #ifndef BOOST_UUID_NO_TYPE_TRAITS
 #include <boost/type_traits/is_pod.hpp>
 #include <boost/type_traits/integral_constant.hpp>
@@ -56,11 +56,11 @@ namespace uuids {
 struct uuid
 {
 public:
-    typedef uint8_t value_type;
-    typedef uint8_t& reference;
-    typedef uint8_t const& const_reference;
-    typedef uint8_t* iterator;
-    typedef uint8_t const* const_iterator;
+    typedef std::uint8_t value_type;
+    typedef std::uint8_t& reference;
+    typedef std::uint8_t const& const_reference;
+    typedef std::uint8_t* iterator;
+    typedef std::uint8_t const* const_iterator;
     typedef std::size_t size_type;
     typedef std::ptrdiff_t difference_type;
 
@@ -117,7 +117,7 @@ public:
     {
         // version is stored in octet 9
         // which is index 6, since indexes count backwards
-        uint8_t octet9 = data[6];
+        std::uint8_t octet9 = data[6];
         if ( (octet9 & 0xF0) == 0x10 ) {
             return version_time_based;
         } else if ( (octet9 & 0xF0) == 0x20 ) {
@@ -138,7 +138,7 @@ public:
 
 public:
     // or should it be array<uint8_t, 16>
-    uint8_t data[16];
+    std::uint8_t data[16];
 };
 
 bool operator== (uuid const& lhs, uuid const& rhs) BOOST_NOEXCEPT;
@@ -202,4 +202,4 @@ struct is_pod<uuids::uuid> : true_type {};
 #pragma warning(pop) // Restore warnings to previous state.
 #endif
 
-#endif // BOOST_UUID_HPP
+#endif // BOOST_UUID_HPP_INCLUDED

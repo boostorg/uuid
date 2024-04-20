@@ -8,20 +8,19 @@
 // Positive and negative testing for detail::random_provider
 //
 
-#include <boost/array.hpp>
-#include <boost/cstdint.hpp>
-#include <boost/detail/lightweight_test.hpp>
-
 // The mock needs to load first for posix system call redirection to work properly
 #include "mock_random.hpp"
 #include <boost/uuid/detail/random_provider.hpp>
 #include <boost/uuid/uuid.hpp>
 #include <boost/uuid/uuid_io.hpp>
+#include <boost/array.hpp>
+#include <boost/core/lightweight_test.hpp>
 #include <limits>
+#include <cstdint>
 #include <string.h>
 
 
-int main(int, char*[])
+int main()
 {
 #if !defined(BOOST_UUID_TEST_RANDOM_MOCK)   // Positive Testing
 

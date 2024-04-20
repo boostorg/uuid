@@ -10,12 +10,12 @@
 #ifndef BOOST_UUID_BASIC_NAME_GENERATOR_HPP
 #define BOOST_UUID_BASIC_NAME_GENERATOR_HPP
 
-#include <boost/config.hpp>
-#include <boost/cstdint.hpp>
-#include <boost/static_assert.hpp>
 #include <boost/uuid/uuid.hpp>
-#include <cstring> // for strlen, wcslen
+#include <boost/config.hpp>
+#include <boost/static_assert.hpp>
 #include <string>
+#include <cstdint>
+#include <cstring> // for strlen, wcslen
 
 #ifdef BOOST_HAS_PRAGMA_ONCE
 #pragma once

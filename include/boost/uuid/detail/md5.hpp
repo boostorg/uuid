@@ -26,11 +26,11 @@
 #ifndef BOOST_UUID_MD5_HPP
 #define BOOST_UUID_MD5_HPP
 
-#include <boost/cast.hpp>
-#include <boost/config.hpp>
-#include <boost/cstdint.hpp>
 #include <boost/uuid/uuid.hpp> // for version
 #include <boost/predef/other/endian.h>
+#include <boost/cast.hpp>
+#include <boost/config.hpp>
+#include <cstdint>
 #include <string.h>
 
 namespace boost {
@@ -71,7 +71,7 @@ public:
 private:
 
     /* Any 32-bit or wider unsigned integer data type will do */
-    typedef uint32_t MD5_u32plus;
+    typedef std::uint32_t MD5_u32plus;
 
     typedef struct {
         MD5_u32plus lo, hi;

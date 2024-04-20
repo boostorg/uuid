@@ -11,17 +11,17 @@
 #ifndef BOOST_UUID_DETAIL_RANDOM_PROVIDER_HPP
 #define BOOST_UUID_DETAIL_RANDOM_PROVIDER_HPP
 
+#include <boost/uuid/entropy_error.hpp>
 #include <boost/config.hpp>
-#include <boost/cstdint.hpp>
-#include <boost/limits.hpp>
 #include <boost/static_assert.hpp>
 #include <boost/move/core.hpp>
 #include <boost/move/utility_core.hpp>
 #include <boost/type_traits/is_integral.hpp>
 #include <boost/type_traits/is_unsigned.hpp>
-#include <boost/uuid/entropy_error.hpp>
-#include <climits>
 #include <iterator>
+#include <limits>
+#include <cstdint>
+#include <climits>
 
 // Detection of the platform is separated from inclusion of the correct
 // header to facilitate mock testing of the provider implementations.
