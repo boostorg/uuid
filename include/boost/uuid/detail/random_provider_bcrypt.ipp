@@ -8,14 +8,13 @@
 // BCrypt provider for entropy
 //
 
-#include <cstddef>
-#include <boost/config.hpp>
-#include <boost/core/ignore_unused.hpp>
 #include <boost/move/core.hpp>
 #include <boost/numeric/conversion/cast.hpp>
 #include <boost/winapi/bcrypt.hpp>
 #include <boost/winapi/get_last_error.hpp>
 #include <boost/throw_exception.hpp>
+#include <boost/config.hpp>
+#include <cstddef>
 
 #if defined(_MSC_VER) && !defined(BOOST_UUID_DISABLE_AUTO_LINK) && !defined(BOOST_UUID_RANDOM_PROVIDER_NO_LIB)
 #  pragma comment(lib, "bcrypt.lib")
@@ -87,7 +86,7 @@ private:
     {
         if (hProv_)
         {
-            boost::ignore_unused(boost::winapi::BCryptCloseAlgorithmProvider(hProv_, 0));
+            boost::winapi::BCryptCloseAlgorithmProvider(hProv_, 0);
         }
     }
 

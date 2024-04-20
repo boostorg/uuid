@@ -9,18 +9,18 @@
 #ifndef BOOST_UUID_RANDOM_GENERATOR_HPP
 #define BOOST_UUID_RANDOM_GENERATOR_HPP
 
-#include <boost/config.hpp>
+#include <boost/uuid/detail/random_provider.hpp>
+#include <boost/uuid/uuid.hpp>
 #include <boost/assert.hpp>
 #include <boost/move/core.hpp>
 #include <boost/move/utility_core.hpp>
-#include <boost/core/enable_if.hpp>
 #include <boost/random/mersenne_twister.hpp>
 #include <boost/random/uniform_int.hpp>
 #include <boost/random/variate_generator.hpp>
 #include <boost/tti/has_member_function.hpp>
-#include <boost/uuid/detail/random_provider.hpp>
-#include <boost/uuid/uuid.hpp>
+#include <boost/config.hpp>
 #include <limits>
+#include <type_traits>
 
 namespace boost {
 namespace uuids {
@@ -164,7 +164,7 @@ private:
     // meet the post-conditions for the default constructor.
 
     template<class MaybePseudoRandomNumberGenerator>
-    typename boost::enable_if<detail::has_member_function_seed<MaybePseudoRandomNumberGenerator, void> >::type
+    typename std::enable_if<detail::has_member_function_seed<MaybePseudoRandomNumberGenerator, void> >::type
         seed(MaybePseudoRandomNumberGenerator& rng)
     {
         detail::random_provider seeder;
@@ -172,7 +172,7 @@ private:
     }
 
     template<class MaybePseudoRandomNumberGenerator>
-    typename boost::disable_if<detail::has_member_function_seed<MaybePseudoRandomNumberGenerator, void> >::type
+    typename std::enable_if<!detail::has_member_function_seed<MaybePseudoRandomNumberGenerator, void> >::type
         seed(MaybePseudoRandomNumberGenerator&)
     {
     }

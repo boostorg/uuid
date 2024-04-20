@@ -13,7 +13,6 @@
 */
 
 #include <boost/config.hpp>
-#include <boost/core/ignore_unused.hpp>
 #include <boost/move/core.hpp>
 #include <boost/throw_exception.hpp>
 #include <boost/uuid/entropy_error.hpp>
@@ -107,7 +106,7 @@ private:
     {
         if (fd_ >= 0)
         {
-            boost::ignore_unused(BOOST_UUID_RANDOM_PROVIDER_POSIX_IMPL_CLOSE(fd_));
+            BOOST_UUID_RANDOM_PROVIDER_POSIX_IMPL_CLOSE(fd_);
         }
     }
 
