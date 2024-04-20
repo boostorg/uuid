@@ -238,7 +238,7 @@ int main(int, char*[])
     }
 
     { // test is_pod
-        BOOST_TEST_EQ(boost::is_pod<uuid>::value, true);
+        BOOST_TEST_EQ(std::is_pod<uuid>::value, true);
     }
 
     return boost::report_errors();

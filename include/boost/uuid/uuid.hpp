@@ -36,14 +36,6 @@
 #include <boost/uuid/detail/config.hpp>
 #include <cstddef>
 #include <cstdint>
-#ifndef BOOST_UUID_NO_TYPE_TRAITS
-#include <boost/type_traits/is_pod.hpp>
-#include <boost/type_traits/integral_constant.hpp>
-#endif
-
-#ifdef BOOST_HAS_PRAGMA_ONCE
-#pragma once
-#endif
 
 #if defined(_MSC_VER)
 #pragma warning(push) // Save warning settings.
@@ -181,16 +173,6 @@ inline std::size_t hash_value(uuid const& u) BOOST_NOEXCEPT
 }
 
 }} //namespace boost::uuids
-
-#ifndef BOOST_UUID_NO_TYPE_TRAITS
-// type traits specializations
-namespace boost {
-
-template <>
-struct is_pod<uuids::uuid> : true_type {};
-
-} // namespace boost
-#endif
 
 #if defined(BOOST_UUID_USE_SSE2)
 #include <boost/uuid/detail/uuid_x86.ipp>
