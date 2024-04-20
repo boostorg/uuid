@@ -9,6 +9,8 @@ lib bcrypt ;
 project libs/uuid/test
     : requirements
 
+      <warnings>pedantic
+
       # boost.jam defines BOOST_ALL_NO_LIB, this makes library management
       # near-impossible with the platform selection logic in the random_provider
       <target-os>windows:<define>BOOST_UUID_FORCE_AUTO_LINK
