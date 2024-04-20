@@ -65,12 +65,12 @@ public:
 
     random_provider_base& operator= (random_provider_base&& that) BOOST_NOEXCEPT
     {
-		if( this != &that )
-		{
-			destroy();
-			fd_ = that.fd_;
-			that.fd_ = -1;
-		}
+        if( this != &that )
+        {
+            destroy();
+            fd_ = that.fd_;
+            that.fd_ = -1;
+        }
 
         return *this;
     }
