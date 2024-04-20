@@ -12,7 +12,6 @@
 * $Id$
 */
 
-#include <boost/move/core.hpp>
 #include <boost/numeric/conversion/cast.hpp>
 #include <boost/winapi/crypt.hpp>
 #include <boost/winapi/get_last_error.hpp>
@@ -34,9 +33,8 @@ namespace detail {
 
 class random_provider_base
 {
-    BOOST_MOVABLE_BUT_NOT_COPYABLE(random_provider_base)
-
 public:
+
     random_provider_base()
         : hProv_(0)
     {
@@ -53,16 +51,20 @@ public:
         }
     }
 
-    random_provider_base(BOOST_RV_REF(random_provider_base) that) BOOST_NOEXCEPT : hProv_(that.hProv_)
+    random_provider_base(random_provider_base&& that) BOOST_NOEXCEPT : hProv_(that.hProv_)
     {
         that.hProv_ = 0;
     }
 
-    random_provider_base& operator= (BOOST_RV_REF(random_provider_base) that) BOOST_NOEXCEPT
+    random_provider_base& operator= (random_provider_base&& that) BOOST_NOEXCEPT
     {
-        destroy();
-        hProv_ = that.hProv_;
-        that.hProv_ = 0;
+        if( this != &that )
+        {
+            destroy();
+            hProv_ = that.hProv_;
+            that.hProv_ = 0;
+        }
+
         return *this;
     }
 

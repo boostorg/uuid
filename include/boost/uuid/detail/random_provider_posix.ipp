@@ -12,10 +12,9 @@
 * $Id$
 */
 
-#include <boost/config.hpp>
-#include <boost/move/core.hpp>
-#include <boost/throw_exception.hpp>
 #include <boost/uuid/entropy_error.hpp>
+#include <boost/throw_exception.hpp>
+#include <boost/config.hpp>
 #include <cerrno>
 #include <cstddef>
 #include <fcntl.h>    // open
@@ -41,9 +40,8 @@ namespace detail {
 
 class random_provider_base
 {
-    BOOST_MOVABLE_BUT_NOT_COPYABLE(random_provider_base)
-
 public:
+
     random_provider_base()
       : fd_(-1)
     {
@@ -60,16 +58,20 @@ public:
         }
     }
 
-    random_provider_base(BOOST_RV_REF(random_provider_base) that) BOOST_NOEXCEPT : fd_(that.fd_)
+    random_provider_base(random_provider_base&& that) BOOST_NOEXCEPT : fd_(that.fd_)
     {
         that.fd_ = -1;
     }
 
-    random_provider_base& operator= (BOOST_RV_REF(random_provider_base) that) BOOST_NOEXCEPT
+    random_provider_base& operator= (random_provider_base&& that) BOOST_NOEXCEPT
     {
-        destroy();
-        fd_ = that.fd_;
-        that.fd_ = -1;
+		if( this != &that )
+		{
+			destroy();
+			fd_ = that.fd_;
+			that.fd_ = -1;
+		}
+
         return *this;
     }
 

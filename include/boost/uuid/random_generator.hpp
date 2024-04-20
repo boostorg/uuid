@@ -12,8 +12,6 @@
 #include <boost/uuid/detail/random_provider.hpp>
 #include <boost/uuid/uuid.hpp>
 #include <boost/assert.hpp>
-#include <boost/move/core.hpp>
-#include <boost/move/utility_core.hpp>
 #include <boost/random/mersenne_twister.hpp>
 #include <boost/random/uniform_int.hpp>
 #include <boost/random/variate_generator.hpp>
@@ -50,9 +48,8 @@ namespace detail {
 template <typename UniformRandomNumberGenerator>
 class basic_random_generator
 {
-    BOOST_MOVABLE_BUT_NOT_COPYABLE(basic_random_generator)
-
 private:
+
     typedef uniform_int<unsigned long> distribution_type;
     typedef variate_generator<UniformRandomNumberGenerator*, distribution_type> generator_type;
 
@@ -67,8 +64,8 @@ private:
 
         virtual ~impl() {}
 
-        BOOST_DELETED_FUNCTION(impl(impl const&))
-        BOOST_DELETED_FUNCTION(impl& operator= (impl const&))
+        impl(impl const&) = delete;
+        impl& operator= (impl const&) = delete;
     };
 
     struct urng_holder
@@ -96,6 +93,7 @@ private:
 #endif
 
 public:
+
     typedef uuid result_type;
 
     // default constructor creates the random number generator and
@@ -120,16 +118,20 @@ public:
         BOOST_ASSERT(!!gen);
     }
 
-    basic_random_generator(BOOST_RV_REF(basic_random_generator) that) BOOST_NOEXCEPT : m_impl(that.m_impl)
+    basic_random_generator(basic_random_generator&& that) BOOST_NOEXCEPT : m_impl(that.m_impl)
     {
         that.m_impl = 0;
     }
 
-    basic_random_generator& operator= (BOOST_RV_REF(basic_random_generator) that) BOOST_NOEXCEPT
+    basic_random_generator& operator= (basic_random_generator&& that) BOOST_NOEXCEPT
     {
-        delete m_impl;
-        m_impl = that.m_impl;
-        that.m_impl = 0;
+        if( this != &that )
+        {
+            delete m_impl;
+            m_impl = that.m_impl;
+            that.m_impl = 0;
+        }
+
         return *this;
     }
 
@@ -164,7 +166,7 @@ private:
     // meet the post-conditions for the default constructor.
 
     template<class MaybePseudoRandomNumberGenerator>
-    typename std::enable_if<detail::has_member_function_seed<MaybePseudoRandomNumberGenerator, void> >::type
+    typename std::enable_if< detail::has_member_function_seed<MaybePseudoRandomNumberGenerator, void>::value >::type
         seed(MaybePseudoRandomNumberGenerator& rng)
     {
         detail::random_provider seeder;
@@ -172,7 +174,7 @@ private:
     }
 
     template<class MaybePseudoRandomNumberGenerator>
-    typename std::enable_if<!detail::has_member_function_seed<MaybePseudoRandomNumberGenerator, void> >::type
+    typename std::enable_if< !detail::has_member_function_seed<MaybePseudoRandomNumberGenerator, void>::value >::type
         seed(MaybePseudoRandomNumberGenerator&)
     {
     }
@@ -185,23 +187,14 @@ private:
 //!        satisfy the majority of use cases
 class random_generator_pure
 {
-    BOOST_MOVABLE_BUT_NOT_COPYABLE(random_generator_pure)
-
 public:
+
     typedef uuid result_type;
 
-    BOOST_DEFAULTED_FUNCTION(random_generator_pure(), {})
+    random_generator_pure() = default;
 
-    random_generator_pure(BOOST_RV_REF(random_generator_pure) that) BOOST_NOEXCEPT :
-        prov_(boost::move(that.prov_))
-    {
-    }
-
-    random_generator_pure& operator= (BOOST_RV_REF(random_generator_pure) that) BOOST_NOEXCEPT
-    {
-        prov_ = boost::move(that.prov_);
-        return *this;
-    }
+    random_generator_pure(random_generator_pure&& that) = default;
+    random_generator_pure& operator= (random_generator_pure&& that) = default;
 
     //! \returns a random, valid uuid
     //! \throws entropy_error
@@ -213,6 +206,7 @@ public:
     }
 
 private:
+
     detail::random_provider prov_;
 };
 
