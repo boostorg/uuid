@@ -21,19 +21,12 @@
 #include <boost/winapi/get_last_error.hpp>
 #include <boost/throw_exception.hpp>
 
-#if defined(BOOST_UUID_FORCE_AUTO_LINK) || (!defined(BOOST_ALL_NO_LIB) && !defined(BOOST_UUID_RANDOM_PROVIDER_NO_LIB))
-#   if defined(_WIN32_WCE)
-#      define BOOST_LIB_NAME "coredll"
-#   else
-#      define BOOST_LIB_NAME "advapi32"
-#   endif
-#   if defined(BOOST_AUTO_LINK_NOMANGLE)
-#      include <boost/config/auto_link.hpp>
-#   else
-#      define BOOST_AUTO_LINK_NOMANGLE
-#      include <boost/config/auto_link.hpp>
-#      undef BOOST_AUTO_LINK_NOMANGLE
-#   endif
+#if defined(_MSC_VER) && !defined(BOOST_UUID_DISABLE_AUTO_LINK) && !defined(BOOST_UUID_RANDOM_PROVIDER_NO_LIB)
+# if defined(_WIN32_WCE)
+#   pragma comment(lib, "coredll.lib")
+# else
+#   pragma comment(lib, "advapi32.lib")
+# endif
 #endif
 
 namespace boost {

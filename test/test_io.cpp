@@ -11,14 +11,20 @@
 
 #include <boost/uuid/uuid.hpp>
 #include <boost/uuid/uuid_io.hpp>
-#include <boost/detail/lightweight_test.hpp>
+#include <boost/core/lightweight_test.hpp>
 #include <boost/predef/library/c/cloudabi.h>
+#include <boost/config.hpp>
 #include <string>
 #include <sstream>
 #include <iomanip>
 
-#if !BOOST_LIB_C_CLOUDABI
-#include <boost/lexical_cast.hpp>
+#if !BOOST_LIB_C_CLOUDABI && !(defined(BOOST_GCC) && BOOST_GCC < 40800)
+// lexical_cast depends on sprintf which is not available in cloudlibc
+# define HAVE_LEXICAL_CAST
+#endif
+
+#if defined(HAVE_LEXICAL_CAST)
+# include <boost/lexical_cast.hpp>
 #endif
 
 using namespace boost::uuids;
@@ -129,7 +135,7 @@ int main(int, char*[])
     uufail(L"01234567-89AB-CDEF-0123-456789abcdeg");
 #endif
 
-#if !BOOST_LIB_C_CLOUDABI
+#if defined(HAVE_LEXICAL_CAST)
     // lexical_cast depends on sprintf which is not available in cloudlibc
     BOOST_TEST(boost::lexical_cast<std::string>(u1) == std::string("00000000-0000-0000-0000-000000000000"));
     BOOST_TEST(boost::lexical_cast<uuid>("00000000-0000-0000-0000-000000000000") == u1);
