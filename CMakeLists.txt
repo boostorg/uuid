@@ -17,7 +17,6 @@ target_link_libraries(boost_uuid
     Boost::assert
     Boost::config
     Boost::container_hash
-    Boost::core
     Boost::io
     Boost::move
     Boost::numeric_conversion
