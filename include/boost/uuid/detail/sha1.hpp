@@ -13,9 +13,9 @@
 #ifndef BOOST_UUID_SHA1_H
 #define BOOST_UUID_SHA1_H
 
-#include <boost/static_assert.hpp>
-#include <boost/throw_exception.hpp>
+#include <boost/uuid/detail/static_assert.hpp>
 #include <boost/uuid/uuid.hpp> // for version
+#include <boost/throw_exception.hpp>
 #include <cstddef>
 #include <stdexcept>
 #include <string>
@@ -24,8 +24,8 @@ namespace boost {
 namespace uuids {
 namespace detail {
 
-BOOST_STATIC_ASSERT(sizeof(unsigned char)*8 == 8);
-BOOST_STATIC_ASSERT(sizeof(unsigned int)*8 == 32);
+BOOST_UUID_STATIC_ASSERT(sizeof(unsigned char)*8 == 8);
+BOOST_UUID_STATIC_ASSERT(sizeof(unsigned int)*8 == 32);
 
 inline unsigned int left_rotate(unsigned int x, std::size_t n)
 {

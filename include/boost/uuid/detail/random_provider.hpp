@@ -12,8 +12,8 @@
 #define BOOST_UUID_DETAIL_RANDOM_PROVIDER_HPP
 
 #include <boost/uuid/entropy_error.hpp>
+#include <boost/uuid/detail/static_assert.hpp>
 #include <boost/config.hpp>
-#include <boost/static_assert.hpp>
 #include <boost/type_traits/is_integral.hpp>
 #include <boost/type_traits/is_unsigned.hpp>
 #include <iterator>
@@ -55,9 +55,9 @@ public:
     void generate(Iter first, Iter last)
     {
         typedef typename std::iterator_traits<Iter>::value_type value_type;
-        BOOST_STATIC_ASSERT(is_integral<value_type>::value);
-        BOOST_STATIC_ASSERT(is_unsigned<value_type>::value);
-        BOOST_STATIC_ASSERT(sizeof(value_type) * CHAR_BIT >= 32);
+        BOOST_UUID_STATIC_ASSERT(is_integral<value_type>::value);
+        BOOST_UUID_STATIC_ASSERT(is_unsigned<value_type>::value);
+        BOOST_UUID_STATIC_ASSERT(sizeof(value_type) * CHAR_BIT >= 32);
 
         for (; first != last; ++first)
         {

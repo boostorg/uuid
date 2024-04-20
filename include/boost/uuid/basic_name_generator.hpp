@@ -11,8 +11,8 @@
 #define BOOST_UUID_BASIC_NAME_GENERATOR_HPP
 
 #include <boost/uuid/uuid.hpp>
+#include <boost/uuid/detail/static_assert.hpp>
 #include <boost/config.hpp>
-#include <boost/static_assert.hpp>
 #include <string>
 #include <cstdint>
 #include <cstring> // for strlen, wcslen
@@ -75,7 +75,7 @@ private:
     // except for char
     template <typename char_type>
     void process_characters(HashAlgo& hash, char_type const*const characters, std::size_t count) const {
-        BOOST_STATIC_ASSERT(sizeof(uint32_t) >= sizeof(char_type));
+        BOOST_UUID_STATIC_ASSERT(sizeof(uint32_t) >= sizeof(char_type));
 
         for (std::size_t i=0; i<count; i++) {
             std::size_t c = characters[i];
@@ -95,7 +95,7 @@ private:
         digest_type digest;
         hash.get_digest(digest);
 
-        BOOST_STATIC_ASSERT(sizeof(digest_type) >= 16);
+        BOOST_UUID_STATIC_ASSERT(sizeof(digest_type) >= 16);
 
         uuid u;
         for (int i=0; i<4; ++i) {
