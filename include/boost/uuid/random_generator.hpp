@@ -15,7 +15,6 @@
 #include <boost/random/mersenne_twister.hpp>
 #include <boost/random/uniform_int.hpp>
 #include <boost/random/variate_generator.hpp>
-#include <boost/tti/has_member_function.hpp>
 #include <boost/config.hpp>
 #include <limits>
 #include <type_traits>
@@ -39,8 +38,6 @@ namespace detail {
 
         return u;
     }
-
-    BOOST_TTI_HAS_MEMBER_FUNCTION(seed)
 }
 
 //! generate a random-based uuid
@@ -102,7 +99,7 @@ public:
     basic_random_generator() : m_impl(new self_contained_impl())
     {
         // seed the random number generator if it is capable
-        seed(static_cast< self_contained_impl* >(m_impl)->urng);
+        seed(static_cast< self_contained_impl* >(m_impl)->urng, 0);
     }
 
     // keep a reference to a random number generator
@@ -165,17 +162,15 @@ private:
     // basic_random_generator to take any type of UniformRandomNumberGenerator and still
     // meet the post-conditions for the default constructor.
 
-    template<class MaybePseudoRandomNumberGenerator>
-    typename std::enable_if< detail::has_member_function_seed<MaybePseudoRandomNumberGenerator, void>::value >::type
-        seed(MaybePseudoRandomNumberGenerator& rng)
+    template<class MaybePseudoRandomNumberGenerator, class En = decltype( std::declval<MaybePseudoRandomNumberGenerator&>().seed() )>
+    void seed(MaybePseudoRandomNumberGenerator& rng, int)
     {
         detail::random_provider seeder;
         rng.seed(seeder);
     }
 
     template<class MaybePseudoRandomNumberGenerator>
-    typename std::enable_if< !detail::has_member_function_seed<MaybePseudoRandomNumberGenerator, void>::value >::type
-        seed(MaybePseudoRandomNumberGenerator&)
+    void seed(MaybePseudoRandomNumberGenerator&, long)
     {
     }
 
