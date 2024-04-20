@@ -20,12 +20,6 @@
 #include <stdexcept>
 #include <string>
 
-#ifdef BOOST_NO_STDC_NAMESPACE
-namespace std {
-    using ::size_t;
-} // namespace std
-#endif
-
 namespace boost {
 namespace uuids {
 namespace detail {

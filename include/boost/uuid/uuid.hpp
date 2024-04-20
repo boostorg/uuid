@@ -50,13 +50,6 @@
 #pragma warning(disable : 4996) // Disable deprecated std::swap_ranges, std::equal
 #endif
 
-#ifdef BOOST_NO_STDC_NAMESPACE
-namespace std {
-    using ::size_t;
-    using ::ptrdiff_t;
-} //namespace std
-#endif //BOOST_NO_STDC_NAMESPACE
-
 namespace boost {
 namespace uuids {
 

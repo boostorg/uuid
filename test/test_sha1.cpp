@@ -19,13 +19,6 @@
 
 #include "digestutils.hpp"
 
-#ifdef BOOST_NO_STDC_NAMESPACE
-namespace std {
-  using ::strlen;
-  using ::size_t;
-} //namespace std
-#endif
-
 #define BOOST_TEST_SHA1_DIGEST(lhs, rhs) \
     ( boost::uuids::test::test_digest_equal_array(__FILE__, __LINE__, BOOST_CURRENT_FUNCTION, (lhs), (rhs), 20) )
 

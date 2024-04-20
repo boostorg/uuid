@@ -21,14 +21,6 @@
 #pragma once
 #endif
 
-#ifdef BOOST_NO_STDC_NAMESPACE
-namespace std {
-    using ::size_t;
-    using ::strlen;
-    using ::wcslen;
-} //namespace std
-#endif //BOOST_NO_STDC_NAMESPACE
-
 namespace boost {
 namespace uuids {
 
