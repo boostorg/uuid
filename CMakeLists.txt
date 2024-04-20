@@ -21,7 +21,6 @@ target_link_libraries(boost_uuid
     Boost::predef
     Boost::random
     Boost::throw_exception
-    Boost::tti
     Boost::type_traits
     Boost::winapi
 )
