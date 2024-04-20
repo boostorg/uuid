@@ -8,7 +8,7 @@
 // BCrypt provider for entropy
 //
 
-#include <boost/numeric/conversion/cast.hpp>
+#include <boost/uuid/detail/numeric_cast.hpp>
 #include <boost/winapi/bcrypt.hpp>
 #include <boost/winapi/get_last_error.hpp>
 #include <boost/throw_exception.hpp>
@@ -74,7 +74,7 @@ public:
             boost::winapi::BCryptGenRandom(
                 hProv_,
                 static_cast<boost::winapi::PUCHAR_>(buf),
-                boost::numeric_cast<boost::winapi::ULONG_>(siz),
+                detail::numeric_cast<boost::winapi::ULONG_>(siz),
                 0);
 
         if (BOOST_UNLIKELY(status != 0))

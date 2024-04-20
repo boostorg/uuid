@@ -12,7 +12,7 @@
 * $Id$
 */
 
-#include <boost/numeric/conversion/cast.hpp>
+#include <boost/uuid/detail/numeric_cast.hpp>
 #include <boost/winapi/crypt.hpp>
 #include <boost/winapi/get_last_error.hpp>
 #include <boost/throw_exception.hpp>
@@ -80,7 +80,7 @@ public:
     {
         boost::winapi::BOOL_ res = boost::winapi::CryptGenRandom(
             hProv_,
-            boost::numeric_cast<boost::winapi::DWORD_>(siz),
+            detail::numeric_cast<boost::winapi::DWORD_>(siz),
             static_cast<boost::winapi::BYTE_ *>(buf));
         if (BOOST_UNLIKELY(!res))
         {
