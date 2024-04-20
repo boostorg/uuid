@@ -18,7 +18,6 @@ target_link_libraries(boost_uuid
     Boost::config
     Boost::container_hash
     Boost::io
-    Boost::move
     Boost::numeric_conversion
     Boost::predef
     Boost::random
