@@ -20,7 +20,6 @@ target_link_libraries(boost_uuid
     Boost::io
     Boost::predef
     Boost::random
-    Boost::static_assert
     Boost::throw_exception
     Boost::tti
     Boost::type_traits
