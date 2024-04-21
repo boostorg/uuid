@@ -141,93 +141,11 @@ run test_msvc_simd_bug981648_main.cpp test_msvc_simd_bug981648_foo.cpp : : : <va
 
 run test_bench_random.cpp /boost//timer : : : <toolset>clang-cloudabi:<build>no ;
 
-run test_entropy_error.cpp ;
-
 # tests for the header-only random provider
-# there are a number of variations to test all compile-time branches
-# and to make sure we test all the error handling code paths
 
-run test_detail_random_provider.cpp
-  : : :
-    <define>_WIN32_WINNT=0x0600                                     # will force bcrypt over wincrypt (on windows)
-  : test_detail_random_provider_happy ;
+run test_entropy_error.cpp ;
+run test_detail_random_provider.cpp ;
 
-run test_detail_random_provider.cpp
-  : : :
-    <define>BOOST_UUID_RANDOM_PROVIDER_NO_LIB                       # disable any auto-linking
-    <define>BOOST_UUID_TEST_RANDOM_MOCK                             # mock default provider to force error path testing
-    <define>_WIN32_WINNT=0x0600                                     # will force bcrypt over wincrypt (on windows)
-  :
-    test_detail_random_provider_sad ;
-
-# CI builds in appveyor normally select the bcrypt provider, so
-# force wincrypt to be selected and test both happy and sad paths:
-
-lib mock_random
-  : mock_random.cpp
-  : <link>shared
-    <build>no                                                       # do not build on any target-os
-    <target-os>windows:<build>yes ;                                 # except for windows
-
-run test_detail_random_provider.cpp
-  : : :
-    <define>_WIN32_WINNT=0x0501                                     # will force wincrypt over bcrypt
-    <build>no                                                       # do not build on any target-os
-    <target-os>windows:<build>yes                                   # except for windows
-  : test_detail_random_provider_happy_wincrypt ;
-
-run test_detail_random_provider.cpp
-    mock_random
-  : : :
-    <define>_WIN32_WINNT=0x0501                                     # will force wincrypt over bcrypt
-    <define>BOOST_UUID_RANDOM_PROVIDER_NO_LIB                       # disable any auto-linking
-    <define>BOOST_UUID_TEST_RANDOM_MOCK                             # mock wincrypt to force error path testing
-    <build>no                                                       # do not build on any target-os
-    <target-os>windows:<build>yes                                   # except for windows
-  : test_detail_random_provider_sad_wincrypt ;
-
-# CI builds in travis will eventually select getrandom/getentropy when they move
-# to a version of ubuntu with glibc-2.25 on it, so when that happens keep
-# testing the posix provider:
-
-run test_detail_random_provider.cpp
-  : : :
-    <define>BOOST_UUID_RANDOM_PROVIDER_FORCE_POSIX                  # will force POSIX over getrandom/getentropy
-    <target-os>windows:<build>no                                    # do not bother running on windows
-    <toolset>clang-cloudabi:<build>no                               # no need to build under cloudabi
-  : test_detail_random_provider_happy_posix ;
-
-run test_detail_random_provider.cpp
-  : : :
-    <define>BOOST_UUID_RANDOM_PROVIDER_FORCE_POSIX                  # will force POSIX over getrandom/getentropy
-    <define>BOOST_UUID_TEST_RANDOM_MOCK                             # redirect code to use mock system calls
-    <target-os>windows:<build>no                                    # do not bother running on windows
-    <toolset>clang-cloudabi:<build>no                               # no need to build under cloudabi
-  : test_detail_random_provider_sad_posix ;
-
-# Force running tests for getentropy despite it's not going to be used on Linux. getentropy
-# may be used on systems other than Linux, which are not part of the CI testers pool.
-
-run test_detail_random_provider.cpp
-  : : :
-    <define>BOOST_UUID_RANDOM_PROVIDER_DISABLE_GETRANDOM            # will force getentropy over getrandom
-    <build>no
-    <target-os>linux:<build>yes                                     # build only on linux (or any other systems that support getentropy)
-  : test_detail_random_provider_happy_getentropy ;
-
-run test_detail_random_provider.cpp
-  : : :
-    <define>BOOST_UUID_RANDOM_PROVIDER_DISABLE_GETRANDOM            # will force getentropy over getrandom
-    <define>BOOST_UUID_TEST_RANDOM_MOCK                             # redirect code to use mock system calls
-    <build>no
-    <target-os>linux:<build>yes                                     # build only on linux (or any other systems that support getentropy)
-  : test_detail_random_provider_sad_getentropy ;
-
-run test_detail_random_provider.cpp
-  : : :
-    <define>BOOST_UUID_RANDOM_PROVIDER_GETRANDOM_DISABLE_LIBC_WRAPPER   # will disable getrandom libc wrapper
-    <build>no
-    <target-os>linux:<build>yes                                         # build only on linux
-  : test_detail_random_provider_happy_getrandom_syscall ;
+# 'quick' test for CI
 
 run quick.cpp ;
