@@ -27,7 +27,7 @@ boost_test(TYPE run SOURCES test_tagging.cpp)
 boost_test(TYPE run SOURCES test_uuid_class.cpp)
 boost_test(TYPE run SOURCES test_uuid_in_map.cpp)
 
-boost_test(TYPE run SOURCES test_hash.cpp)
+boost_test(TYPE run SOURCES test_hash.cpp LINK_LIBRARIES Boost::container_hash)
 boost_test(TYPE run SOURCES test_hash_value.cpp)
 boost_test(TYPE run SOURCES test_detail_endian.cpp)
 boost_test(TYPE run SOURCES test_boost_unordered.cpp LINK_LIBRARIES Boost::unordered)
