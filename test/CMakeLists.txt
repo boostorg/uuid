@@ -10,7 +10,7 @@ endif()
 
 set(BOOST_TEST_LINK_LIBRARIES Boost::uuid Boost::core)
 
-boost_test(TYPE run SOURCES test_uuid.cpp)
+boost_test(TYPE run SOURCES test_uuid.cpp LINK_LIBRARIES Boost::container_hash)
 boost_test(TYPE run SOURCES test_uuid_no_simd.cpp)
 
 boost_test(TYPE run SOURCES test_include1.cpp test_include2.cpp)

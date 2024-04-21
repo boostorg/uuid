@@ -9,12 +9,12 @@
 
 //  libs/uuid/test/test_uuid.cpp  -------------------------------//
 
-#include <iostream>
 #include <boost/uuid/uuid.hpp>
 #include <boost/uuid/uuid_io.hpp>
-#include <boost/detail/lightweight_test.hpp>
-#include <boost/functional/hash.hpp>
+#include <boost/container_hash/hash.hpp>
+#include <boost/core/lightweight_test.hpp>
 #include <boost/current_function.hpp>
+#include <iostream>
 
 void test_uuid_equal_array(char const * file, int line, char const * function,
                            boost::uuids::uuid const& lhs, const unsigned char (&rhs)[16])
