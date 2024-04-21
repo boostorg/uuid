@@ -40,17 +40,13 @@
 #include <cstddef>
 #include <cstdint>
 
-#if defined(_MSC_VER)
-#pragma warning(push) // Save warning settings.
-#pragma warning(disable : 4996) // Disable deprecated std::swap_ranges, std::equal
-#endif
-
 namespace boost {
 namespace uuids {
 
 struct uuid
 {
 public:
+
     typedef std::uint8_t value_type;
     typedef std::uint8_t& reference;
     typedef std::uint8_t const& const_reference;
@@ -66,6 +62,7 @@ public:
     static BOOST_CONSTEXPR size_type static_size() BOOST_NOEXCEPT { return 16; }
 
 public:
+
     iterator begin() BOOST_NOEXCEPT { return data; }
     const_iterator begin() const BOOST_NOEXCEPT { return data; }
     iterator end() BOOST_NOEXCEPT { return data+size(); }
@@ -82,6 +79,7 @@ public:
         variant_microsoft, // Microsoft Corporation backward compatibility
         variant_future // future definition
     };
+
     variant_type variant() const BOOST_NOEXCEPT
     {
         // variant is stored in octet 7
@@ -108,6 +106,7 @@ public:
         version_random_number_based = 4,
         version_name_based_sha1 = 5
     };
+
     version_type version() const BOOST_NOEXCEPT
     {
         // version is stored in octet 9
@@ -132,12 +131,12 @@ public:
     void swap(uuid& rhs) BOOST_NOEXCEPT;
 
 public:
-    // or should it be array<uint8_t, 16>
+
     std::uint8_t data[16];
 };
 
-bool operator== (uuid const& lhs, uuid const& rhs) BOOST_NOEXCEPT;
-bool operator< (uuid const& lhs, uuid const& rhs) BOOST_NOEXCEPT;
+inline bool operator== (uuid const& lhs, uuid const& rhs) BOOST_NOEXCEPT;
+inline bool operator< (uuid const& lhs, uuid const& rhs) BOOST_NOEXCEPT;
 
 inline bool operator!=(uuid const& lhs, uuid const& rhs) BOOST_NOEXCEPT
 {
@@ -210,10 +209,6 @@ namespace std
 #include <boost/uuid/detail/uuid_x86.ipp>
 #else
 #include <boost/uuid/detail/uuid_generic.ipp>
-#endif
-
-#if defined(_MSC_VER)
-#pragma warning(pop) // Restore warnings to previous state.
 #endif
 
 #endif // BOOST_UUID_HPP_INCLUDED
