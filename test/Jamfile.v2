@@ -89,7 +89,7 @@ run test_random_generator.cpp ;
 
 # test serializing uuids
 
-run test_serialization.cpp /boost//serialization ;
+run test_serialization.cpp /boost//serialization : : : <undefined-sanitizer>norecover:<link>static ;
 # run test_wserialization.cpp /boost//serialization /boost//wserialization ;
 
 # test tagging an object
