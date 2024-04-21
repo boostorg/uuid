@@ -19,7 +19,6 @@ config
 container_hash
 io
 predef
-random
 throw_exception
 type_traits
 winapi
@@ -28,32 +27,7 @@ winapi
 
 describe
 mp11
-array
-core
-dynamic_bitset
-integer
-range
 static_assert
-system
-utility
-move
-concept_check
-conversion
-detail
-iterator
-mpl
-optional
-preprocessor
-regex
-tuple
-variant2
-smart_ptr
-function_types
-fusion
-functional
-typeof
-function
-bind
 )
 
 foreach(dep IN LISTS deps)
