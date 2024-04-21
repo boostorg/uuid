@@ -1,3 +1,6 @@
+#ifndef BOOST_UUID_BASIC_NAME_GENERATOR_HPP_INCLUDED
+#define BOOST_UUID_BASIC_NAME_GENERATOR_HPP_INCLUDED
+
 // Boost basic_name_generator.hpp header file  -----------------------//
 
 // Copyright 2010 Andy Tompkins.
@@ -6,9 +9,6 @@
 // Distributed under the Boost Software License, Version 1.0. (See
 // accompanying file LICENSE_1_0.txt or copy at
 //  https://www.boost.org/LICENSE_1_0.txt)
-
-#ifndef BOOST_UUID_BASIC_NAME_GENERATOR_HPP
-#define BOOST_UUID_BASIC_NAME_GENERATOR_HPP
 
 #include <boost/uuid/uuid.hpp>
 #include <boost/uuid/detail/static_assert.hpp>
@@ -155,4 +155,4 @@ BOOST_FORCEINLINE uuid x500dn() {
 } // uuids
 } // boost
 
-#endif // BOOST_UUID_BASIC_NAME_GENERATOR_HPP
+#endif // BOOST_UUID_BASIC_NAME_GENERATOR_HPP_INCLUDED

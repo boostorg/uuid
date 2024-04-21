@@ -1,12 +1,12 @@
+#ifndef BOOST_UUID_STRING_GENERATOR_HPP_INCLUDED
+#define BOOST_UUID_STRING_GENERATOR_HPP_INCLUDED
+
 // Boost string_generator.hpp header file  ----------------------------------------------//
 
 // Copyright 2010 Andy Tompkins.
 // Distributed under the Boost Software License, Version 1.0. (See
 // accompanying file LICENSE_1_0.txt or copy at
 // https://www.boost.org/LICENSE_1_0.txt)
-
-#ifndef BOOST_UUID_STRING_GENERATOR_HPP
-#define BOOST_UUID_STRING_GENERATOR_HPP
 
 #include <boost/uuid/uuid.hpp>
 #include <string>
@@ -188,5 +188,4 @@ private:
 
 }} // namespace boost::uuids
 
-#endif //BOOST_UUID_STRING_GENERATOR_HPP
-
+#endif // BOOST_UUID_STRING_GENERATOR_HPP_INCLUDED

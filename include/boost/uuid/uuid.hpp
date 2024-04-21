@@ -1,5 +1,5 @@
-#ifndef BOOST_UUID_HPP_INCLUDED
-#define BOOST_UUID_HPP_INCLUDED
+#ifndef BOOST_UUID_UUID_HPP_INCLUDED
+#define BOOST_UUID_UUID_HPP_INCLUDED
 
 // Boost uuid.hpp header file  ----------------------------------------------//
 
@@ -211,4 +211,4 @@ namespace std
 #include <boost/uuid/detail/uuid_generic.ipp>
 #endif
 
-#endif // BOOST_UUID_HPP_INCLUDED
+#endif // BOOST_UUID_UUID_HPP_INCLUDED

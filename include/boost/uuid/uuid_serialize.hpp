@@ -1,5 +1,5 @@
-#ifndef BOOST_UUID_SERIALIZE_HPP_INCLUDED
-#define BOOST_UUID_SERIALIZE_HPP_INCLUDED
+#ifndef BOOST_UUID_UUID_SERIALIZE_HPP_INCLUDED
+#define BOOST_UUID_UUID_SERIALIZE_HPP_INCLUDED
 
 // Copyright 2007 Andy Tompkins.
 // Distributed under the Boost Software License, Version 1.0.
@@ -10,4 +10,4 @@
 
 #include <boost/uuid/uuid.hpp>
 
-#endif // BOOST_UUID_SERIALIZE_HPP_INCLUDED
+#endif // BOOST_UUID_UUID_SERIALIZE_HPP_INCLUDED

@@ -1,3 +1,6 @@
+#ifndef BOOST_UUID_NAME_GENERATOR_SHA1_HPP_INCLUDED
+#define BOOST_UUID_NAME_GENERATOR_SHA1_HPP_INCLUDED
+
 // Boost name_generator_sha1.hpp header file  ------------------------//
 
 // Copyright 2010 Andy Tompkins.
@@ -6,9 +9,6 @@
 // Distributed under the Boost Software License, Version 1.0. (See
 // accompanying file LICENSE_1_0.txt or copy at
 //  https://www.boost.org/LICENSE_1_0.txt)
-
-#ifndef BOOST_UUID_NAME_GENERATOR_SHA1_HPP
-#define BOOST_UUID_NAME_GENERATOR_SHA1_HPP
 
 #include <boost/uuid/basic_name_generator.hpp>
 #include <boost/uuid/detail/sha1.hpp>
@@ -23,4 +23,4 @@ typedef basic_name_generator<detail::sha1> name_generator_sha1;
 } // uuids
 } // boost
 
-#endif // BOOST_UUID_NAME_GENERATOR_SHA1_HPP
+#endif // BOOST_UUID_NAME_GENERATOR_SHA1_HPP_INCLUDED

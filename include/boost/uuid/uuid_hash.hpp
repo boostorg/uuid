@@ -1,5 +1,5 @@
-#ifndef BOOST_UUID_HASH_HPP_INCLUDED
-#define BOOST_UUID_HASH_HPP_INCLUDED
+#ifndef BOOST_UUID_UUID_HASH_HPP_INCLUDED
+#define BOOST_UUID_UUID_HASH_HPP_INCLUDED
 
 // Copyright (c) 2018 James E. King III
 // Distributed under the Boost Software License, Version 1.0.
@@ -10,4 +10,4 @@
 
 #include <boost/uuid/uuid.hpp>
 
-#endif // #ifndef BOOST_UUID_HASH_HPP_INCLUDED
+#endif // #ifndef BOOST_UUID_UUID_HASH_HPP_INCLUDED

@@ -1,3 +1,6 @@
+#ifndef BOOST_UUID_ENTROPY_ERROR_HPP_INCLUDED
+#define BOOST_UUID_ENTROPY_ERROR_HPP_INCLUDED
+
 //
 // Copyright (c) 2017, 2018 James E. King III
 //
@@ -7,9 +10,6 @@
 //
 // Entropy error class
 //
-
-#ifndef BOOST_UUID_RANDOM_ENTROPY_ERROR_HPP
-#define BOOST_UUID_RANDOM_ENTROPY_ERROR_HPP
 
 #include <boost/config.hpp>
 #include <stdexcept>
@@ -43,4 +43,4 @@ private:
 } // uuids
 } // boost
 
-#endif // BOOST_UUID_RANDOM_ENTROPY_ERROR_HPP
+#endif // BOOST_UUID_ENTROPY_ERROR_HPP_INCLUDED
