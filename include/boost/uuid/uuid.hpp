@@ -34,6 +34,7 @@
 //  29 Apr 2013 - added support for noexcept and constexpr, added optimizations for SSE/AVX
 
 #include <boost/uuid/detail/config.hpp>
+#include <boost/type_traits/integral_constant.hpp> // for Serialization support
 #include <boost/config.hpp>
 #include <typeindex> // cheapest std::hash
 #include <cstddef>
@@ -175,6 +176,21 @@ inline std::size_t hash_value(uuid const& u) BOOST_NOEXCEPT
 }
 
 }} //namespace boost::uuids
+
+// Boost.Serialization support
+
+// BOOST_CLASS_IMPLEMENTATION(boost::uuids::uuid, boost::serialization::primitive_type)
+
+namespace boost
+{
+namespace serialization
+{
+
+template<class T> struct implementation_level_impl;
+template<> struct implementation_level_impl<const uuids::uuid>: boost::integral_constant<int, 1> {};
+
+} // namespace serialization
+} // namespace boost
 
 // std::hash support
 
