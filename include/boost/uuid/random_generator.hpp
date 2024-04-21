@@ -1,3 +1,6 @@
+#ifndef BOOST_UUID_RANDOM_GENERATOR_HPP_INCLUDED
+#define BOOST_UUID_RANDOM_GENERATOR_HPP_INCLUDED
+
 // Boost random_generator.hpp header file  ----------------------------------------------//
 
 // Copyright 2010 Andy Tompkins.
@@ -6,18 +9,13 @@
 // accompanying file LICENSE_1_0.txt or copy at
 // https://www.boost.org/LICENSE_1_0.txt)
 
-#ifndef BOOST_UUID_RANDOM_GENERATOR_HPP
-#define BOOST_UUID_RANDOM_GENERATOR_HPP
-
 #include <boost/uuid/detail/random_provider.hpp>
 #include <boost/uuid/uuid.hpp>
 #include <boost/assert.hpp>
-#include <boost/random/mersenne_twister.hpp>
-#include <boost/random/uniform_int.hpp>
-#include <boost/random/variate_generator.hpp>
 #include <boost/config.hpp>
 #include <limits>
 #include <type_traits>
+#include <random>
 
 namespace boost {
 namespace uuids {
@@ -47,19 +45,19 @@ class basic_random_generator
 {
 private:
 
-    typedef uniform_int<unsigned long> distribution_type;
-    typedef variate_generator<UniformRandomNumberGenerator*, distribution_type> generator_type;
+    typedef std::uniform_int_distribution<unsigned long> distribution_type;
 
     struct impl
     {
-        generator_type generator;
+        UniformRandomNumberGenerator* purng;
+        distribution_type dist;
 
         explicit impl(UniformRandomNumberGenerator* purng_arg) :
-            generator(purng_arg, distribution_type((std::numeric_limits<unsigned long>::min)(), (std::numeric_limits<unsigned long>::max)()))
+            purng(purng_arg), dist((std::numeric_limits<unsigned long>::min)(), (std::numeric_limits<unsigned long>::max)())
         {
         }
 
-        virtual ~impl() {}
+        virtual ~impl() = default;
 
         impl(impl const&) = delete;
         impl& operator= (impl const&) = delete;
@@ -141,11 +139,11 @@ public:
     {
         result_type u;
 
-        int i=0;
-        unsigned long random_value = m_impl->generator();
+        int i = 0;
+        unsigned long random_value = m_impl->dist( *m_impl->purng );
         for (uuid::iterator it = u.begin(), end = u.end(); it != end; ++it, ++i) {
             if (i==sizeof(unsigned long)) {
-                random_value = m_impl->generator();
+                random_value = m_impl->dist( *m_impl->purng );
                 i = 0;
             }
 
@@ -206,12 +204,12 @@ private:
 };
 
 #if defined(BOOST_UUID_RANDOM_GENERATOR_COMPAT)
-typedef basic_random_generator<mt19937> random_generator;
+typedef basic_random_generator<std::mt19937> random_generator;
 #else
 typedef random_generator_pure random_generator;
-typedef basic_random_generator<mt19937> random_generator_mt19937;
+typedef basic_random_generator<std::mt19937> random_generator_mt19937;
 #endif
 
 }} // namespace boost::uuids
 
-#endif // BOOST_UUID_RANDOM_GENERATOR_HPP
+#endif // BOOST_UUID_RANDOM_GENERATOR_HPP_INCLUDED

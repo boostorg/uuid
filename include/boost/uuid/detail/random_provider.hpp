@@ -47,6 +47,8 @@ public:
     random_provider(random_provider&& that) = default;
     random_provider& operator= (random_provider&& that) = default;
 
+    typedef std::uint32_t result_type;
+
     //! Leverage the provider as a SeedSeq for
     //! PseudoRandomNumberGeneration seeing.
     //! \note: See Boost.Random documentation for more details
@@ -54,14 +56,16 @@ public:
     void generate(Iter first, Iter last)
     {
         typedef typename std::iterator_traits<Iter>::value_type value_type;
+
         BOOST_UUID_STATIC_ASSERT(std::is_integral<value_type>::value);
         BOOST_UUID_STATIC_ASSERT(std::is_unsigned<value_type>::value);
         BOOST_UUID_STATIC_ASSERT(sizeof(value_type) * CHAR_BIT >= 32);
 
         for (; first != last; ++first)
         {
-            get_random_bytes(&*first, sizeof(*first));
-            *first &= (std::numeric_limits<boost::uint32_t>::max)();
+            std::uint32_t tmp;
+            get_random_bytes( &tmp, sizeof( tmp ) );
+            *first = tmp;
         }
     }
 
