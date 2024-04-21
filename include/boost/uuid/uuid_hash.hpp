@@ -8,21 +8,13 @@
 // std::hash support for uuid
 //
 
-#ifndef BOOST_UUID_HASH_HPP
-#define BOOST_UUID_HASH_HPP
+#ifndef BOOST_UUID_HASH_HPP_INCLUDED
+#define BOOST_UUID_HASH_HPP_INCLUDED
 
-#include <boost/config.hpp>
-#include <boost/container_hash/hash.hpp>
 #include <boost/uuid/uuid.hpp>
-
-#ifdef BOOST_HAS_PRAGMA_ONCE
-#pragma once
-#endif
-
-#ifndef BOOST_NO_CXX11_HDR_FUNCTIONAL
-
+#include <boost/config.hpp>
+#include <typeindex> // cheapest std::hash
 #include <cstddef>
-#include <functional>
 
 namespace std
 {
@@ -36,5 +28,4 @@ namespace std
     };
 }
 
-#endif /* !BOOST_NO_CXX11_HDR_FUNCTIONAL */
-#endif /* !BOOST_UUID_HASH_HPP */
+#endif // #ifndef BOOST_UUID_HASH_HPP_INCLUDED
