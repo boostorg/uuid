@@ -4,17 +4,9 @@
 # accompanying file LICENSE_1_0.txt or copy at
 # https://www.boost.org/LICENSE_1_0.txt)
 
-lib bcrypt ;
-
-project libs/uuid/test
+project
     : requirements
-
       <warnings>pedantic
-
-      <target-os>windows,<toolset>gcc:<library>bcrypt
-
-      # boost::random needs this setting for a warning free build:
-      <toolset>msvc:<define>_SCL_SECURE_NO_WARNINGS
 ;
 
 import os ;
