@@ -33,6 +33,8 @@
 //  02 Dec 2009 - removed BOOST_STATIC_CONSTANT - not all compilers like it
 //  29 Apr 2013 - added support for noexcept and constexpr, added optimizations for SSE/AVX
 
+#include <boost/uuid/detail/endian.hpp>
+#include <boost/uuid/detail/hash_mix.hpp>
 #include <boost/uuid/detail/config.hpp>
 #include <boost/type_traits/integral_constant.hpp> // for Serialization support
 #include <boost/config.hpp>
@@ -162,16 +164,18 @@ inline void swap(uuid& lhs, uuid& rhs) BOOST_NOEXCEPT
     lhs.swap(rhs);
 }
 
-// This is equivalent to boost::hash_range(u.begin(), u.end());
-inline std::size_t hash_value(uuid const& u) BOOST_NOEXCEPT
-{
-    std::size_t seed = 0;
-    for(uuid::const_iterator i=u.begin(), e=u.end(); i != e; ++i)
-    {
-        seed ^= static_cast<std::size_t>(*i) + 0x9e3779b9 + (seed << 6) + (seed >> 2);
-    }
+// hash_value
 
-    return seed;
+inline std::size_t hash_value( uuid const& u ) BOOST_NOEXCEPT
+{
+    std::uint64_t r = 0;
+
+    r = detail::hash_mix_mx( r + detail::load_little_u32( u.data +  0 ) );
+    r = detail::hash_mix_mx( r + detail::load_little_u32( u.data +  4 ) );
+    r = detail::hash_mix_mx( r + detail::load_little_u32( u.data +  8 ) );
+    r = detail::hash_mix_mx( r + detail::load_little_u32( u.data + 12 ) );
+
+    return static_cast<std::size_t>( detail::hash_mix_fmx( r ) );
 }
 
 }} //namespace boost::uuids
