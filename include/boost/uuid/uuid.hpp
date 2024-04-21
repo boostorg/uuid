@@ -34,6 +34,8 @@
 //  29 Apr 2013 - added support for noexcept and constexpr, added optimizations for SSE/AVX
 
 #include <boost/uuid/detail/config.hpp>
+#include <boost/config.hpp>
+#include <typeindex> // cheapest std::hash
 #include <cstddef>
 #include <cstdint>
 
@@ -173,6 +175,20 @@ inline std::size_t hash_value(uuid const& u) BOOST_NOEXCEPT
 }
 
 }} //namespace boost::uuids
+
+// std::hash support
+
+namespace std
+{
+    template<>
+    struct hash<boost::uuids::uuid>
+    {
+        std::size_t operator () (const boost::uuids::uuid& value) const BOOST_NOEXCEPT
+        {
+            return boost::uuids::hash_value(value);
+        }
+    };
+}
 
 #if defined(BOOST_UUID_USE_SSE2)
 #include <boost/uuid/detail/uuid_x86.ipp>

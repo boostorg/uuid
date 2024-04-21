@@ -8,20 +8,13 @@
 // std::hash support for uuid
 //
 
-#include <boost/config.hpp>
-#include <boost/core/lightweight_test.hpp>
-#include <boost/uuid/string_generator.hpp>
 #include <boost/uuid/uuid.hpp>
-#include <boost/uuid/uuid_hash.hpp>
-#include <iostream>
-
-#if !defined(BOOST_NO_CXX11_HDR_UNORDERED_SET) && !defined(BOOST_NO_CXX11_HDR_FUNCTIONAL)
+#include <boost/uuid/string_generator.hpp>
+#include <boost/core/lightweight_test.hpp>
 #include <unordered_set>
-#endif
 
-int main(int, char*[])
+int main()
 {
-#if !defined(BOOST_NO_CXX11_HDR_UNORDERED_SET) && !defined(BOOST_NO_CXX11_HDR_FUNCTIONAL)
     using namespace boost::uuids;
     string_generator gen;
 
@@ -38,8 +31,4 @@ int main(int, char*[])
     BOOST_TEST_EQ(uns.size(), 2);
 
     return boost::report_errors();
-#else
-    std::cout << "test skipped - no library support for std::hash or std::unordered_set" << std::endl;
-    return 0;
-#endif
 }
