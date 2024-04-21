@@ -101,9 +101,14 @@ run test_tagging.cpp ;
 run test_uuid_class.cpp ;
 run test_uuid_in_map.cpp ;
 
-# test hash functions
+# test hashing support
 
 run test_hash.cpp ;
+run test_boost_unordered.cpp ;
+run test_std_unordered.cpp ;
+
+# test hash functions
+
 run test_md5.cpp ;
 run test_md5.cpp : : : <define>BOOST_UUID_COMPAT_PRE_1_71_MD5 : test_md5_pre_1_71_compat ;
 run test_sha1.cpp ;
