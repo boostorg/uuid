@@ -16,7 +16,6 @@ target_link_libraries(boost_uuid
   INTERFACE
     Boost::assert
     Boost::config
-    Boost::container_hash
     Boost::io
     Boost::predef
     Boost::throw_exception
