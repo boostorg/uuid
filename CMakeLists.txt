@@ -19,7 +19,6 @@ target_link_libraries(boost_uuid
     Boost::container_hash
     Boost::io
     Boost::predef
-    Boost::random
     Boost::throw_exception
     Boost::type_traits
     Boost::winapi
