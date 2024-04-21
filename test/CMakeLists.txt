@@ -26,6 +26,9 @@ boost_test(TYPE run SOURCES test_uuid_class.cpp)
 boost_test(TYPE run SOURCES test_uuid_in_map.cpp)
 
 boost_test(TYPE run SOURCES test_hash.cpp)
+boost_test(TYPE run SOURCES test_boost_unordered.cpp LINK_LIBRARIES Boost::unordered)
+boost_test(TYPE run SOURCES test_std_unordered.cpp)
+
 boost_test(TYPE run SOURCES test_md5.cpp)
 boost_test(TYPE run SOURCES test_sha1.cpp)
 
