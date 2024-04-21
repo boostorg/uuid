@@ -16,7 +16,6 @@ set(deps
 
 assert
 config
-container_hash
 io
 predef
 throw_exception
@@ -25,8 +24,6 @@ winapi
 
 # Secondary dependencies
 
-describe
-mp11
 static_assert
 )
 
