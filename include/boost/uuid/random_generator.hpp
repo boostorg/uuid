@@ -13,9 +13,11 @@
 #include <boost/uuid/uuid.hpp>
 #include <boost/assert.hpp>
 #include <boost/config.hpp>
-#include <limits>
 #include <type_traits>
 #include <random>
+#include <limits>
+#include <cstring>
+#include <cstdint>
 
 namespace boost {
 namespace uuids {
@@ -194,7 +196,12 @@ public:
     result_type operator()()
     {
         result_type result;
-        prov_.get_random_bytes(&result, sizeof(result_type));
+
+        std::uint32_t tmp[ 4 ];
+        prov_.generate( tmp + 0, tmp + 4 );
+
+        std::memcpy( result.data, tmp, 16 );
+
         return detail::set_uuid_random_vv(result);
     }
 
