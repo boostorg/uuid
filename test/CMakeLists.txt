@@ -4,8 +4,6 @@
 
 include(BoostTest OPTIONAL RESULT_VARIABLE HAVE_BOOST_TEST)
 
-include(BoostTest OPTIONAL RESULT_VARIABLE HAVE_BOOST_TEST)
-
 if(NOT HAVE_BOOST_TEST)
   return()
 endif()
@@ -20,7 +18,7 @@ boost_test(TYPE run SOURCES test_io.cpp LINK_LIBRARIES Boost::lexical_cast)
 boost_test(TYPE run SOURCES test_nil_generator.cpp)
 boost_test(TYPE run SOURCES test_name_generator.cpp)
 boost_test(TYPE run SOURCES test_string_generator.cpp)
-boost_test(TYPE run SOURCES test_random_generator.cpp)
+boost_test(TYPE run SOURCES test_random_generator.cpp LINK_LIBRARIES Boost::random)
 
 boost_test(TYPE run SOURCES test_tagging.cpp)
 
@@ -33,6 +31,8 @@ boost_test(TYPE run SOURCES test_sha1.cpp)
 
 boost_test(TYPE run SOURCES test_entropy_error.cpp)
 
-boost_test(TYPE run SOURCES test_detail_random_provider.cpp)
+boost_test(TYPE run SOURCES test_detail_random_provider.cpp LINK_LIBRARIES Boost::array)
 
 boost_test(TYPE run SOURCES test_serialization.cpp LINK_LIBRARIES Boost::serialization)
+
+boost_test(TYPE run SOURCES quick.cpp)
