@@ -13,6 +13,8 @@
 
 #include <boost/uuid/nil_generator.hpp>
 #include <boost/uuid/string_generator.hpp>
+#include <boost/uuid/name_generator_sha1.hpp>
+#include <boost/uuid/name_generator_md5.hpp>
 #include <boost/uuid/name_generator.hpp>
 #include <boost/uuid/random_generator.hpp>
 
