@@ -13,10 +13,10 @@
 //  28 Nov 2009 - disabled deprecated warnings for MSVC
 
 #include <boost/uuid/uuid.hpp>
+#include <boost/io/ios_state.hpp>
 #include <ios>
 #include <ostream>
 #include <istream>
-#include <boost/io/ios_state.hpp>
 #include <locale>
 #include <algorithm>
 

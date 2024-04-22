@@ -9,13 +9,13 @@
 // https://www.boost.org/LICENSE_1_0.txt)
 
 #include <boost/uuid/uuid.hpp>
+#include <boost/throw_exception.hpp>
+#include <boost/config.hpp>
 #include <string>
 #include <cstring> // for strlen, wcslen
 #include <iterator>
 #include <algorithm> // for find
 #include <stdexcept>
-#include <boost/throw_exception.hpp>
-#include <boost/config.hpp>
 
 namespace boost {
 namespace uuids {

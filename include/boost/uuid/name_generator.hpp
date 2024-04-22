@@ -10,7 +10,6 @@
 // accompanying file LICENSE_1_0.txt or copy at
 //  https://www.boost.org/LICENSE_1_0.txt)
 
-#include <boost/config.hpp>
 #include <boost/uuid/name_generator_sha1.hpp>
 
 namespace boost {
