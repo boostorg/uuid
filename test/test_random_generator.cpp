@@ -9,14 +9,16 @@
 
 //  libs/uuid/test/test_random_generator.cpp  -------------------------------//
 
+#include <boost/uuid/random_generator.hpp>
+#include <boost/uuid/entropy_error.hpp>
+#include <boost/uuid/uuid_io.hpp>
+#include <boost/uuid/uuid.hpp>
 #include <boost/core/ignore_unused.hpp>
 #include <boost/core/lightweight_test.hpp>
 #include <boost/predef/library/c/cloudabi.h>
-#include <boost/random.hpp>
-#include <boost/uuid/entropy_error.hpp>
-#include <boost/uuid/random_generator.hpp>
-#include <boost/uuid/uuid_io.hpp>
-#include <boost/uuid/uuid.hpp>
+#include <boost/random/additive_combine.hpp>
+#include <boost/random/linear_congruential.hpp>
+#include <boost/random/taus88.hpp>
 #include <boost/move/utility_core.hpp>
 #include <random>
 
