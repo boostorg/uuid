@@ -3,11 +3,12 @@
 // https://www.boost.org/LICENSE_1_0.txt
 
 #include <boost/uuid/detail/sha1.hpp>
+#include <boost/uuid/uuid.hpp>
+#include <boost/core/snprintf.hpp>
 #include <boost/core/lightweight_test.hpp>
 #include <cstdint>
 #include <string>
 #include <cstddef>
-#include <cstdio>
 
 template<std::size_t N> std::string digest_to_string( unsigned char const (&v)[ N ] )
 {
@@ -16,7 +17,7 @@ template<std::size_t N> std::string digest_to_string( unsigned char const (&v)[ 
     for( std::size_t i = 0; i < N; ++i )
     {
         char buffer[ 8 ];
-        std::snprintf( buffer, sizeof( buffer ), "%02x", static_cast<int>( v[ i ] ) );
+        boost::core::snprintf( buffer, sizeof( buffer ), "%02x", static_cast<int>( v[ i ] ) );
 
         r += buffer;
     }
