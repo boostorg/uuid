@@ -1,3 +1,6 @@
+#ifndef BOOST_UUID_DETAIL_MD5_HPP_INCLUDED
+#define BOOST_UUID_DETAIL_MD5_HPP_INCLUDED
+
 /*
  * This RFC 1321 compatible MD5 implementation originated at:
  * http://openwall.info/wiki/people/solar/software/public-domain-source-code/md5
@@ -23,9 +26,6 @@
 // accompanying file LICENSE_1_0.txt or copy at
 // https://www.boost.org/LICENSE_1_0.txt)
 
-#ifndef BOOST_UUID_MD5_HPP
-#define BOOST_UUID_MD5_HPP
-
 #include <boost/uuid/detail/numeric_cast.hpp>
 #include <boost/uuid/uuid.hpp> // for version
 #include <string.h>
@@ -37,7 +37,8 @@ namespace detail {
 class md5
 {
 public:
-    typedef unsigned int(digest_type)[4];
+
+    typedef unsigned char digest_type[ 16 ];
 
     md5()
     {
@@ -56,7 +57,7 @@ public:
 
     void get_digest(digest_type& digest)
     {
-        MD5_Final(reinterpret_cast<unsigned char *>(&digest[0]), &ctx_);
+        MD5_Final(digest, &ctx_);
     }
 
     unsigned char get_version() const
@@ -337,4 +338,4 @@ private:
 } // uuids
 } // boost
 
-#endif // BOOST_UUID_MD5_HPP
+#endif // BOOST_UUID_DETAIL_MD5_HPP_INCLUDED
