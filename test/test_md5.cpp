@@ -1,6 +1,6 @@
 //  libs/uuid/test/test_md5.cpp  --------------------------------//
 
-// (C) Copyright 2017 - 2019 James E. King III
+// (C) Copyright 2017 James E. King III
 
 // Distributed under the Boost Software License, Version 1.0. (See
 // accompanying file LICENSE_1_0.txt or copy at
@@ -9,11 +9,6 @@
 #include <boost/uuid/detail/md5.hpp>
 #include <boost/core/lightweight_test.hpp>
 #include <cstdint>
-
-#include "digestutils.hpp"
-
-#define BOOST_TEST_MD5_DIGEST(lhs, rhs) \
-    ( boost::uuids::test::test_digest_equal_array(__FILE__, __LINE__, BOOST_CURRENT_FUNCTION, (lhs), (rhs), 16) )
 
 int main(int, char**)
 {
@@ -42,9 +37,8 @@ int main(int, char**)
         hash.process_bytes(expectations[i].data, expectations[i].len);
         boost::uuids::detail::md5::digest_type result;
         hash.get_digest(result);
-        unsigned char raw_result[16];
-        boost::uuids::test::copy_raw_digest(raw_result, result, 4);
-        BOOST_TEST_MD5_DIGEST(raw_result, expectations[i].expected);
+        BOOST_TEST_EQ(0, memcmp(result, expectations[i].expected,
+            sizeof(boost::uuids::detail::md5::digest_type)));
         BOOST_TEST_EQ(hash.get_version(), 0x03);
 
     }

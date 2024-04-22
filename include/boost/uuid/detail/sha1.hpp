@@ -180,7 +180,7 @@ inline void sha1::process_block()
 inline unsigned char sha1::get_version() const
 {
     // RFC 4122 Section 4.1.3
-    return uuid::version_name_based_sha1;
+        return uuid::version_name_based_sha1;
 }
 
 inline void sha1::get_digest(digest_type& digest)

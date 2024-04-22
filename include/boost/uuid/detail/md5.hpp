@@ -28,9 +28,6 @@
 
 #include <boost/uuid/detail/numeric_cast.hpp>
 #include <boost/uuid/uuid.hpp> // for version
-#include <boost/predef/other/endian.h>
-#include <boost/config.hpp>
-#include <cstdint>
 #include <string.h>
 
 namespace boost {
@@ -288,27 +285,11 @@ private:
         memcpy(ctx->buffer, data, size);
     }
 
-    // This must remain consistent no matter the endianness
     #define BOOST_UUID_DETAIL_MD5_OUT(dst, src) \
         (dst)[0] = (unsigned char)(src); \
         (dst)[1] = (unsigned char)((src) >> 8); \
         (dst)[2] = (unsigned char)((src) >> 16); \
         (dst)[3] = (unsigned char)((src) >> 24);
-
-    // When we copy into a byte buffer, take endianness into account
-#if BOOST_ENDIAN_LITTLE_BYTE
-    #define BOOST_UUID_DETAIL_MD5_BYTE_OUT(dst, src) \
-        (dst)[0] = (unsigned char)((src) >> 24); \
-        (dst)[1] = (unsigned char)((src) >> 16); \
-        (dst)[2] = (unsigned char)((src) >> 8); \
-        (dst)[3] = (unsigned char)(src);
-#else
-    #define BOOST_UUID_DETAIL_MD5_BYTE_OUT(dst, src) \
-        (dst)[0] = (unsigned char)(src); \
-        (dst)[1] = (unsigned char)((src) >> 8); \
-        (dst)[2] = (unsigned char)((src) >> 16); \
-        (dst)[3] = (unsigned char)((src) >> 24);
-#endif
 
     void MD5_Final(unsigned char *result, MD5_CTX *ctx)
     {
@@ -335,10 +316,10 @@ private:
 
         body(ctx, ctx->buffer, 64);
 
-        BOOST_UUID_DETAIL_MD5_BYTE_OUT(&result[0], ctx->a)
-        BOOST_UUID_DETAIL_MD5_BYTE_OUT(&result[4], ctx->b)
-        BOOST_UUID_DETAIL_MD5_BYTE_OUT(&result[8], ctx->c)
-        BOOST_UUID_DETAIL_MD5_BYTE_OUT(&result[12], ctx->d)
+        BOOST_UUID_DETAIL_MD5_OUT(&result[0], ctx->a)
+        BOOST_UUID_DETAIL_MD5_OUT(&result[4], ctx->b)
+        BOOST_UUID_DETAIL_MD5_OUT(&result[8], ctx->c)
+        BOOST_UUID_DETAIL_MD5_OUT(&result[12], ctx->d)
 
         memset(ctx, 0, sizeof(*ctx));
     }
