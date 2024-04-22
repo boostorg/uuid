@@ -250,6 +250,68 @@ inline void store_big_u32( void* p, std::uint32_t v )
     std::memcpy( p, &v, sizeof( v ) );
 }
 
+// store_*_u64
+
+inline void store_native_u64( void* p, std::uint64_t v )
+{
+    std::memcpy( p, &v, sizeof( v ) );
+}
+
+inline void store_little_u64( void* p, std::uint64_t v )
+{
+#if BOOST_UUID_BYTE_ORDER != BOOST_UUID_ORDER_LITTLE_ENDIAN
+
+    v = detail::byteswap( v );
+
+#endif
+
+    std::memcpy( p, &v, sizeof( v ) );
+}
+
+inline void store_big_u64( void* p, std::uint64_t v )
+{
+#if BOOST_UUID_BYTE_ORDER != BOOST_UUID_ORDER_BIG_ENDIAN
+
+    v = detail::byteswap( v );
+
+#endif
+
+    std::memcpy( p, &v, sizeof( v ) );
+}
+
+// store_*_u128
+
+#if defined(__SIZEOF_INT128__)
+
+inline void store_native_u128( void* p, __uint128_t v )
+{
+    std::memcpy( p, &v, sizeof( v ) );
+}
+
+inline void store_little_u128( void* p, __uint128_t v )
+{
+#if BOOST_UUID_BYTE_ORDER != BOOST_UUID_ORDER_LITTLE_ENDIAN
+
+    v = detail::byteswap( v );
+
+#endif
+
+    std::memcpy( p, &v, sizeof( v ) );
+}
+
+inline void store_big_u128( void* p, __uint128_t v )
+{
+#if BOOST_UUID_BYTE_ORDER != BOOST_UUID_ORDER_BIG_ENDIAN
+
+    v = detail::byteswap( v );
+
+#endif
+
+    std::memcpy( p, &v, sizeof( v ) );
+}
+
+#endif
+
 } // detail
 } // uuids
 } // boost

@@ -230,5 +230,100 @@ int main()
 #endif
     }
 
+    // store u64
+
+    {
+        std::uint64_t x = 0x0102030405060708;
+        std::uint64_t y = 0x0807060504030201;
+
+        unsigned char data[ 8 ] = {};
+
+        detail::store_little_u64( data, x );
+        BOOST_TEST_EQ( detail::load_little_u64( data ), x );
+        BOOST_TEST_EQ( detail::load_big_u64( data ), y );
+
+        detail::store_big_u64( data, x );
+        BOOST_TEST_EQ( detail::load_little_u64( data ), y );
+        BOOST_TEST_EQ( detail::load_big_u64( data ), x );
+
+        detail::store_native_u64( data, x );
+
+#if BOOST_UUID_BYTE_ORDER == BOOST_UUID_ORDER_LITTLE_ENDIAN
+
+        BOOST_TEST_EQ( detail::load_little_u64( data ), x );
+        BOOST_TEST_EQ( detail::load_big_u64( data ), y );
+
+#else
+
+        BOOST_TEST_EQ( detail::load_little_u64( data ), y );
+        BOOST_TEST_EQ( detail::load_big_u64( data ), x );
+
+#endif
+    }
+
+    {
+        std::uint64_t x = 0xFFEEDDCCBBAA9988;
+        std::uint64_t y = 0x8899AABBCCDDEEFF;
+
+        unsigned char data[ 8 ] = {};
+
+        detail::store_little_u64( data, x );
+        BOOST_TEST_EQ( detail::load_little_u64( data ), x );
+        BOOST_TEST_EQ( detail::load_big_u64( data ), y );
+
+        detail::store_big_u64( data, x );
+        BOOST_TEST_EQ( detail::load_little_u64( data ), y );
+        BOOST_TEST_EQ( detail::load_big_u64( data ), x );
+
+        detail::store_native_u64( data, x );
+
+#if BOOST_UUID_BYTE_ORDER == BOOST_UUID_ORDER_LITTLE_ENDIAN
+
+        BOOST_TEST_EQ( detail::load_little_u64( data ), x );
+        BOOST_TEST_EQ( detail::load_big_u64( data ), y );
+
+#else
+
+        BOOST_TEST_EQ( detail::load_little_u64( data ), y );
+        BOOST_TEST_EQ( detail::load_big_u64( data ), x );
+
+#endif
+    }
+
+    // store u128
+
+#if defined(__SIZEOF_INT128__)
+
+    {
+        __uint128_t x = ( static_cast<__uint128_t>( 0x0011223344556677 ) << 64 ) | 0x8899AABBCCDDEEFF;
+        __uint128_t y = ( static_cast<__uint128_t>( 0xFFEEDDCCBBAA9988 ) << 64 ) | 0x7766554433221100;
+
+        unsigned char data[ 16 ] = {};
+
+        detail::store_little_u128( data, x );
+        BOOST_TEST( detail::load_little_u128( data ) == x );
+        BOOST_TEST( detail::load_big_u128( data ) == y );
+
+        detail::store_big_u128( data, x );
+        BOOST_TEST( detail::load_little_u128( data ) == y );
+        BOOST_TEST( detail::load_big_u128( data ) == x );
+
+        detail::store_native_u128( data, x );
+
+#if BOOST_UUID_BYTE_ORDER == BOOST_UUID_ORDER_LITTLE_ENDIAN
+
+        BOOST_TEST( detail::load_little_u128( data ) == x );
+        BOOST_TEST( detail::load_big_u128( data ) == y );
+
+#else
+
+        BOOST_TEST( detail::load_little_u128( data ) == y );
+        BOOST_TEST( detail::load_big_u128( data ) == x );
+
+#endif
+    }
+
+#endif
+
     return boost::report_errors();
 }
