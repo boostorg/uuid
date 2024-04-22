@@ -209,10 +209,12 @@ namespace std
     };
 }
 
-#if defined(BOOST_UUID_USE_SSE2)
-#include <boost/uuid/detail/uuid_x86.ipp>
+#if defined(__SIZEOF_INT128__)
+# include <boost/uuid/detail/uuid_uint128.ipp>
+#elif defined(BOOST_UUID_USE_SSE2)
+# include <boost/uuid/detail/uuid_x86.ipp>
 #else
-#include <boost/uuid/detail/uuid_generic.ipp>
+# include <boost/uuid/detail/uuid_generic.ipp>
 #endif
 
 #endif // BOOST_UUID_UUID_HPP_INCLUDED
