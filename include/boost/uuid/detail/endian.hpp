@@ -176,6 +176,51 @@ inline std::uint64_t load_big_u64( void const* p )
 #endif
 }
 
+// load_*_u128
+
+#if defined(__SIZEOF_INT128__)
+
+inline __uint128_t load_native_u128( void const* p )
+{
+    __uint128_t tmp;
+    std::memcpy( &tmp, p, sizeof( tmp ) );
+    return tmp;
+}
+
+inline __uint128_t load_little_u128( void const* p )
+{
+    __uint128_t tmp;
+    std::memcpy( &tmp, p, sizeof( tmp ) );
+
+#if BOOST_UUID_BYTE_ORDER == BOOST_UUID_ORDER_LITTLE_ENDIAN
+
+    return tmp;
+
+#else
+
+    return detail::byteswap( tmp );
+
+#endif
+}
+
+inline __uint128_t load_big_u128( void const* p )
+{
+    __uint128_t tmp;
+    std::memcpy( &tmp, p, sizeof( tmp ) );
+
+#if BOOST_UUID_BYTE_ORDER == BOOST_UUID_ORDER_BIG_ENDIAN
+
+    return tmp;
+
+#else
+
+    return detail::byteswap( tmp );
+
+#endif
+}
+
+#endif
+
 // store_*_u32
 
 inline void store_native_u32( void* p, std::uint32_t v )

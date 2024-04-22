@@ -144,6 +144,32 @@ int main()
 #endif
     }
 
+    // load u128
+
+#if defined(__SIZEOF_INT128__)
+
+    {
+        __uint128_t x = ( static_cast<__uint128_t>( 0x0011223344556677 ) << 64 ) | 0x8899AABBCCDDEEFF;
+        __uint128_t y = ( static_cast<__uint128_t>( 0xFFEEDDCCBBAA9988 ) << 64 ) | 0x7766554433221100;
+
+        unsigned char data[] = { 0x00, 0x11, 0x22, 0x33, 0x44, 0x55, 0x66, 0x77, 0x88, 0x99, 0xAA, 0xBB, 0xCC, 0xDD, 0xEE, 0xFF };
+
+        BOOST_TEST( detail::load_little_u128( data ) == y );
+        BOOST_TEST( detail::load_big_u128( data ) == x );
+
+#if BOOST_UUID_BYTE_ORDER == BOOST_UUID_ORDER_LITTLE_ENDIAN
+
+        BOOST_TEST( detail::load_native_u128( data ) == y );
+
+#else
+
+        BOOST_TEST( detail::load_native_u128( data ) == x );
+
+#endif
+    }
+
+#endif
+
     // store u32
 
     {
