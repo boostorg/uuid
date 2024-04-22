@@ -18,7 +18,7 @@ namespace uuids {
 // The default name generator
 typedef name_generator_sha1 name_generator;
 
-// Only provided for compatibility with 1.84 and earlier
+// Only provided for compatibility with 1.85 and earlier
 typedef name_generator_sha1 name_generator_latest;
 
 } // uuids
