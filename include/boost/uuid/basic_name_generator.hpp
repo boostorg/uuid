@@ -98,12 +98,7 @@ private:
         BOOST_UUID_STATIC_ASSERT(sizeof(digest_type) >= 16);
 
         uuid u;
-        for (int i=0; i<4; ++i) {
-            *(u.begin() + i*4+0) = static_cast<uint8_t>((digest[i] >> 24) & 0xFF);
-            *(u.begin() + i*4+1) = static_cast<uint8_t>((digest[i] >> 16) & 0xFF);
-            *(u.begin() + i*4+2) = static_cast<uint8_t>((digest[i] >> 8) & 0xFF);
-            *(u.begin() + i*4+3) = static_cast<uint8_t>((digest[i] >> 0) & 0xFF);
-        }
+        std::memcpy( u.data, digest, 16 );
 
         // set variant: must be 0b10xxxxxx
         *(u.begin()+8) &= 0xBF;
