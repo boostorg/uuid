@@ -38,7 +38,7 @@ void test_uuid_equal_array(char const * file, int line, char const * function,
 
 #define BOOST_TEST_UUID(lhs, rhs) ( test_uuid_equal_array(__FILE__, __LINE__, BOOST_CURRENT_FUNCTION, lhs, rhs) )
 
-int main(int, char*[])
+int main()
 {
     using namespace boost::uuids;
 
@@ -153,35 +153,58 @@ int main(int, char*[])
         BOOST_TEST_UUID(u2, values2);
     }
 
-    { // test comparsion
+    { // test comparison
         uuid u1 = {{0}};
         uuid u2 = {{1,0}};
         uuid u3 = {{255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255}};
         uuid u4 = {{0,1,0}};
         uuid u5 = {{0,255,0}};
+        uuid u6 = {{0, 0, 0, 0, 0, 0, 0, 0, 1}};
+        uuid u7 = {{0, 0, 0, 0, 0, 0, 0, 0, 0, 1}};
 
-        BOOST_TEST_EQ(u1, u1);
+        BOOST_TEST_EQ( u1, u1 );
 
-        BOOST_TEST_NE(u1, u2);
+        BOOST_TEST_NE( u1, u2 );
+        BOOST_TEST_NE( u6, u7 );
 
-        BOOST_TEST(u1 < u2);
-        BOOST_TEST(u2 < u3);
-        BOOST_TEST(u1 < u4);
-        BOOST_TEST(u1 < u5);
-        BOOST_TEST(u4 < u5);
-        BOOST_TEST(u4 < u2);
-        BOOST_TEST(u5 < u2);
+        BOOST_TEST_LT( u1, u2 );
+        BOOST_TEST_LT( u2, u3 );
+        BOOST_TEST_LT( u1, u4);
+        BOOST_TEST_LT( u1, u5 );
+        BOOST_TEST_LT( u4, u5 );
+        BOOST_TEST_LT( u4, u2 );
+        BOOST_TEST_LT( u5, u2 );
 
-        BOOST_TEST(u1 <= u1);
-        BOOST_TEST(u1 <= u2);
-        BOOST_TEST(u2 <= u3);
+        BOOST_TEST_LT( u1, u6 );
+        BOOST_TEST_LT( u1, u7 );
+        BOOST_TEST_LT( u7, u6 );
+        BOOST_TEST_LT( u6, u4 );
+        BOOST_TEST_LT( u7, u4 );
 
-        BOOST_TEST(u2 >= u1);
-        BOOST_TEST(u3 >= u1);
+        BOOST_TEST_LE( u1, u1 );
+        BOOST_TEST_LE( u1, u2 );
+        BOOST_TEST_LE( u2, u3 );
 
-        BOOST_TEST(u3 >= u3);
-        BOOST_TEST(u2 >= u1);
-        BOOST_TEST(u3 >= u1);
+        BOOST_TEST_LE( u1, u6 );
+        BOOST_TEST_LE( u1, u7 );
+        BOOST_TEST_LE( u6, u6 );
+        BOOST_TEST_LE( u7, u6 );
+        BOOST_TEST_LE( u6, u4 );
+        BOOST_TEST_LE( u7, u4 );
+
+        BOOST_TEST_GE( u2, u1 );
+        BOOST_TEST_GE( u3, u1 );
+
+        BOOST_TEST_GE( u3, u3 );
+        BOOST_TEST_GE( u2, u1 );
+        BOOST_TEST_GE( u3, u1 );
+
+        BOOST_TEST_GE( u6, u1 );
+        BOOST_TEST_GE( u7, u1 );
+        BOOST_TEST_GE( u6, u6 );
+        BOOST_TEST_GE( u6, u7 );
+        BOOST_TEST_GE( u4, u6 );
+        BOOST_TEST_GE( u4, u7 );
     }
 
     { // ticket 10510
