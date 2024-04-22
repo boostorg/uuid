@@ -10,7 +10,7 @@ int main()
 {
     namespace detail = boost::uuids::detail;
 
-    // byteswap
+    // byteswap u32
 
     {
         std::uint32_t x = 0x01020304;
@@ -28,6 +28,8 @@ int main()
         BOOST_TEST_EQ( detail::byteswap( y ), x );
     }
 
+    // byteswap u64
+
     {
         std::uint64_t x = 0x0102030405060708;
         std::uint64_t y = 0x0807060504030201;
@@ -44,7 +46,7 @@ int main()
         BOOST_TEST_EQ( detail::byteswap( y ), x );
     }
 
-    // load
+    // load u32
 
     {
         std::uint32_t x = 0x01020304;
@@ -86,6 +88,8 @@ int main()
 #endif
     }
 
+    // load u64
+
     {
         std::uint64_t x = 0x0102030405060708;
         std::uint64_t y = 0x0807060504030201;
@@ -122,6 +126,66 @@ int main()
 #else
 
         BOOST_TEST_EQ( detail::load_native_u64( data ), x );
+
+#endif
+    }
+
+    // store u32
+
+    {
+        std::uint32_t x = 0x01020304;
+        std::uint32_t y = 0x04030201;
+
+        unsigned char data[ 4 ] = {};
+
+        detail::store_little_u32( data, x );
+        BOOST_TEST_EQ( detail::load_little_u32( data ), x );
+        BOOST_TEST_EQ( detail::load_big_u32( data ), y );
+
+        detail::store_big_u32( data, x );
+        BOOST_TEST_EQ( detail::load_little_u32( data ), y );
+        BOOST_TEST_EQ( detail::load_big_u32( data ), x );
+
+        detail::store_native_u32( data, x );
+
+#if BOOST_UUID_BYTE_ORDER == BOOST_UUID_ORDER_LITTLE_ENDIAN
+
+        BOOST_TEST_EQ( detail::load_little_u32( data ), x );
+        BOOST_TEST_EQ( detail::load_big_u32( data ), y );
+
+#else
+
+        BOOST_TEST_EQ( detail::load_little_u32( data ), y );
+        BOOST_TEST_EQ( detail::load_big_u32( data ), x );
+
+#endif
+    }
+
+    {
+        std::uint32_t x = 0xFFEEDDCC;
+        std::uint32_t y = 0xCCDDEEFF;
+
+        unsigned char data[ 4 ] = {};
+
+        detail::store_little_u32( data, x );
+        BOOST_TEST_EQ( detail::load_little_u32( data ), x );
+        BOOST_TEST_EQ( detail::load_big_u32( data ), y );
+
+        detail::store_big_u32( data, x );
+        BOOST_TEST_EQ( detail::load_little_u32( data ), y );
+        BOOST_TEST_EQ( detail::load_big_u32( data ), x );
+
+        detail::store_native_u32( data, x );
+
+#if BOOST_UUID_BYTE_ORDER == BOOST_UUID_ORDER_LITTLE_ENDIAN
+
+        BOOST_TEST_EQ( detail::load_little_u32( data ), x );
+        BOOST_TEST_EQ( detail::load_big_u32( data ), y );
+
+#else
+
+        BOOST_TEST_EQ( detail::load_little_u32( data ), y );
+        BOOST_TEST_EQ( detail::load_big_u32( data ), x );
 
 #endif
     }

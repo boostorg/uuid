@@ -30,17 +30,17 @@ template<class Hash> std::string digest( char const * s )
     Hash hash;
     hash.process_bytes( s, std::strlen( s ) );
 
-    typename Hash::digest_type digest;
-    hash.get_digest( digest );
+    typename Hash::digest_type result;
+    hash.get_digest( result );
 
-    return digest_to_string( digest );
+    return digest_to_string( result );
 }
 
 int main()
 {
-    // Test vectors from https://tools.ietf.org/html/rfc1321
-
     using boost::uuids::detail::md5;
+
+    // Test vectors from https://tools.ietf.org/html/rfc1321
 
     BOOST_TEST_EQ( digest<md5>( "" ), std::string( "d41d8cd98f00b204e9800998ecf8427e" ) );
     BOOST_TEST_EQ( digest<md5>( "a" ), std::string( "0cc175b9c0f1b6a831c399e269772661" ) );

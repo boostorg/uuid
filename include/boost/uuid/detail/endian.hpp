@@ -167,6 +167,35 @@ inline std::uint64_t load_big_u64( void const* p )
 #endif
 }
 
+// store_*_u32
+
+inline void store_native_u32( void* p, std::uint32_t v )
+{
+    std::memcpy( p, &v, sizeof( v ) );
+}
+
+inline void store_little_u32( void* p, std::uint32_t v )
+{
+#if BOOST_UUID_BYTE_ORDER != BOOST_UUID_ORDER_LITTLE_ENDIAN
+
+    v = detail::byteswap( v );
+
+#endif
+
+    std::memcpy( p, &v, sizeof( v ) );
+}
+
+inline void store_big_u32( void* p, std::uint32_t v )
+{
+#if BOOST_UUID_BYTE_ORDER != BOOST_UUID_ORDER_BIG_ENDIAN
+
+    v = detail::byteswap( v );
+
+#endif
+
+    std::memcpy( p, &v, sizeof( v ) );
+}
+
 } // detail
 } // uuids
 } // boost
