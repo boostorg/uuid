@@ -16,7 +16,7 @@
 #include <limits>
 #include <stdlib.h>
 
-extern "C" errno_t __cdecl rand_s( unsigned int *randomValue );
+extern "C" int __cdecl rand_s( unsigned int *randomValue );
 
 namespace boost {
 namespace uuids {
