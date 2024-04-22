@@ -76,7 +76,6 @@ run test_io.cpp ;
 
 run test_nil_generator.cpp ;
 run test_name_generator.cpp ;
-run test_name_generator.cpp : : : <define>BOOST_UUID_COMPAT_PRE_1_71_MD5 : test_name_generator_pre_1_71_compat ;
 run test_string_generator.cpp ;
 run test_random_generator.cpp ;
 
@@ -109,7 +108,6 @@ run test_boost_unordered.cpp
 # test hash functions
 
 run test_md5.cpp ;
-run test_md5.cpp : : : <define>BOOST_UUID_COMPAT_PRE_1_71_MD5 : test_md5_pre_1_71_compat ;
 run test_sha1.cpp ;
 
 # compile-fail tests
