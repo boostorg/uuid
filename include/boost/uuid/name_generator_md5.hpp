@@ -9,7 +9,7 @@
 // accompanying file LICENSE_1_0.txt or copy at
 //  https://www.boost.org/LICENSE_1_0.txt)
 
-#include <boost/uuid/basic_name_generator.hpp>
+#include <boost/uuid/detail/basic_name_generator.hpp>
 #include <boost/uuid/detail/md5.hpp>
 
 namespace boost {
@@ -17,7 +17,7 @@ namespace uuids {
 
 //! \brief MD5 hashing is defined in RFC 4122 however it is not commonly
 //!        used; the definition is provided for backwards compatibility.
-typedef basic_name_generator<detail::md5> name_generator_md5;
+typedef detail::basic_name_generator<detail::md5> name_generator_md5;
 
 } // uuids
 } // boost

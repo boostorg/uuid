@@ -1,5 +1,5 @@
-#ifndef BOOST_UUID_BASIC_NAME_GENERATOR_HPP_INCLUDED
-#define BOOST_UUID_BASIC_NAME_GENERATOR_HPP_INCLUDED
+#ifndef BOOST_UUID_DETAIL_BASIC_NAME_GENERATOR_HPP_INCLUDED
+#define BOOST_UUID_DETAIL_BASIC_NAME_GENERATOR_HPP_INCLUDED
 
 // Boost basic_name_generator.hpp header file  -----------------------//
 
@@ -17,12 +17,9 @@
 #include <cstdint>
 #include <cstring> // for strlen, wcslen
 
-#ifdef BOOST_HAS_PRAGMA_ONCE
-#pragma once
-#endif
-
 namespace boost {
 namespace uuids {
+namespace detail {
 
 //! \brief Generate a name based UUID using
 //!        the provided hashing algorithm that
@@ -116,6 +113,8 @@ private:
     uuid namespace_uuid;
 };
 
+} // namespace detail
+
 namespace ns {
 
 BOOST_FORCEINLINE uuid dns() {
@@ -150,4 +149,4 @@ BOOST_FORCEINLINE uuid x500dn() {
 } // uuids
 } // boost
 
-#endif // BOOST_UUID_BASIC_NAME_GENERATOR_HPP_INCLUDED
+#endif // BOOST_UUID_DETAIL_BASIC_NAME_GENERATOR_HPP_INCLUDED

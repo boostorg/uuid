@@ -13,23 +13,13 @@
 #include <boost/config.hpp>
 #include <boost/uuid/name_generator_sha1.hpp>
 
-#ifdef BOOST_HAS_PRAGMA_ONCE
-#pragma once
-#endif
-
 namespace boost {
 namespace uuids {
 
-//! \deprecated
-//! \brief this provides backwards compatibility with previous boost
-//!        releases however it is now deprecated to ensure that once
-//!        a new hashing algorithm is defined for name generation that
-//!        there is no confusion - at that time this will be removed.
+// The default name generator
 typedef name_generator_sha1 name_generator;
 
-//! \brief this provides the latest name generator hashing algorithm
-//!        regardless of boost release; if you do not need stable
-//!        name generation across releases then this will suffice
+// Only provided for compatibility with 1.84 and earlier
 typedef name_generator_sha1 name_generator_latest;
 
 } // uuids
