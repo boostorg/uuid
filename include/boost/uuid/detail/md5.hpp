@@ -116,9 +116,9 @@ private:
      */
     #if defined(__i386__) || defined(__x86_64__) || defined(__vax__)
     #define BOOST_UUID_DETAIL_MD5_SET(n) \
-        (*(MD5_u32plus *)&ptr[(n) * 4])
+        (memcpy(&ctx->block[(n)], &ptr[(n) * 4], sizeof(MD5_u32plus)), (ctx->block[(n)]))
     #define BOOST_UUID_DETAIL_MD5_GET(n) \
-        BOOST_UUID_DETAIL_MD5_SET(n)
+        (ctx->block[(n)])
     #else
     #define BOOST_UUID_DETAIL_MD5_SET(n) \
         (ctx->block[(n)] = \
