@@ -46,6 +46,20 @@ int main()
         BOOST_TEST_EQ( detail::byteswap( y ), x );
     }
 
+    // byteswap u128
+
+#if defined(__SIZEOF_INT128__)
+
+    {
+        __uint128_t x = ( static_cast<__uint128_t>( 0x0011223344556677 ) << 64 ) | 0x8899AABBCCDDEEFF;
+        __uint128_t y = ( static_cast<__uint128_t>( 0xFFEEDDCCBBAA9988 ) << 64 ) | 0x7766554433221100;
+
+        BOOST_TEST( detail::byteswap( x ) == y );
+        BOOST_TEST( detail::byteswap( y ) == x );
+    }
+
+#endif
+
     // load u32
 
     {

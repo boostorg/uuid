@@ -85,6 +85,15 @@ inline std::uint64_t byteswap( std::uint64_t x )
 
 #endif
 
+#if defined(__SIZEOF_INT128__)
+
+inline __uint128_t byteswap( __uint128_t x )
+{
+    return ( static_cast<__uint128_t>( detail::byteswap( static_cast<std::uint64_t>( x ) ) ) << 64 ) | detail::byteswap( static_cast<std::uint64_t>( x >> 64 ) );
+}
+
+#endif
+
 // load_*_u32
 
 inline std::uint32_t load_native_u32( void const* p )
