@@ -36,11 +36,10 @@ boost_test(TYPE run SOURCES test_hash_value.cpp)
 boost_test(TYPE run SOURCES test_boost_unordered.cpp LINK_LIBRARIES Boost::unordered)
 boost_test(TYPE run SOURCES test_std_unordered.cpp)
 
+boost_test(TYPE run SOURCES test_detail_md5.cpp)
+boost_test(TYPE run SOURCES test_detail_sha1.cpp)
 boost_test(TYPE run SOURCES test_detail_endian.cpp)
 boost_test(TYPE run SOURCES test_detail_chacha20.cpp)
-
-boost_test(TYPE run SOURCES test_md5.cpp)
-boost_test(TYPE run SOURCES test_sha1.cpp)
 
 boost_test(TYPE run SOURCES test_entropy_error.cpp)
 

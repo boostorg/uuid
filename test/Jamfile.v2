@@ -109,13 +109,10 @@ run test_boost_unordered.cpp
 
 # test detail components
 
+run test_detail_md5.cpp ;
+run test_detail_sha1.cpp ;
 run test_detail_endian.cpp ;
 run test_detail_chacha20.cpp ;
-
-# test hash functions
-
-run test_md5.cpp ;
-run test_sha1.cpp ;
 
 # compile-fail tests
 
