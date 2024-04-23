@@ -24,6 +24,11 @@ namespace detail {
 
 struct random_device
 {
+    // noncopyable to match std::random_device
+    random_device() = default;
+    random_device( random_device&& ) = delete;
+    random_device& operator=( random_device&& ) = delete;
+
     using result_type = unsigned;
 
     static constexpr result_type min()
