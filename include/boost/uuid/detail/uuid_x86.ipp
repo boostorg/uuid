@@ -46,7 +46,7 @@ namespace boost {
 namespace uuids {
 namespace detail {
 
-BOOST_FORCEINLINE __m128i load_unaligned_si128(const uint8_t* p) BOOST_NOEXCEPT
+BOOST_FORCEINLINE __m128i load_unaligned_si128(const std::uint8_t* p) BOOST_NOEXCEPT
 {
 #if !defined(BOOST_UUID_DETAIL_MSVC_BUG981648) || defined(BOOST_UUID_USE_AVX)
     return _mm_loadu_si128(reinterpret_cast< const __m128i* >(p));
@@ -59,6 +59,39 @@ BOOST_FORCEINLINE __m128i load_unaligned_si128(const uint8_t* p) BOOST_NOEXCEPT
     // VS2008 x64 doesn't respect _ReadWriteBarrier above, so we have to generate this crippled code to load unaligned data
     return _mm_unpacklo_epi64(_mm_loadl_epi64(reinterpret_cast< const __m128i* >(p)), _mm_loadl_epi64(reinterpret_cast< const __m128i* >(p + 8)));
 #endif
+}
+
+BOOST_FORCEINLINE void compare(uuid const& lhs, uuid const& rhs, std::uint32_t& cmp, std::uint32_t& rcmp) BOOST_NOEXCEPT
+{
+    __m128i mm_left = uuids::detail::load_unaligned_si128(lhs.data);
+    __m128i mm_right = uuids::detail::load_unaligned_si128(rhs.data);
+
+    // To emulate lexicographical_compare behavior we have to perform two comparisons - the forward and reverse one.
+    // Then we know which bytes are equivalent and which ones are different, and for those different the comparison results
+    // will be opposite. Then we'll be able to find the first differing comparison result (for both forward and reverse ways),
+    // and depending on which way it is for, this will be the result of the operation. There are a few notes to consider:
+    //
+    // 1. Due to little endian byte order the first bytes go into the lower part of the xmm registers,
+    //    so the comparison results in the least significant bits will actually be the most signigicant for the final operation result.
+    //    This means we have to determine which of the comparison results have the least significant bit on, and this is achieved with
+    //    the "(x - 1) ^ x" trick.
+    // 2. Because there is only signed comparison in SSE/AVX, we have to invert byte comparison results whenever signs of the corresponding
+    //    bytes are different. I.e. in signed comparison it's -1 < 1, but in unsigned it is the opposite (255 > 1). To do that we XOR left and right,
+    //    making the most significant bit of each byte 1 if the signs are different, and later apply this mask with another XOR to the comparison results.
+    // 3. pcmpgtw compares for "greater" relation, so we swap the arguments to get what we need.
+
+    const __m128i mm_signs_mask = _mm_xor_si128(mm_left, mm_right);
+
+    __m128i mm_cmp = _mm_cmpgt_epi8(mm_right, mm_left), mm_rcmp = _mm_cmpgt_epi8(mm_left, mm_right);
+
+    mm_cmp = _mm_xor_si128(mm_signs_mask, mm_cmp);
+    mm_rcmp = _mm_xor_si128(mm_signs_mask, mm_rcmp);
+
+    cmp = static_cast< std::uint32_t >(_mm_movemask_epi8(mm_cmp));
+    rcmp = static_cast< std::uint32_t >(_mm_movemask_epi8(mm_rcmp));
+
+    cmp = (cmp - 1u) ^ cmp;
+    rcmp = (rcmp - 1u) ^ rcmp;
 }
 
 } // namespace detail
@@ -98,35 +131,8 @@ inline bool operator== (uuid const& lhs, uuid const& rhs) BOOST_NOEXCEPT
 
 inline bool operator< (uuid const& lhs, uuid const& rhs) BOOST_NOEXCEPT
 {
-    __m128i mm_left = uuids::detail::load_unaligned_si128(lhs.data);
-    __m128i mm_right = uuids::detail::load_unaligned_si128(rhs.data);
-
-    // To emulate lexicographical_compare behavior we have to perform two comparisons - the forward and reverse one.
-    // Then we know which bytes are equivalent and which ones are different, and for those different the comparison results
-    // will be opposite. Then we'll be able to find the first differing comparison result (for both forward and reverse ways),
-    // and depending on which way it is for, this will be the result of the operation. There are a few notes to consider:
-    //
-    // 1. Due to little endian byte order the first bytes go into the lower part of the xmm registers,
-    //    so the comparison results in the least significant bits will actually be the most signigicant for the final operation result.
-    //    This means we have to determine which of the comparison results have the least significant bit on, and this is achieved with
-    //    the "(x - 1) ^ x" trick.
-    // 2. Because there is only signed comparison in SSE/AVX, we have to invert byte comparison results whenever signs of the corresponding
-    //    bytes are different. I.e. in signed comparison it's -1 < 1, but in unsigned it is the opposite (255 > 1). To do that we XOR left and right,
-    //    making the most significant bit of each byte 1 if the signs are different, and later apply this mask with another XOR to the comparison results.
-    // 3. pcmpgtw compares for "greater" relation, so we swap the arguments to get what we need.
-
-    const __m128i mm_signs_mask = _mm_xor_si128(mm_left, mm_right);
-
-    __m128i mm_cmp = _mm_cmpgt_epi8(mm_right, mm_left), mm_rcmp = _mm_cmpgt_epi8(mm_left, mm_right);
-
-    mm_cmp = _mm_xor_si128(mm_signs_mask, mm_cmp);
-    mm_rcmp = _mm_xor_si128(mm_signs_mask, mm_rcmp);
-
-    uint32_t cmp = static_cast< uint32_t >(_mm_movemask_epi8(mm_cmp)), rcmp = static_cast< uint32_t >(_mm_movemask_epi8(mm_rcmp));
-
-    cmp = (cmp - 1u) ^ cmp;
-    rcmp = (rcmp - 1u) ^ rcmp;
-
+    std::uint32_t cmp, rcmp;
+    uuids::detail::compare(lhs, rhs, cmp, rcmp);
     return cmp < rcmp;
 }
 
@@ -134,16 +140,9 @@ inline bool operator< (uuid const& lhs, uuid const& rhs) BOOST_NOEXCEPT
 
 inline std::strong_ordering operator<=> (uuid const& lhs, uuid const& rhs) BOOST_NOEXCEPT
 {
-    std::uint64_t v1 = detail::load_big_u64( lhs.data + 0 );
-    std::uint64_t w1 = detail::load_big_u64( lhs.data + 8 );
-
-    std::uint64_t v2 = detail::load_big_u64( rhs.data + 0 );
-    std::uint64_t w2 = detail::load_big_u64( rhs.data + 8 );
-
-    if( v1 < v2 ) return std::strong_ordering::less;
-    if( v1 > v2 ) return std::strong_ordering::greater;
-
-    return w1 <=> w2;
+    std::uint32_t cmp, rcmp;
+    uuids::detail::compare(lhs, rhs, cmp, rcmp);
+    return cmp <=> rcmp;
 }
 
 #endif
