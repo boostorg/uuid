@@ -117,9 +117,6 @@ run test_sha1.cpp ;
 
 # compile-fail tests
 
-compile-fail compile-fail/basic_random_generator_no_copy_assign.cpp ;
-compile-fail compile-fail/basic_random_generator_no_copy_ctor.cpp ;
-
 compile-fail compile-fail/random_generator_no_copy_assign.cpp ;
 compile-fail compile-fail/random_generator_no_copy_ctor.cpp ;
 
