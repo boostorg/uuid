@@ -40,6 +40,7 @@ boost_test(TYPE run SOURCES test_detail_md5.cpp)
 boost_test(TYPE run SOURCES test_detail_sha1.cpp)
 boost_test(TYPE run SOURCES test_detail_endian.cpp)
 boost_test(TYPE run SOURCES test_detail_chacha20.cpp)
+boost_test(TYPE run SOURCES test_detail_uuid_clock.cpp)
 
 boost_test(TYPE run SOURCES test_entropy_error.cpp)
 
