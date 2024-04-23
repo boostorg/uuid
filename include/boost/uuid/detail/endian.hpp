@@ -46,6 +46,11 @@ namespace detail {
 
 #if defined(__GNUC__) || defined(__clang__)
 
+inline std::uint16_t byteswap( std::uint16_t x )
+{
+    return __builtin_bswap16( x );
+}
+
 inline std::uint32_t byteswap( std::uint32_t x )
 {
     return __builtin_bswap32( x );
@@ -58,6 +63,11 @@ inline std::uint64_t byteswap( std::uint64_t x )
 
 #elif defined(_MSC_VER)
 
+inline std::uint16_t byteswap( std::uint16_t x )
+{
+    return _byteswap_ushort( x );
+}
+
 inline std::uint32_t byteswap( std::uint32_t x )
 {
     return _byteswap_ulong( x );
@@ -69,6 +79,11 @@ inline std::uint64_t byteswap( std::uint64_t x )
 }
 
 #else
+
+inline std::uint16_t byteswap( std::uint16_t x )
+{
+    return static_cast<std::uint16_t>( x << 8 | x >> 8 );
+}
 
 inline std::uint32_t byteswap( std::uint32_t x )
 {
@@ -93,6 +108,47 @@ inline __uint128_t byteswap( __uint128_t x )
 }
 
 #endif
+
+// load_*_u16
+
+inline std::uint16_t load_native_u16( void const* p )
+{
+    std::uint16_t tmp;
+    std::memcpy( &tmp, p, sizeof( tmp ) );
+    return tmp;
+}
+
+inline std::uint16_t load_little_u16( void const* p )
+{
+    std::uint16_t tmp;
+    std::memcpy( &tmp, p, sizeof( tmp ) );
+
+#if BOOST_UUID_BYTE_ORDER == BOOST_UUID_ORDER_LITTLE_ENDIAN
+
+    return tmp;
+
+#else
+
+    return detail::byteswap( tmp );
+
+#endif
+}
+
+inline std::uint16_t load_big_u16( void const* p )
+{
+    std::uint16_t tmp;
+    std::memcpy( &tmp, p, sizeof( tmp ) );
+
+#if BOOST_UUID_BYTE_ORDER == BOOST_UUID_ORDER_BIG_ENDIAN
+
+    return tmp;
+
+#else
+
+    return detail::byteswap( tmp );
+
+#endif
+}
 
 // load_*_u32
 
@@ -220,6 +276,35 @@ inline __uint128_t load_big_u128( void const* p )
 }
 
 #endif
+
+// store_*_u16
+
+inline void store_native_u16( void* p, std::uint16_t v )
+{
+    std::memcpy( p, &v, sizeof( v ) );
+}
+
+inline void store_little_u16( void* p, std::uint16_t v )
+{
+#if BOOST_UUID_BYTE_ORDER != BOOST_UUID_ORDER_LITTLE_ENDIAN
+
+    v = detail::byteswap( v );
+
+#endif
+
+    std::memcpy( p, &v, sizeof( v ) );
+}
+
+inline void store_big_u16( void* p, std::uint16_t v )
+{
+#if BOOST_UUID_BYTE_ORDER != BOOST_UUID_ORDER_BIG_ENDIAN
+
+    v = detail::byteswap( v );
+
+#endif
+
+    std::memcpy( p, &v, sizeof( v ) );
+}
 
 // store_*_u32
 

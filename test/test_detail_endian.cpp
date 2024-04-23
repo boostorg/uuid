@@ -10,6 +10,24 @@ int main()
 {
     namespace detail = boost::uuids::detail;
 
+    // byteswap u16
+
+    {
+        std::uint16_t x = 0x0102;
+        std::uint16_t y = 0x0201;
+
+        BOOST_TEST_EQ( detail::byteswap( x ), y );
+        BOOST_TEST_EQ( detail::byteswap( y ), x );
+    }
+
+    {
+        std::uint16_t x = 0xFFEE;
+        std::uint16_t y = 0xEEFF;
+
+        BOOST_TEST_EQ( detail::byteswap( x ), y );
+        BOOST_TEST_EQ( detail::byteswap( y ), x );
+    }
+
     // byteswap u32
 
     {
@@ -59,6 +77,48 @@ int main()
     }
 
 #endif
+
+    // load u16
+
+    {
+        std::uint16_t x = 0x0102;
+        std::uint16_t y = 0x0201;
+
+        unsigned char data[] = { 0x01, 0x02 };
+
+        BOOST_TEST_EQ( detail::load_little_u16( data ), y );
+        BOOST_TEST_EQ( detail::load_big_u16( data ), x );
+
+#if BOOST_UUID_BYTE_ORDER == BOOST_UUID_ORDER_LITTLE_ENDIAN
+
+        BOOST_TEST_EQ( detail::load_native_u16( data ), y );
+
+#else
+
+        BOOST_TEST_EQ( detail::load_native_u16( data ), x );
+
+#endif
+    }
+
+    {
+        std::uint16_t x = 0xFFEE;
+        std::uint16_t y = 0xEEFF;
+
+        unsigned char data[] = { 0xFF, 0xEE };
+
+        BOOST_TEST_EQ( detail::load_little_u16( data ), y );
+        BOOST_TEST_EQ( detail::load_big_u16( data ), x );
+
+#if BOOST_UUID_BYTE_ORDER == BOOST_UUID_ORDER_LITTLE_ENDIAN
+
+        BOOST_TEST_EQ( detail::load_native_u16( data ), y );
+
+#else
+
+        BOOST_TEST_EQ( detail::load_native_u16( data ), x );
+
+#endif
+    }
 
     // load u32
 
@@ -169,6 +229,66 @@ int main()
     }
 
 #endif
+
+    // store u16
+
+    {
+        std::uint16_t x = 0x0102;
+        std::uint16_t y = 0x0201;
+
+        unsigned char data[ 2 ] = {};
+
+        detail::store_little_u16( data, x );
+        BOOST_TEST_EQ( detail::load_little_u16( data ), x );
+        BOOST_TEST_EQ( detail::load_big_u16( data ), y );
+
+        detail::store_big_u16( data, x );
+        BOOST_TEST_EQ( detail::load_little_u16( data ), y );
+        BOOST_TEST_EQ( detail::load_big_u16( data ), x );
+
+        detail::store_native_u16( data, x );
+
+#if BOOST_UUID_BYTE_ORDER == BOOST_UUID_ORDER_LITTLE_ENDIAN
+
+        BOOST_TEST_EQ( detail::load_little_u16( data ), x );
+        BOOST_TEST_EQ( detail::load_big_u16( data ), y );
+
+#else
+
+        BOOST_TEST_EQ( detail::load_little_u16( data ), y );
+        BOOST_TEST_EQ( detail::load_big_u16( data ), x );
+
+#endif
+    }
+
+    {
+        std::uint16_t x = 0xFFEE;
+        std::uint16_t y = 0xEEFF;
+
+        unsigned char data[ 2 ] = {};
+
+        detail::store_little_u16( data, x );
+        BOOST_TEST_EQ( detail::load_little_u16( data ), x );
+        BOOST_TEST_EQ( detail::load_big_u16( data ), y );
+
+        detail::store_big_u16( data, x );
+        BOOST_TEST_EQ( detail::load_little_u16( data ), y );
+        BOOST_TEST_EQ( detail::load_big_u16( data ), x );
+
+        detail::store_native_u16( data, x );
+
+#if BOOST_UUID_BYTE_ORDER == BOOST_UUID_ORDER_LITTLE_ENDIAN
+
+        BOOST_TEST_EQ( detail::load_little_u16( data ), x );
+        BOOST_TEST_EQ( detail::load_big_u16( data ), y );
+
+#else
+
+        BOOST_TEST_EQ( detail::load_little_u16( data ), y );
+        BOOST_TEST_EQ( detail::load_big_u16( data ), x );
+
+#endif
+    }
 
     // store u32
 
