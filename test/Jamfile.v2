@@ -116,7 +116,7 @@ run test_detail_chacha20.cpp ;
 
 # compile-fail tests
 
-compile-fail compile-fail/random_provder_no_copy_ctor.cpp ;
+compile-fail compile-fail/random_provider_no_copy_ctor.cpp ;
 compile-fail compile-fail/random_provider_no_copy_assign.cpp ;
 
 # test MSVC 12 (VS2013) optimizer bug with SIMD operations.
