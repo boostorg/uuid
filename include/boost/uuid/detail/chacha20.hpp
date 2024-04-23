@@ -36,32 +36,32 @@ private:
         x[ c ] += x[ d ]; x[ b ] = rotl( x[b] ^ x[c],  7 );
     }
 
-    void get_next_block( std::uint32_t (&result)[ 16 ] )
+    void get_next_block()
     {
         for( int i = 0; i < 16; ++i )
         {
-            result[ i ] = state_[ i ];
+            block_[ i ] = state_[ i ];
         }
 
         for( int i = 0; i < 6; ++i )
         {
-            quarter_round( result, 0, 4,  8, 12 );
-            quarter_round( result, 1, 5,  9, 13 );
-            quarter_round( result, 2, 6, 10, 14 );
-            quarter_round( result, 3, 7, 11, 15 );
-            quarter_round( result, 0, 5, 10, 15 );
-            quarter_round( result, 1, 6, 11, 12 );
-            quarter_round( result, 2, 7,  8, 13 );
-            quarter_round( result, 3, 4,  9, 14 );
+            quarter_round( block_, 0, 4,  8, 12 );
+            quarter_round( block_, 1, 5,  9, 13 );
+            quarter_round( block_, 2, 6, 10, 14 );
+            quarter_round( block_, 3, 7, 11, 15 );
+            quarter_round( block_, 0, 5, 10, 15 );
+            quarter_round( block_, 1, 6, 11, 12 );
+            quarter_round( block_, 2, 7,  8, 13 );
+            quarter_round( block_, 3, 4,  9, 14 );
         }
 
         for( int i = 0; i < 16; ++i )
         {
-            result[ i ] += state_[ i ];
+            block_[ i ] += state_[ i ];
         }
 
         if( ++state_[ 12 ] == 0 ) ++state_[ 13 ];
-	}
+    }
 
 public:
 
@@ -135,7 +135,7 @@ public:
     {
         if( index_ == 16 )
         {
-            get_next_block( block_ );
+            get_next_block();
             index_ = 0;
         }
 
