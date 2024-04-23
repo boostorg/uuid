@@ -43,7 +43,7 @@ int main()
 ```
 
 ```shell
-$ clang++ -ansi -Wall -Wextra -std=c++03 -O3 mkuuid.cpp -o mkuuid
+$ clang++ -Wall -Wextra -std=c++11 -O2 mkuuid.cpp -o mkuuid
 $ ./mkuuid
 2c186eb0-89cf-4a3c-9b97-86db1670d5f4
 $ ./mkuuid
