@@ -59,6 +59,14 @@ private:
 
 #if !defined(BOOST_UUID_DISABLE_ALIGNMENT)
 
+#if (defined(__SIZEOF_POINTER__) && (__SIZEOF_POINTER__ >= 8)) || \
+    defined(__x86_64__) /* This covers x86-x32 */ || \
+    defined(_M_AMD64) || defined(_M_ARM64)
+            // Align uuid objects to 16 bytes on 64-bit platforms for performance.
+            // On most 32-bit platforms, default stack and dynamic memory alignment is lower than 16
+            // (typically 4 or 8), which makes it problematic to require uuid alignment of 16.
+            BOOST_ALIGNMENT(16)
+#endif
             std::uint64_t align_u64_;
 
 #endif
