@@ -6,15 +6,15 @@ Distributed under the [Boost Software License, Version 1.0](https://www.boost.or
 
 ### Properties
 
-* C++03
+* C++11 (since Boost 1.86.0)
 * Header-only
 
 ### Build Status
 
 Branch          | GHA CI | Appveyor CI | Coverity Scan | codecov.io | Deps | Docs | Tests |
 :-------------: | ------ | ----------- | ------------- | ---------- | ---- | ---- | ----- |
-[`master`](https://github.com/boostorg/uuid/tree/master) | [![Build Status](https://github.com/boostorg/uuid/actions/workflows/ci.yml/badge.svg?branch=master)](https://github.com/boostorg/uuid/actions?query=branch:master) | [![Build status](https://ci.appveyor.com/api/projects/status/nuihr6s92fjb9gwy/branch/master?svg=true)](https://ci.appveyor.com/project/jeking3/uuid-gaamf/branch/master) | [![Coverity Scan Build Status](https://scan.coverity.com/projects/13982/badge.svg)](https://scan.coverity.com/projects/boostorg-uuid) | [![codecov](https://codecov.io/gh/boostorg/uuid/branch/master/graph/badge.svg)](https://codecov.io/gh/boostorg/uuid/branch/master)| [![Deps](https://img.shields.io/badge/deps-master-brightgreen.svg)](https://pdimov.github.io/boostdep-report/master/uuid.html) | [![Documentation](https://img.shields.io/badge/docs-master-brightgreen.svg)](http://www.boost.org/doc/libs/master/doc/html/uuid.html) | [![Enter the Matrix](https://img.shields.io/badge/matrix-master-brightgreen.svg)](http://www.boost.org/development/tests/master/developer/uuid.html)
-[`develop`](https://github.com/boostorg/uuid/tree/develop) | [![Build Status](https://github.com/boostorg/uuid/actions/workflows/ci.yml/badge.svg?branch=develop)](https://github.com/boostorg/uuid/actions?query=branch:develop) | [![Build status](https://ci.appveyor.com/api/projects/status/nuihr6s92fjb9gwy/branch/develop?svg=true)](https://ci.appveyor.com/project/jeking3/uuid-gaamf/branch/develop) | [![Coverity Scan Build Status](https://scan.coverity.com/projects/13982/badge.svg)](https://scan.coverity.com/projects/boostorg-uuid) | [![codecov](https://codecov.io/gh/boostorg/uuid/branch/develop/graph/badge.svg)](https://codecov.io/gh/boostorg/uuid/branch/develop) | [![Deps](https://img.shields.io/badge/deps-develop-brightgreen.svg)](https://pdimov.github.io/boostdep-report/develop/uuid.html) | [![Documentation](https://img.shields.io/badge/docs-develop-brightgreen.svg)](http://www.boost.org/doc/libs/develop/doc/html/uuid.html) | [![Enter the Matrix](https://img.shields.io/badge/matrix-develop-brightgreen.svg)](http://www.boost.org/development/tests/develop/developer/uuid.html)
+[`master`](https://github.com/boostorg/uuid/tree/master) | [![Build Status](https://github.com/boostorg/uuid/actions/workflows/ci.yml/badge.svg?branch=master)](https://github.com/boostorg/uuid/actions?query=branch:master) | [![Build status](https://ci.appveyor.com/api/projects/status/rmp9xmse2b6urkjv/branch/master?svg=true)](https://ci.appveyor.com/project/cppalliance/uuid/branch/master) | [![Deps](https://img.shields.io/badge/deps-master-brightgreen.svg)](https://pdimov.github.io/boostdep-report/master/uuid.html) | [![Documentation](https://img.shields.io/badge/docs-master-brightgreen.svg)](http://www.boost.org/doc/libs/master/doc/html/uuid.html) | [![Enter the Matrix](https://img.shields.io/badge/matrix-master-brightgreen.svg)](http://www.boost.org/development/tests/master/developer/uuid.html)
+[`develop`](https://github.com/boostorg/uuid/tree/develop) | [![Build Status](https://github.com/boostorg/uuid/actions/workflows/ci.yml/badge.svg?branch=develop)](https://github.com/boostorg/uuid/actions?query=branch:develop) | [![Build status](https://ci.appveyor.com/api/projects/status/rmp9xmse2b6urkjv/branch/develop?svg=true)](https://ci.appveyor.com/project/cppalliance/uuid/branch/develop) | [![Deps](https://img.shields.io/badge/deps-develop-brightgreen.svg)](https://pdimov.github.io/boostdep-report/develop/uuid.html) | [![Documentation](https://img.shields.io/badge/docs-develop-brightgreen.svg)](http://www.boost.org/doc/libs/develop/doc/html/uuid.html) | [![Enter the Matrix](https://img.shields.io/badge/matrix-develop-brightgreen.svg)](http://www.boost.org/development/tests/develop/developer/uuid.html)
 
 ### Directories
 
@@ -33,29 +33,23 @@ Branch          | GHA CI | Appveyor CI | Coverity Scan | codecov.io | Deps | Doc
 
 ### Code Example - UUID Generation
 
-    // Copyright 2017 James E. King III
-    // Distributed under the Boost Software License, Version 1.0.
-    // (See https://www.boost.org/LICENSE_1_0.txt)
-    //  mkuuid.cpp example
-    
-    #include <boost/lexical_cast.hpp>
-    #include <boost/uuid/random_generator.hpp>
-    #include <boost/uuid/uuid_io.hpp>
-    #include <iostream>
-    
-    int main(void)
-    {
-        boost::uuids::random_generator gen;
-        std::cout << boost::lexical_cast<std::string>(gen()) << std::endl;
-        return 0;
-    }
-    
-    ----
-    
-    $ clang++ -ansi -Wall -Wextra -std=c++03 -O3 mkuuid.cpp -o mkuuid
-    $ ./mkuuid
-    2c186eb0-89cf-4a3c-9b97-86db1670d5f4
-    $ ./mkuuid
-    a9d3fbb9-0383-4389-a8a8-61f6629f90b6
+```cpp
+//  mkuuid.cpp example
 
+#include <boost/uuid.hpp>
+#include <iostream>
 
+int main()
+{
+    boost::uuids::random_generator gen;
+    std::cout << gen() << std::endl;
+}
+```
+----
+```shell
+$ clang++ -ansi -Wall -Wextra -std=c++03 -O3 mkuuid.cpp -o mkuuid
+$ ./mkuuid
+2c186eb0-89cf-4a3c-9b97-86db1670d5f4
+$ ./mkuuid
+a9d3fbb9-0383-4389-a8a8-61f6629f90b6
+```
