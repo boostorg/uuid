@@ -42,6 +42,10 @@
 #include <cstddef>
 #include <cstdint>
 
+#if defined(__cpp_impl_three_way_comparison) && __cpp_impl_three_way_comparison >= 201907L
+# include <compare>
+#endif
+
 namespace boost {
 namespace uuids {
 
@@ -158,6 +162,12 @@ inline bool operator>=(uuid const& lhs, uuid const& rhs) BOOST_NOEXCEPT
 {
     return !(lhs < rhs);
 }
+
+#if defined(__cpp_impl_three_way_comparison) && __cpp_impl_three_way_comparison >= 201907L
+
+inline std::strong_ordering operator<=> (uuid const& lhs, uuid const& rhs) BOOST_NOEXCEPT;
+
+#endif
 
 inline void swap(uuid& lhs, uuid& rhs) BOOST_NOEXCEPT
 {

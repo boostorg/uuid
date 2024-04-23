@@ -56,6 +56,24 @@ inline bool operator<( uuid const& lhs, uuid const& rhs ) BOOST_NOEXCEPT
     return v1 < v2 || ( !( v2 < v1 ) && w1 < w2 );
 }
 
+#if defined(__cpp_impl_three_way_comparison) && __cpp_impl_three_way_comparison >= 201907L
+
+inline std::strong_ordering operator<=> (uuid const& lhs, uuid const& rhs) BOOST_NOEXCEPT
+{
+    std::uint64_t v1 = detail::load_big_u64( lhs.data + 0 );
+    std::uint64_t w1 = detail::load_big_u64( lhs.data + 8 );
+
+    std::uint64_t v2 = detail::load_big_u64( rhs.data + 0 );
+    std::uint64_t w2 = detail::load_big_u64( rhs.data + 8 );
+
+    if( v1 < v2 ) return std::strong_ordering::less;
+    if( v1 > v2 ) return std::strong_ordering::greater;
+
+    return w1 <=> w2;
+}
+
+#endif
+
 } // namespace uuids
 } // namespace boost
 

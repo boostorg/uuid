@@ -163,6 +163,12 @@ int main()
         uuid u7 = {{0, 0, 0, 0, 0, 0, 0, 0, 0, 1}};
 
         BOOST_TEST_EQ( u1, u1 );
+        BOOST_TEST_EQ( u2, u2 );
+        BOOST_TEST_EQ( u3, u3 );
+        BOOST_TEST_EQ( u4, u4 );
+        BOOST_TEST_EQ( u5, u5 );
+        BOOST_TEST_EQ( u6, u6 );
+        BOOST_TEST_EQ( u7, u7 );
 
         BOOST_TEST_NE( u1, u2 );
         BOOST_TEST_NE( u6, u7 );
@@ -192,10 +198,11 @@ int main()
         BOOST_TEST_LE( u6, u4 );
         BOOST_TEST_LE( u7, u4 );
 
-        BOOST_TEST_GE( u2, u1 );
-        BOOST_TEST_GE( u3, u1 );
-
+        BOOST_TEST_GE( u1, u1 );
+        BOOST_TEST_GE( u2, u2 );
         BOOST_TEST_GE( u3, u3 );
+
+        BOOST_TEST_GE( u3, u2 );
         BOOST_TEST_GE( u2, u1 );
         BOOST_TEST_GE( u3, u1 );
 
@@ -205,6 +212,46 @@ int main()
         BOOST_TEST_GE( u6, u7 );
         BOOST_TEST_GE( u4, u6 );
         BOOST_TEST_GE( u4, u7 );
+
+#if defined(__cpp_impl_three_way_comparison) && __cpp_impl_three_way_comparison >= 201907L
+
+        constexpr auto eq = std::strong_ordering::equal;
+        constexpr auto lt = std::strong_ordering::less;
+        constexpr auto gt = std::strong_ordering::greater;
+
+        BOOST_TEST( ( u1 <=> u1 ) == eq );
+        BOOST_TEST( ( u2 <=> u2 ) == eq );
+        BOOST_TEST( ( u3 <=> u3 ) == eq );
+        BOOST_TEST( ( u4 <=> u4 ) == eq );
+        BOOST_TEST( ( u5 <=> u5 ) == eq );
+        BOOST_TEST( ( u6 <=> u6 ) == eq );
+        BOOST_TEST( ( u7 <=> u7 ) == eq );
+
+        BOOST_TEST( ( u1 <=> u2 ) == lt );
+        BOOST_TEST( ( u2 <=> u3 ) == lt );
+        BOOST_TEST( ( u1 <=> u4 ) == lt );
+        BOOST_TEST( ( u1 <=> u5 ) == lt );
+        BOOST_TEST( ( u4 <=> u5 ) == lt );
+        BOOST_TEST( ( u4 <=> u2 ) == lt );
+        BOOST_TEST( ( u5 <=> u2 ) == lt );
+
+        BOOST_TEST( ( u1 <=> u6 ) == lt );
+        BOOST_TEST( ( u1 <=> u7 ) == lt );
+        BOOST_TEST( ( u7 <=> u6 ) == lt );
+        BOOST_TEST( ( u6 <=> u4 ) == lt );
+        BOOST_TEST( ( u7 <=> u4 ) == lt );
+
+        BOOST_TEST( ( u2 <=> u1 ) == gt );
+        BOOST_TEST( ( u3 <=> u1 ) == gt );
+        BOOST_TEST( ( u3 <=> u2 ) == gt );
+
+        BOOST_TEST( ( u6 <=> u1 ) == gt );
+        BOOST_TEST( ( u7 <=> u1 ) == gt );
+        BOOST_TEST( ( u6 <=> u7 ) == gt );
+        BOOST_TEST( ( u4 <=> u6 ) == gt );
+        BOOST_TEST( ( u4 <=> u7 ) == gt );
+
+#endif
     }
 
     { // ticket 10510
