@@ -5,6 +5,7 @@
 // Distributed under the Boost Software License, Version 1.0.
 // https://www.boost.org/LICENSE_1_0.txt
 
+#include <limits>
 #include <cstdint>
 #include <cstddef>
 
@@ -118,6 +119,16 @@ public:
         // reset counter
         state_[ 12 ] = 0;
         state_[ 13 ] = 0;
+    }
+
+    static constexpr result_type min()
+    {
+        return std::numeric_limits<result_type>::min();
+    }
+
+    static constexpr result_type max()
+    {
+        return std::numeric_limits<result_type>::max();
     }
 
     result_type operator()()

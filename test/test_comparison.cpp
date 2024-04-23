@@ -74,7 +74,7 @@ int main()
 
     {
         std::mt19937 rng;
-        random_generator_mt19937 gen( &rng );
+        basic_random_generator<std::mt19937> gen( &rng );
 
         for( int i = 0; i < 16; ++i )
         {
