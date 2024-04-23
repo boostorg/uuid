@@ -83,6 +83,7 @@ run test_nil_generator.cpp ;
 run test_name_generator.cpp ;
 run test_string_generator.cpp ;
 run test_random_generator.cpp ;
+run test_time_generator_v1.cpp ;
 
 # test serializing uuids
 

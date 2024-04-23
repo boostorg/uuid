@@ -17,5 +17,6 @@
 #include <boost/uuid/name_generator_md5.hpp>
 #include <boost/uuid/name_generator.hpp>
 #include <boost/uuid/random_generator.hpp>
+#include <boost/uuid/time_generator_v1.hpp>
 
 #endif //BOOST_UUID_UUID_GENERATORS_HPP_INCLUDED
