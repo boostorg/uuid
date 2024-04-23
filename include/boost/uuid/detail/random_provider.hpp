@@ -8,7 +8,6 @@
 
 #include <boost/uuid/detail/random_device.hpp>
 #include <random>
-#include <memory>
 #include <cstdint>
 
 namespace boost {
@@ -19,18 +18,13 @@ class random_provider
 {
 private:
 
-    std::unique_ptr< detail::random_device > pdev_;
+    detail::random_device dev_;
 
 public:
 
-    random_provider(): pdev_( new detail::random_device )
-    {
-    }
-
-    random_provider( random_provider&& that ) = default;
-    random_provider& operator=( random_provider&& that ) = default;
-
     typedef std::uint32_t result_type;
+
+    random_provider() = default;
 
     // Leverage the provider as a SeedSeq for
     // PseudoRandomNumberGeneration seeding.
@@ -42,7 +36,7 @@ public:
 
         for( ; first != last; ++first )
         {
-            *first = dist( *pdev_ );
+            *first = dist( dev_ );
         }
     }
 

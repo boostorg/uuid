@@ -12,6 +12,7 @@
 #include <boost/uuid/basic_random_generator.hpp>
 #include <boost/uuid/uuid.hpp>
 #include <boost/uuid/detail/random_provider.hpp>
+#include <memory>
 #include <cstring>
 #include <cstdint>
 
@@ -23,11 +24,17 @@ namespace uuids {
 //!        satisfy the majority of use cases
 class random_generator_pure
 {
+private:
+
+    std::unique_ptr<detail::random_provider> prov_;
+
 public:
 
     typedef uuid result_type;
 
-    random_generator_pure() = default;
+    random_generator_pure(): prov_( new detail::random_provider )
+    {
+    }
 
     random_generator_pure(random_generator_pure&& that) = default;
     random_generator_pure& operator= (random_generator_pure&& that) = default;
@@ -39,7 +46,7 @@ public:
         result_type result;
 
         std::uint32_t tmp[ 4 ];
-        prov_.generate( tmp + 0, tmp + 4 );
+        prov_->generate( tmp + 0, tmp + 4 );
 
         std::memcpy( result.data, tmp, 16 );
 
@@ -55,10 +62,6 @@ public:
 
         return result;
     }
-
-private:
-
-    detail::random_provider prov_;
 };
 
 #if defined(BOOST_UUID_RANDOM_GENERATOR_COMPAT)
