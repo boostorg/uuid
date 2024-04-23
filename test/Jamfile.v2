@@ -101,14 +101,16 @@ run test_uuid_in_map.cpp ;
 # test hashing support
 
 run test_hash.cpp ;
-
 run test_hash_value.cpp ;
-
-run test_detail_endian.cpp ;
 
 run test_std_unordered.cpp ;
 run test_boost_unordered.cpp
   : : : <toolset>gcc-4.7:<build>no ;
+
+# test detail components
+
+run test_detail_endian.cpp ;
+run test_detail_chacha20.cpp ;
 
 # test hash functions
 
