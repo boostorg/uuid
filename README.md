@@ -45,7 +45,7 @@ int main()
     std::cout << gen() << std::endl;
 }
 ```
-----
+
 ```shell
 $ clang++ -ansi -Wall -Wextra -std=c++03 -O3 mkuuid.cpp -o mkuuid
 $ ./mkuuid
