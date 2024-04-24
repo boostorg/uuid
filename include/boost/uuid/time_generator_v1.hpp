@@ -5,10 +5,10 @@
 // Distributed under the Boost Software License, Version 1.0.
 // https://www.boost.org/LICENSE_1_0.txt
 
-#include <boost/uuid/detail/uuid_clock.hpp>
+#include <boost/uuid/uuid.hpp>
+#include <boost/uuid/uuid_clock.hpp>
 #include <boost/uuid/detail/random_provider.hpp>
 #include <boost/uuid/detail/endian.hpp>
-#include <boost/uuid/uuid.hpp>
 #include <atomic>
 #include <cstdint>
 #include <cstring>
@@ -83,7 +83,7 @@ inline time_generator_v1::state_type time_generator_v1::get_new_state( state_typ
 {
     state_type newst( oldst );
 
-    std::uint64_t timestamp = detail::uuid_clock::now().time_since_epoch().count();
+    std::uint64_t timestamp = uuid_clock::now().time_since_epoch().count();
 
     if( timestamp <= newst.timestamp )
     {

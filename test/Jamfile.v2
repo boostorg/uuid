@@ -77,6 +77,10 @@ run test_comparison.cpp : : : <define>BOOST_UUID_NO_SIMD : test_comparison_no_si
 
 run test_io.cpp ;
 
+# test uuid_clock
+
+run test_uuid_clock.cpp ;
+
 # test generators
 
 run test_nil_generator.cpp ;
@@ -118,7 +122,6 @@ run test_detail_md5.cpp ;
 run test_detail_sha1.cpp ;
 run test_detail_endian.cpp ;
 run test_detail_chacha20.cpp ;
-run test_detail_uuid_clock.cpp ;
 
 # compile-fail tests
 

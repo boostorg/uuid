@@ -2,14 +2,14 @@
 // Distributed under the Boost Software License, Version 1.0.
 // https://www.boost.org/LICENSE_1_0.txt
 
-#include <boost/uuid/detail/uuid_clock.hpp>
+#include <boost/uuid/uuid_clock.hpp>
 #include <boost/core/lightweight_test.hpp>
 #include <chrono>
 #include <cstdint>
 
 int main()
 {
-    using boost::uuids::detail::uuid_clock;
+    using boost::uuids::uuid_clock;
     using std::chrono::system_clock;
 
     // ddaa7790-018c-11ef-a9df-325096b39f47

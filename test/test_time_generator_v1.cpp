@@ -3,7 +3,7 @@
 // https://www.boost.org/LICENSE_1_0.txt
 
 #include <boost/uuid/time_generator_v1.hpp>
-#include <boost/uuid/detail/uuid_clock.hpp>
+#include <boost/uuid/uuid_clock.hpp>
 #include <boost/core/lightweight_test.hpp>
 #include <atomic>
 #include <chrono>
@@ -13,28 +13,28 @@
 
 using namespace boost::uuids;
 
-detail::uuid_clock::time_point get_time_point_v1( uuid const& u )
+uuid_clock::time_point get_time_point_v1( uuid const& u )
 {
     auto t = u.timestamp_v1();
-    auto d = detail::uuid_clock::duration( t );
+    auto d = uuid_clock::duration( t );
 
-    return detail::uuid_clock::time_point( d );
+    return uuid_clock::time_point( d );
 }
 
 uuid generate_and_test( time_generator_v1& gen )
 {
-    auto sys_before = std::chrono::time_point_cast<detail::uuid_clock::duration>( std::chrono::system_clock::now() );
+    auto sys_before = std::chrono::time_point_cast<uuid_clock::duration>( std::chrono::system_clock::now() );
 
     uuid u = gen();
 
     BOOST_TEST_EQ( u.variant(), uuid::variant_rfc_4122 );
     BOOST_TEST_EQ( u.version(), uuid::version_time_based );
 
-    auto sys_after = std::chrono::time_point_cast<detail::uuid_clock::duration>( std::chrono::system_clock::now() );
+    auto sys_after = std::chrono::time_point_cast<uuid_clock::duration>( std::chrono::system_clock::now() );
 
     auto uuid_time_point = get_time_point_v1( u );
 
-    auto sys_time_point = detail::uuid_clock::to_sys( uuid_time_point );
+    auto sys_time_point = uuid_clock::to_sys( uuid_time_point );
 
     BOOST_TEST( sys_before <= sys_time_point );
     BOOST_TEST( sys_time_point <= sys_after );

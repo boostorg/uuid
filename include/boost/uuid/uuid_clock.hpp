@@ -1,5 +1,5 @@
-#ifndef BOOST_UUID_DETAIL_UUID_CLOCK_HPP_INCLUDED
-#define BOOST_UUID_DETAIL_UUID_CLOCK_HPP_INCLUDED
+#ifndef BOOST_UUID_UUID_CLOCK_HPP_INCLUDED
+#define BOOST_UUID_UUID_CLOCK_HPP_INCLUDED
 
 // Copyright 2024 Peter Dimov
 // Distributed under the Boost Software License, Version 1.0.
@@ -11,7 +11,6 @@
 
 namespace boost {
 namespace uuids {
-namespace detail {
 
 class uuid_clock
 {
@@ -55,8 +54,7 @@ inline std::chrono::system_clock::time_point uuid_clock::to_sys( time_point cons
     return std::chrono::system_clock::time_point( sys_since );
 }
 
-} // detail
 } // uuids
 } // boost
 
-#endif // BOOST_UUID_DETAIL_UUID_CLOCK_HPP_INCLUDED
+#endif // BOOST_UUID_UUID_CLOCK_HPP_INCLUDED

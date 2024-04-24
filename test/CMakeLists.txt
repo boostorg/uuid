@@ -21,6 +21,8 @@ boost_test(TYPE run SOURCES test_include1.cpp test_include2.cpp)
 
 boost_test(TYPE run SOURCES test_io.cpp LINK_LIBRARIES Boost::lexical_cast)
 
+boost_test(TYPE run SOURCES test_uuid_clock.cpp)
+
 boost_test(TYPE run SOURCES test_nil_generator.cpp)
 boost_test(TYPE run SOURCES test_name_generator.cpp)
 boost_test(TYPE run SOURCES test_string_generator.cpp)
@@ -41,7 +43,6 @@ boost_test(TYPE run SOURCES test_detail_md5.cpp)
 boost_test(TYPE run SOURCES test_detail_sha1.cpp)
 boost_test(TYPE run SOURCES test_detail_endian.cpp)
 boost_test(TYPE run SOURCES test_detail_chacha20.cpp)
-boost_test(TYPE run SOURCES test_detail_uuid_clock.cpp)
 
 boost_test(TYPE run SOURCES test_entropy_error.cpp)
 
