@@ -1,5 +1,5 @@
 /*
- *          Copyright Andrey Semashev 2013, 2022.
+ *        Copyright Andrey Semashev 2013, 2022, 2024.
  * Distributed under the Boost Software License, Version 1.0.
  *    (See accompanying file LICENSE_1_0.txt or copy at
  *          https://www.boost.org/LICENSE_1_0.txt)
@@ -17,7 +17,9 @@
 #include <cstdint>
 
 // MSVC does not always have immintrin.h (at least, not up to MSVC 10), so include the appropriate header for each instruction set
-#if defined(BOOST_UUID_USE_SSE41)
+#if defined(BOOST_UUID_USE_AVX10_1)
+#include <immintrin.h>
+#elif defined(BOOST_UUID_USE_SSE41)
 #include <smmintrin.h>
 #elif defined(BOOST_UUID_USE_SSE3)
 #include <pmmintrin.h>
@@ -74,11 +76,22 @@ BOOST_FORCEINLINE void compare(uuid const& lhs, uuid const& rhs, std::uint32_t& 
     // 1. Due to little endian byte order the first bytes go into the lower part of the xmm registers,
     //    so the comparison results in the least significant bits will actually be the most signigicant for the final operation result.
     //    This means we have to determine which of the comparison results have the least significant bit on, and this is achieved with
-    //    the "(x - 1) ^ x" trick.
-    // 2. Because there is only signed comparison in SSE/AVX, we have to invert byte comparison results whenever signs of the corresponding
-    //    bytes are different. I.e. in signed comparison it's -1 < 1, but in unsigned it is the opposite (255 > 1). To do that we XOR left and right,
-    //    making the most significant bit of each byte 1 if the signs are different, and later apply this mask with another XOR to the comparison results.
-    // 3. pcmpgtw compares for "greater" relation, so we swap the arguments to get what we need.
+    //    the "(x - 1) ^ x" trick. With BMI, this will produce a single blsmsk instruction.
+    // 2. Because there is only signed byte comparison until AVX-512, we have to invert byte comparison results whenever signs of the
+    //    corresponding bytes are different. I.e. in signed comparison it's -1 < 1, but in unsigned it is the opposite (255 > 1). To do
+    //    that we XOR left and right, making the most significant bit of each byte 1 if the signs are different, and later apply this mask
+    //    with another XOR to the comparison results.
+    // 3. Until AVX-512, there is only pcmpgtb instruction that compares for "greater" relation, so we swap the arguments to get what we need.
+
+#if defined(BOOST_UUID_USE_AVX10_1)
+
+    __mmask16 k_cmp = _mm_cmplt_epu8_mask(mm_left, mm_right);
+    __mmask16 k_rcmp = _mm_cmplt_epu8_mask(mm_right, mm_left);
+
+    cmp = static_cast< std::uint32_t >(_cvtmask16_u32(k_cmp));
+    rcmp = static_cast< std::uint32_t >(_cvtmask16_u32(k_rcmp));
+
+#else // defined(BOOST_UUID_USE_AVX10_1)
 
     const __m128i mm_signs_mask = _mm_xor_si128(mm_left, mm_right);
 
@@ -89,6 +102,8 @@ BOOST_FORCEINLINE void compare(uuid const& lhs, uuid const& rhs, std::uint32_t& 
 
     cmp = static_cast< std::uint32_t >(_mm_movemask_epi8(mm_cmp));
     rcmp = static_cast< std::uint32_t >(_mm_movemask_epi8(mm_rcmp));
+
+#endif // defined(BOOST_UUID_USE_AVX10_1)
 
     cmp = (cmp - 1u) ^ cmp;
     rcmp = (rcmp - 1u) ^ rcmp;
