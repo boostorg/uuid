@@ -10,7 +10,6 @@
 #include <boost/uuid/detail/endian.hpp>
 #include <boost/uuid/uuid.hpp>
 #include <atomic>
-#include <array>
 #include <cstdint>
 #include <cstring>
 
@@ -23,8 +22,6 @@ class time_generator_v1
 {
 public:
 
-    using node_type = std::array<std::uint8_t, 6>;
-
     struct state_type
     {
         std::uint64_t timestamp;
@@ -33,7 +30,7 @@ public:
 
 private:
 
-    node_type node_ = {};
+    uuid::node_type node_ = {};
 
     std::atomic<state_type>* ps_ = nullptr;
     state_type state_ = {};
@@ -43,7 +40,8 @@ public:
     using result_type = uuid;
 
     time_generator_v1();
-    time_generator_v1( node_type const& node, std::atomic<state_type>& state ) noexcept;
+    time_generator_v1( uuid::node_type const& node, state_type const& state ) noexcept;
+    time_generator_v1( uuid::node_type const& node, std::atomic<state_type>& state ) noexcept;
 
     result_type operator()() noexcept;
 
@@ -71,7 +69,11 @@ inline time_generator_v1::time_generator_v1()
     state_.clock_seq = static_cast<std::uint16_t>( tmp[ 2 ] & 0x3FFF );
 }
 
-inline time_generator_v1::time_generator_v1( node_type const& node, std::atomic<state_type>& state ) noexcept: node_( node ), ps_( &state )
+inline time_generator_v1::time_generator_v1( uuid::node_type const& node, state_type const& state ) noexcept: node_( node ), state_( state )
+{
+}
+
+inline time_generator_v1::time_generator_v1( uuid::node_type const& node, std::atomic<state_type>& state ) noexcept: node_( node ), ps_( &state )
 {
 }
 
@@ -101,16 +103,16 @@ inline time_generator_v1::result_type time_generator_v1::operator()() noexcept
     {
         auto oldst = ps_->load( std::memory_order_relaxed );
 
-		for( ;; )
-		{
-			auto newst = get_new_state( oldst );
+        for( ;; )
+        {
+            auto newst = get_new_state( oldst );
 
-			if( ps_->compare_exchange_strong( oldst, newst, std::memory_order_relaxed, std::memory_order_relaxed ) )
-			{
-				state_ = newst;
-				break;
-			}
-		}
+            if( ps_->compare_exchange_strong( oldst, newst, std::memory_order_relaxed, std::memory_order_relaxed ) )
+            {
+                state_ = newst;
+                break;
+            }
+        }
     }
     else
     {

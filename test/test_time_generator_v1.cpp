@@ -70,8 +70,35 @@ int main()
     {
         std::set<uuid> set;
 
-        time_generator_v1::node_type node{{ 0x01, 0x02, 0x03, 0x04, 0x05, 0x06 }};
+        uuid::node_type node{{ 0x01, 0x02, 0x03, 0x04, 0x05, 0x06 }};
         std::atomic< time_generator_v1::state_type > state{{ 0, 0x2222 }};
+
+        time_generator_v1 gen( node, state );
+
+        uuid u1 = generate_and_test( gen );
+
+        BOOST_TEST( u1.node_identifier() == node );
+        BOOST_TEST_EQ( u1.clock_seq(), 0x2222 );
+
+        set.insert( u1 );
+
+        for( int i = 0; i < N; ++i )
+        {
+            uuid u2 = generate_and_test( gen );
+
+            BOOST_TEST( u2.node_identifier() == node );
+
+            set.insert( u2 );
+        }
+
+        BOOST_TEST_EQ( set.size(), N + 1 );
+    }
+
+    {
+        std::set<uuid> set;
+
+        uuid::node_type node{{ 0x01, 0x02, 0x03, 0x04, 0x05, 0x06 }};
+        time_generator_v1::state_type state{ 0, 0x2222 };
 
         time_generator_v1 gen( node, state );
 
