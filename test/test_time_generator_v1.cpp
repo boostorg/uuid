@@ -13,31 +13,9 @@
 
 using namespace boost::uuids;
 
-time_generator_v1::node_type get_node( uuid const& u )
-{
-    time_generator_v1::node_type node = {};
-
-    std::memcpy( node.data(), u.data + 10, 6 );
-    return node;
-}
-
-std::uint16_t get_clock_seq( uuid const& u )
-{
-    return detail::load_big_u16( u.data + 8 ) & 0x3FFF;
-}
-
-std::uint64_t get_timestamp_v1( uuid const& u )
-{
-    std::uint32_t time_low = detail::load_big_u32( u.data + 0 );
-    std::uint16_t time_mid = detail::load_big_u16( u.data + 4 );
-    std::uint16_t time_hi = detail::load_big_u16( u.data + 6 ) & 0x0FFF;
-
-    return time_low | static_cast<std::uint64_t>( time_mid ) << 32 | static_cast<std::uint64_t>( time_hi ) << 48;
-}
-
 detail::uuid_clock::time_point get_time_point_v1( uuid const& u )
 {
-    auto t = get_timestamp_v1( u );
+    auto t = u.timestamp_v1();
     auto d = detail::uuid_clock::duration( t );
 
     return detail::uuid_clock::time_point( d );
@@ -81,7 +59,7 @@ int main()
         {
             uuid u2 = generate_and_test( gen );
 
-            BOOST_TEST( get_node( u1 ) == get_node( u2 ) );
+            BOOST_TEST( u1.node_identifier() == u2.node_identifier() );
 
             set.insert( u2 );
         }
@@ -99,8 +77,8 @@ int main()
 
         uuid u1 = generate_and_test( gen );
 
-        BOOST_TEST( get_node( u1 ) == node );
-        BOOST_TEST_EQ( get_clock_seq( u1 ), 0x2222 );
+        BOOST_TEST( u1.node_identifier() == node );
+        BOOST_TEST_EQ( u1.clock_seq(), 0x2222 );
 
         set.insert( u1 );
 
@@ -108,7 +86,7 @@ int main()
         {
             uuid u2 = generate_and_test( gen );
 
-            BOOST_TEST( get_node( u1 ) == get_node( u2 ) );
+            BOOST_TEST( u2.node_identifier() == node );
 
             set.insert( u2 );
         }
