@@ -83,7 +83,11 @@ run test_nil_generator.cpp ;
 run test_name_generator.cpp ;
 run test_string_generator.cpp ;
 run test_random_generator.cpp ;
-run test_time_generator_v1.cpp ;
+
+lib atomic ;
+
+run test_time_generator_v1.cpp
+  : : : <toolset>gcc:<library>atomic <toolset>clang-linux:<library>atomic ;
 
 # test serializing uuids
 
