@@ -1,0 +1,52 @@
+[#string_generator]
+== boost/uuid/string_generator.hpp
+
+:idprefix: string_generator_
+
+=== Synopsis
+
+[source,c++]
+----
+// #include <boost/uuid/string_generator.hpp>
+
+namespace boost {
+namespace uuids {
+
+struct string_generator {
+    typedef uuid result_type;
+
+    template <typename ch, typename char_traits, typename alloc>
+        uuid operator()(std::basic_string<ch, char_traits, alloc> const& s) const;
+};
+
+}} //namespace boost::uuids
+----
+
+=== String Generator
+
+The `boost::uuids::string_generator` class generates a *uuid* from a string. In addition to the standards-defined string format in https://www.ietf.org/rfc/rfc4122.txt[RFC 4122] (p. 3), the string generator accepts a few variants. Valid strings match the following PCRE regular expression:
+
+```txt
+^({)?([0-9a-fA-F]{8})(?-)?([0-9a-fA-F]{4})(?(DASH)-)([0-9a-fA-F]{4})(?(DASH)-)([0-9a-fA-F]{4})(?(DASH)-)([0-9a-fA-F]{12})(?(1)})$
+```
+
+Or more generally, the following formats are accepted as valid string formats, where h is hexadecimal, without case sensitivity, and without any leading or trailing whitespace:
+
+```
+hhhhhhhh-hhhh-hhhh-hhhh-hhhhhhhhhhhh
+{hhhhhhhh-hhhh-hhhh-hhhh-hhhhhhhhhhhh}
+hhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhh
+{hhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhh}
+```
+
+For example:
+
+```c++
+boost::uuids::string_generator gen;
+boost::uuids::uuid u1 = gen("{01234567-89ab-cdef-0123-456789abcdef}");
+boost::uuids::uuid u2 = gen(L"01234567-89ab-cdef-0123-456789abcdef");
+boost::uuids::uuid u3 = gen(std::string("0123456789abcdef0123456789abcdef"));
+boost::uuids::uuid u4 = gen(std::wstring(L"01234567-89AB-CDEF-0123-456789ABCDEF"));
+```
+
+Invalid input will generate a `std::runtime_error` exception.

@@ -1,0 +1,96 @@
+[#random_generator]
+== boost/uuid/random_generator.hpp
+
+:idprefix: random_generator_
+
+=== Synopsis
+
+[source,c++]
+----
+// #include <boost/uuid/random_generator.hpp>
+
+namespace boost {
+namespace uuids {
+
+class random_generator {
+public:
+    typedef uuid result_type;
+    result_type operator()();
+};
+
+template <typename UniformRandomNumberGenerator>
+class basic_random_generator {
+public:
+    typedef uuid result_type;
+
+    basic_random_generator();
+    explicit basic_random_generator(UniformRandomNumberGenerator& gen);
+    explicit basic_random_generator(UniformRandomNumberGenerator* pGen);
+
+    result_type operator()();
+};
+
+typedef basic_random_generator<boost::mt19937> random_generator_mt19937;
+
+}} // namespace boost::uuids
+----
+
+=== Random Generator
+
+`boost::uuids::random_generator` class generates uuids using operating system provided entropy. For the majority of use cases this should be sufficient, as this generator has very low startup overhead when compared to a generator with seeding requirements.
+
+`boost::uuids::basic_random_generator` class generates a random number based uuid from a random number generator (one that conforms to the https://www.boost.org/libs/random/random-concepts.html#uniform-rng[UniformRandomNumberGenerator] concept). The default constructor will properly seed the random number generator if it requires the behavior for proper operation. Additional constructors allow you to provide your own `UniformRandomNumberGenerator` and you are responsible for properly seeding it if necessary.
+
+`boost::uuids::random_generator_mt19937` is a type definition for: `boost::uuids::basic_random_generator<mt19937>` and is provided for convenience.
+
+==== Platforms
+
+The following platforms are supported and entropy selection logic explained:
+
+* CloudABI
+* Unix
+** OpenBSD: use https://man.openbsd.org/arc4random.3[arc4random(3)]
+** Linux 3.17 or later: use http://man7.org/linux/man-pages/man2/getrandom.2.html[getrandom(2)]
+** Other systems with glibc 2.25 or later: use https://www.man7.org/linux/man-pages/man3/getentropy.3.html[getentropy(3)]
+** All other cases: use `/dev/urandom`
+* Windows (UWP Compatible): use BCrypt if available, otherwise use Wincrypt
+
+==== Preprocessor Macros
+
+* `BOOST_UUID_RANDOM_PROVIDER_FORCE_POSIX`: on Unix this will force the selection of `/dev/*random` over `getrandom(2)` or `getentropy(3)`.
+* `BOOST_UUID_RANDOM_PROVIDER_FORCE_WINCRYPT`: on Windows this will force the selection of Wincrypt over BCrypt.
+* `BOOST_UUID_RANDOM_PROVIDER_NO_LIB` (or `BOOST_ALL_NO_LIB`): disable Windows auto linking.
+* `BOOST_UUID_RANDOM_PROVIDER_GETRANDOM_DISABLE_LIBC_WRAPPER`: disable `getrandom(2)` on Linux even if it's available.
+
+==== Performance
+
+In most cases `random_generator` will be optimal. A benchmark can be found in the tests (`test_bench_random`) that will determine the cutoff point where `random_generator_mt19937` outperforms `random_generator` in wall time.
+
+On Windows when using the wincrypt entropy provider, a measurable delay may occur the first time a `random_generator` is constructed within a running instance. This has been observed using `test_bench_random` and was so significant that the benchmark was changed to throw out the first loop of measurements.
+
+==== Exceptions
+
+The exception `boost::uuids::entropy_error` is thrown if there is an error getting entropy from the operating system.
+
+==== Examples
+
+```c++
+// Depending on the platform there may be a setup cost in
+// initializing the generator so plan to reuse it if you can.
+boost::uuids::random_generator gen;
+boost::uuids::uuid id = gen();
+std::cout << id << std::endl;
+boost::uuids::uuid id2 = gen();
+std::cout << id2 << std::endl;
+assert(id != id2);
+
+// You can still use a PseudoRandomNumberGenerator to create
+// UUIDs, however this is not the preferred mechanism.
+boost::uuids::random_generator_mt19937 bulkgen;
+for (size_t i = 0; i < 1000; ++i)
+{
+    boost::uuids::uuid u = bulkgen();
+    // do something with u
+    boost::ignore_unused(u);
+}
+```
