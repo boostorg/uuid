@@ -3,9 +3,10 @@
 // https://www.boost.org/LICENSE_1_0.txt
 
 #include <boost/uuid/time_generator_v1.hpp>
-#include <boost/uuid/time_generator_v1.hpp>
+#include <boost/uuid/detail/uuid_clock.hpp>
 #include <boost/core/lightweight_test.hpp>
 #include <atomic>
+#include <chrono>
 #include <set>
 #include <cstdint>
 #include <cstring>
@@ -25,6 +26,23 @@ std::uint16_t get_clock_seq( uuid const& u )
     return detail::load_big_u16( u.data + 8 ) & 0x3FFF;
 }
 
+std::uint64_t get_timestamp_v1( uuid const& u )
+{
+    std::uint32_t time_low = detail::load_big_u32( u.data + 0 );
+    std::uint16_t time_mid = detail::load_big_u16( u.data + 4 );
+    std::uint16_t time_hi = detail::load_big_u16( u.data + 6 ) & 0x0FFF;
+
+    return time_low | static_cast<std::uint64_t>( time_mid ) << 32 | static_cast<std::uint64_t>( time_hi ) << 48;
+}
+
+detail::uuid_clock::time_point get_time_point_v1( uuid const& u )
+{
+    auto t = get_timestamp_v1( u );
+    auto d = detail::uuid_clock::duration( t );
+
+    return detail::uuid_clock::time_point( d );
+}
+
 int main()
 {
     int const N = 1024;
@@ -34,10 +52,21 @@ int main()
 
         time_generator_v1 gen;
 
+        auto sys_before = std::chrono::system_clock::now();
+
         uuid u1 = gen();
 
         BOOST_TEST_EQ( u1.variant(), uuid::variant_rfc_4122 );
         BOOST_TEST_EQ( u1.version(), uuid::version_time_based );
+
+        auto sys_after = std::chrono::system_clock::now();
+
+        auto uuid_time_point = get_time_point_v1( u1 );
+
+        auto sys_time_point = detail::uuid_clock::to_sys( uuid_time_point );
+
+        BOOST_TEST( sys_before <= sys_time_point );
+        BOOST_TEST( sys_time_point <= sys_after );
 
         set.insert( u1 );
 
@@ -63,12 +92,23 @@ int main()
 
         time_generator_v1 gen( node, state );
 
+        auto sys_before = std::chrono::system_clock::now();
+
         uuid u1 = gen();
 
         BOOST_TEST_EQ( u1.variant(), uuid::variant_rfc_4122 );
         BOOST_TEST_EQ( u1.version(), uuid::version_time_based );
         BOOST_TEST( get_node( u1 ) == node );
         BOOST_TEST_EQ( get_clock_seq( u1 ), 0x2222 );
+
+        auto sys_after = std::chrono::system_clock::now();
+
+        auto uuid_time_point = get_time_point_v1( u1 );
+
+        auto sys_time_point = detail::uuid_clock::to_sys( uuid_time_point );
+
+        BOOST_TEST( sys_before <= sys_time_point );
+        BOOST_TEST( sys_time_point <= sys_after );
 
         set.insert( u1 );
 
