@@ -45,14 +45,14 @@ detail::uuid_clock::time_point get_time_point_v1( uuid const& u )
 
 uuid generate_and_test( time_generator_v1& gen )
 {
-    auto sys_before = std::chrono::system_clock::now();
+    auto sys_before = std::chrono::time_point_cast<detail::uuid_clock::duration>( std::chrono::system_clock::now() );
 
     uuid u = gen();
 
     BOOST_TEST_EQ( u.variant(), uuid::variant_rfc_4122 );
     BOOST_TEST_EQ( u.version(), uuid::version_time_based );
 
-    auto sys_after = std::chrono::system_clock::now();
+    auto sys_after = std::chrono::time_point_cast<detail::uuid_clock::duration>( std::chrono::system_clock::now() );
 
     auto uuid_time_point = get_time_point_v1( u );
 
