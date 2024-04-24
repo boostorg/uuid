@@ -1,5 +1,5 @@
 [#uuid_generators]
-== boost/uuid/uuid_generators.hpp
+== <boost/uuid/uuid_generators.hpp>
 
 :idprefix: uuid_generators_
 
@@ -10,8 +10,6 @@ This file includes all the uuid generators for convenience.
 
 [source,c++]
 ----
-// #include <boost/uuid/uuid_generators.hpp>
-
 #include <boost/uuid/nil_generator.hpp>
 #include <boost/uuid/string_generator.hpp>
 #include <boost/uuid/name_generator.hpp>

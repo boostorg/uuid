@@ -1,5 +1,5 @@
 [#random_generator]
-== boost/uuid/random_generator.hpp
+== <boost/uuid/random_generator.hpp>
 
 :idprefix: random_generator_
 
@@ -7,8 +7,6 @@
 
 [source,c++]
 ----
-// #include <boost/uuid/random_generator.hpp>
-
 namespace boost {
 namespace uuids {
 

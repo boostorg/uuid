@@ -1,5 +1,5 @@
 [#name_generator]
-== boost/uuid/name_generator.hpp
+== <boost/uuid/name_generator.hpp>
 
 :idprefix: name_generator_
 
@@ -7,8 +7,6 @@
 
 [source,c++]
 ----
-// #include <boost/uuid/name_generator.hpp>
-
 namespace boost {
 namespace uuids {
 

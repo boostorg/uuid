@@ -1,5 +1,5 @@
 [#uuid_serialize]
-== boost/uuid/uuid_serialize.hpp
+== <boost/uuid/uuid_serialize.hpp>
 
 :idprefix: uuid_serialize_
 
@@ -7,8 +7,6 @@
 
 [source,c++]
 ----
-// #include <boost/uuid/uuid_serialize.hpp>
-
 namespace boost {
 namespace uuids {
 
