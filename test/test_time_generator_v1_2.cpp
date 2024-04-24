@@ -31,12 +31,12 @@ void threadfunc( std::atomic<time_generator_v1::state_type>& state, std::vector<
 
 int main()
 {
-    int const M = 8;
+    int const M = 4;
 
     std::thread th[ M ];
     std::vector<uuid> v[ M ];
     
-	std::atomic<time_generator_v1::state_type> state{{ 0, 0 }};
+    std::atomic<time_generator_v1::state_type> state{{ 0, 0 }};
 
     for( int i = 0; i < M; ++i )
     {
