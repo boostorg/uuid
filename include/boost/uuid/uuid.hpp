@@ -136,23 +136,6 @@ public:
         }
     }
 
-    using node_type = std::array<std::uint8_t, 6>;
-
-    node_type node_identifier() const BOOST_NOEXCEPT
-    {
-        node_type node = {};
-
-        std::memcpy( node.data(), this->data + 10, 6 );
-        return node;
-    }
-
-    using clock_seq_type = std::uint16_t;
-
-    clock_seq_type clock_seq() const BOOST_NOEXCEPT
-    {
-        return detail::load_big_u16( this->data + 8 ) & 0x3FFF;
-    }
-
     using timestamp_type = std::uint64_t;
 
     timestamp_type timestamp_v1() const BOOST_NOEXCEPT
@@ -162,6 +145,23 @@ public:
         std::uint16_t time_hi = detail::load_big_u16( this->data + 6 ) & 0x0FFF;
 
         return time_low | static_cast<std::uint64_t>( time_mid ) << 32 | static_cast<std::uint64_t>( time_hi ) << 48;
+    }
+
+    using clock_seq_type = std::uint16_t;
+
+    clock_seq_type clock_seq() const BOOST_NOEXCEPT
+    {
+        return detail::load_big_u16( this->data + 8 ) & 0x3FFF;
+    }
+
+    using node_type = std::array<std::uint8_t, 6>;
+
+    node_type node_identifier() const BOOST_NOEXCEPT
+    {
+        node_type node = {};
+
+        std::memcpy( node.data(), this->data + 10, 6 );
+        return node;
     }
 
     // note: linear complexity
