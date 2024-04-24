@@ -33,6 +33,7 @@
 //  02 Dec 2009 - removed BOOST_STATIC_CONSTANT - not all compilers like it
 //  29 Apr 2013 - added support for noexcept and constexpr, added optimizations for SSE/AVX
 
+#include <boost/uuid/uuid_clock.hpp>
 #include <boost/uuid/detail/endian.hpp>
 #include <boost/uuid/detail/hash_mix.hpp>
 #include <boost/uuid/detail/config.hpp>
@@ -81,6 +82,8 @@ public:
 
     // accessors
 
+    // variant
+
     enum variant_type
     {
         variant_ncs, // NCS backward compatibility
@@ -105,6 +108,8 @@ public:
             return variant_future;
         }
     }
+
+    // version
 
     enum version_type
     {
@@ -136,6 +141,8 @@ public:
         }
     }
 
+    // timestamp
+
     using timestamp_type = std::uint64_t;
 
     timestamp_type timestamp_v1() const BOOST_NOEXCEPT
@@ -147,12 +154,23 @@ public:
         return time_low | static_cast<std::uint64_t>( time_mid ) << 32 | static_cast<std::uint64_t>( time_hi ) << 48;
     }
 
+    // time_point
+
+    uuid_clock::time_point time_point_v1() const BOOST_NOEXCEPT
+    {
+        return uuid_clock::from_timestamp( timestamp_v1() );
+    }
+
+    // clock_seq
+
     using clock_seq_type = std::uint16_t;
 
     clock_seq_type clock_seq() const BOOST_NOEXCEPT
     {
         return detail::load_big_u16( this->data + 8 ) & 0x3FFF;
     }
+
+    // node_identifier
 
     using node_type = std::array<std::uint8_t, 6>;
 

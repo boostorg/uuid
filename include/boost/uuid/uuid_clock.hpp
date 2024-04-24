@@ -27,6 +27,9 @@ public:
 
     static time_point from_sys( std::chrono::system_clock::time_point const& tp ) noexcept;
     static std::chrono::system_clock::time_point to_sys( time_point const& tp ) noexcept;
+
+    static time_point from_timestamp( std::uint64_t timestamp ) noexcept;
+    static std::uint64_t to_timestamp( time_point const& tp ) noexcept;
 };
 
 inline uuid_clock::time_point uuid_clock::now() noexcept
@@ -52,6 +55,16 @@ inline std::chrono::system_clock::time_point uuid_clock::to_sys( time_point cons
     auto sys_since = std::chrono::duration_cast<std::chrono::system_clock::duration>( tp.time_since_epoch() - epoch_diff );
 
     return std::chrono::system_clock::time_point( sys_since );
+}
+
+inline uuid_clock::time_point uuid_clock::from_timestamp( std::uint64_t timestamp ) noexcept
+{
+    return time_point( duration( timestamp ) );
+}
+
+inline std::uint64_t uuid_clock::to_timestamp( time_point const& tp ) noexcept
+{
+    return tp.time_since_epoch().count();
 }
 
 } // uuids

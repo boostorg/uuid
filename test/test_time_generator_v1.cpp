@@ -13,14 +13,6 @@
 
 using namespace boost::uuids;
 
-uuid_clock::time_point get_time_point_v1( uuid const& u )
-{
-    auto t = u.timestamp_v1();
-    auto d = uuid_clock::duration( t );
-
-    return uuid_clock::time_point( d );
-}
-
 uuid generate_and_test( time_generator_v1& gen )
 {
     auto sys_before = std::chrono::time_point_cast<uuid_clock::duration>( std::chrono::system_clock::now() );
@@ -32,7 +24,7 @@ uuid generate_and_test( time_generator_v1& gen )
 
     auto sys_after = std::chrono::time_point_cast<uuid_clock::duration>( std::chrono::system_clock::now() );
 
-    auto uuid_time_point = get_time_point_v1( u );
+    auto uuid_time_point = u.time_point_v1();
 
     auto sys_time_point = uuid_clock::to_sys( uuid_time_point );
 

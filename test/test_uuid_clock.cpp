@@ -16,7 +16,9 @@ int main()
 
     std::uint64_t uuid_timestamp = 0x1ef018cddaa7790;
 
-    auto uuid_time = uuid_clock::time_point( uuid_clock::duration( uuid_timestamp ) );
+    auto uuid_time = uuid_clock::from_timestamp( uuid_timestamp );
+
+    BOOST_TEST_EQ( uuid_clock::to_timestamp( uuid_time ), uuid_timestamp );
 
     auto sys_time = uuid_clock::to_sys( uuid_time );
 
@@ -26,7 +28,8 @@ int main()
 
     auto uuid_time_2 = uuid_clock::from_sys( sys_time );
 
-    BOOST_TEST_EQ( uuid_time_2.time_since_epoch().count(), uuid_timestamp );
+    BOOST_TEST( uuid_time == uuid_time_2 );
+    BOOST_TEST_EQ( uuid_clock::to_timestamp( uuid_time_2 ), uuid_timestamp );
 
     return boost::report_errors();
 }
