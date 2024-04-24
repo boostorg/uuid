@@ -93,6 +93,9 @@ lib atomic ;
 run test_time_generator_v1.cpp
   : : : <toolset>gcc:<library>atomic <toolset>clang-linux:<library>atomic ;
 
+run test_time_generator_v1_2.cpp
+  : : : <toolset>gcc:<library>atomic <toolset>clang-linux:<library>atomic ;
+
 # test serializing uuids
 
 run test_serialization.cpp /boost//serialization : : : <undefined-sanitizer>norecover:<link>static ;
