@@ -17,7 +17,7 @@ class uuid_clock
 {
 public:
 
-    using rep = std::uint64_t;
+    using rep = std::int64_t;
     using period = std::ratio<1, 10000000>; // 100ns
     using duration = std::chrono::duration<rep, period>;
     using time_point = std::chrono::time_point<uuid_clock, duration>;
@@ -37,17 +37,17 @@ inline uuid_clock::time_point uuid_clock::now() noexcept
 
 inline uuid_clock::time_point uuid_clock::from_sys( std::chrono::system_clock::time_point const& tp ) noexcept
 {
-    using days = std::chrono::duration< std::uint32_t, std::ratio<86400> >;
+    using days = std::chrono::duration< std::int32_t, std::ratio<86400> >;
     constexpr auto epoch_diff = days( 141427 );
 
-    auto uuid_since = std::chrono::duration_cast<uuid_clock::duration>( tp.time_since_epoch() + epoch_diff );
+    auto uuid_since = std::chrono::duration_cast<uuid_clock::duration>( tp.time_since_epoch() ) + epoch_diff;
 
     return uuid_clock::time_point( uuid_since );
 }
 
 inline std::chrono::system_clock::time_point uuid_clock::to_sys( time_point const& tp ) noexcept
 {
-    using days = std::chrono::duration< std::uint32_t, std::ratio<86400> >;
+    using days = std::chrono::duration< std::int32_t, std::ratio<86400> >;
     constexpr auto epoch_diff = days( 141427 );
 
     auto sys_since = std::chrono::duration_cast<std::chrono::system_clock::duration>( tp.time_since_epoch() - epoch_diff );
