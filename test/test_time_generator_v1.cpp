@@ -43,6 +43,27 @@ detail::uuid_clock::time_point get_time_point_v1( uuid const& u )
     return detail::uuid_clock::time_point( d );
 }
 
+uuid generate_and_test( time_generator_v1& gen )
+{
+    auto sys_before = std::chrono::system_clock::now();
+
+    uuid u = gen();
+
+    BOOST_TEST_EQ( u.variant(), uuid::variant_rfc_4122 );
+    BOOST_TEST_EQ( u.version(), uuid::version_time_based );
+
+    auto sys_after = std::chrono::system_clock::now();
+
+    auto uuid_time_point = get_time_point_v1( u );
+
+    auto sys_time_point = detail::uuid_clock::to_sys( uuid_time_point );
+
+    BOOST_TEST( sys_before <= sys_time_point );
+    BOOST_TEST( sys_time_point <= sys_after );
+
+    return u;
+}
+
 int main()
 {
     int const N = 1024;
@@ -52,30 +73,14 @@ int main()
 
         time_generator_v1 gen;
 
-        auto sys_before = std::chrono::system_clock::now();
-
-        uuid u1 = gen();
-
-        BOOST_TEST_EQ( u1.variant(), uuid::variant_rfc_4122 );
-        BOOST_TEST_EQ( u1.version(), uuid::version_time_based );
-
-        auto sys_after = std::chrono::system_clock::now();
-
-        auto uuid_time_point = get_time_point_v1( u1 );
-
-        auto sys_time_point = detail::uuid_clock::to_sys( uuid_time_point );
-
-        BOOST_TEST( sys_before <= sys_time_point );
-        BOOST_TEST( sys_time_point <= sys_after );
+        uuid u1 = generate_and_test( gen );
 
         set.insert( u1 );
 
         for( int i = 0; i < N; ++i )
         {
-            uuid u2 = gen();
+            uuid u2 = generate_and_test( gen );
 
-            BOOST_TEST_EQ( u2.variant(), uuid::variant_rfc_4122 );
-            BOOST_TEST_EQ( u2.version(), uuid::version_time_based );
             BOOST_TEST( get_node( u1 ) == get_node( u2 ) );
 
             set.insert( u2 );
@@ -92,32 +97,17 @@ int main()
 
         time_generator_v1 gen( node, state );
 
-        auto sys_before = std::chrono::system_clock::now();
+        uuid u1 = generate_and_test( gen );
 
-        uuid u1 = gen();
-
-        BOOST_TEST_EQ( u1.variant(), uuid::variant_rfc_4122 );
-        BOOST_TEST_EQ( u1.version(), uuid::version_time_based );
         BOOST_TEST( get_node( u1 ) == node );
         BOOST_TEST_EQ( get_clock_seq( u1 ), 0x2222 );
-
-        auto sys_after = std::chrono::system_clock::now();
-
-        auto uuid_time_point = get_time_point_v1( u1 );
-
-        auto sys_time_point = detail::uuid_clock::to_sys( uuid_time_point );
-
-        BOOST_TEST( sys_before <= sys_time_point );
-        BOOST_TEST( sys_time_point <= sys_after );
 
         set.insert( u1 );
 
         for( int i = 0; i < N; ++i )
         {
-            uuid u2 = gen();
+            uuid u2 = generate_and_test( gen );
 
-            BOOST_TEST_EQ( u2.variant(), uuid::variant_rfc_4122 );
-            BOOST_TEST_EQ( u2.version(), uuid::version_time_based );
             BOOST_TEST( get_node( u1 ) == get_node( u2 ) );
 
             set.insert( u2 );
