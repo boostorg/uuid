@@ -97,14 +97,14 @@ run test_time_generator_v1.cpp
 run test_time_generator_v1_2.cpp
   : : :
     <toolset>gcc:<library>atomic <toolset>clang-linux:<library>atomic
-    # gcc-13 -m32 hangs
-    <toolset>gcc-13,<address-model>32:<build>no ;
+    # gcc-13 hangs on GHA
+    <toolset>gcc-13:<build>no ;
 
 run test_time_generator_v1_3.cpp
   : : :
     <toolset>gcc:<library>atomic <toolset>clang-linux:<library>atomic
-    # gcc-13 -m32 hangs
-    <toolset>gcc-13,<address-model>32:<build>no ;
+    # gcc-13 hangs on GHA
+    <toolset>gcc-13:<build>no ;
 
 # test serializing uuids
 
