@@ -7,6 +7,13 @@
 
 #include <boost/uuid/detail/endian.hpp>
 
+#if defined(BOOST_UUID_REPORT_IMPLEMENTATION)
+
+#include <boost/config/pragma_message.hpp>
+BOOST_PRAGMA_MESSAGE( "Using uuid_uint128.ipp" )
+
+#endif
+
 namespace boost {
 namespace uuids {
 

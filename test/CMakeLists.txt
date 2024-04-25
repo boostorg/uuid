@@ -13,12 +13,12 @@ find_package(Threads REQUIRED)
 
 set(BOOST_TEST_LINK_LIBRARIES Boost::uuid Boost::core)
 
-boost_test(TYPE run SOURCES test_uuid.cpp LINK_LIBRARIES Boost::container_hash)
-boost_test(TYPE run SOURCES test_uuid.cpp LINK_LIBRARIES Boost::container_hash COMPILE_DEFINITIONS BOOST_UUID_NO_SIMD=1 NAME test_uuid_no_simd)
+boost_test(TYPE run SOURCES test_uuid.cpp LINK_LIBRARIES Boost::container_hash COMPILE_DEFINITIONS BOOST_UUID_REPORT_IMPLEMENTATION=1)
+boost_test(TYPE run SOURCES test_uuid.cpp LINK_LIBRARIES Boost::container_hash COMPILE_DEFINITIONS BOOST_UUID_NO_SIMD=1 BOOST_UUID_REPORT_IMPLEMENTATION=1 NAME test_uuid_no_simd)
 boost_test(TYPE run SOURCES test_uuid_2.cpp)
 
-boost_test(TYPE run SOURCES test_comparison.cpp)
-boost_test(TYPE run SOURCES test_comparison.cpp COMPILE_DEFINITIONS BOOST_UUID_NO_SIMD=1 NAME test_comparison_no_simd)
+boost_test(TYPE run SOURCES test_comparison.cpp COMPILE_DEFINITIONS BOOST_UUID_REPORT_IMPLEMENTATION=1)
+boost_test(TYPE run SOURCES test_comparison.cpp COMPILE_DEFINITIONS BOOST_UUID_NO_SIMD=1 BOOST_UUID_REPORT_IMPLEMENTATION=1 NAME test_comparison_no_simd)
 
 boost_test(TYPE run SOURCES test_include1.cpp test_include2.cpp)
 

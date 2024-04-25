@@ -16,6 +16,24 @@
 #include <boost/uuid/detail/endian.hpp>
 #include <cstdint>
 
+#if defined(BOOST_UUID_REPORT_IMPLEMENTATION)
+#include <boost/config/pragma_message.hpp>
+
+#if defined(BOOST_UUID_USE_AVX10_1)
+BOOST_PRAGMA_MESSAGE( "Using uuid_x86.ipp, AVX10.1" )
+
+#elif defined(BOOST_UUID_USE_SSE41)
+BOOST_PRAGMA_MESSAGE( "Using uuid_x86.ipp, SSE4.1" )
+
+#elif defined(BOOST_UUID_USE_SSE3)
+BOOST_PRAGMA_MESSAGE( "Using uuid_x86.ipp, SSE3" )
+
+#else
+BOOST_PRAGMA_MESSAGE( "Using uuid_x86.ipp, SSE2" )
+
+#endif
+#endif // #if defined(BOOST_UUID_REPORT_IMPLEMENTATION)
+
 // MSVC does not always have immintrin.h (at least, not up to MSVC 10), so include the appropriate header for each instruction set
 #if defined(BOOST_UUID_USE_AVX10_1)
 #include <immintrin.h>

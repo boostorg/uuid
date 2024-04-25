@@ -64,14 +64,16 @@ run test_include1.cpp test_include2.cpp ;
 
 # main test
 
-run test_uuid.cpp ;
-run test_uuid.cpp : : : <define>BOOST_UUID_NO_SIMD : test_uuid_no_simd ;
+run test_uuid.cpp
+   : : : <define>BOOST_UUID_REPORT_IMPLEMENTATION ;
+run test_uuid.cpp : : : <define>BOOST_UUID_NO_SIMD <define>BOOST_UUID_REPORT_IMPLEMENTATION : test_uuid_no_simd ;
 run test_uuid_2.cpp ;
 
 # test comparison
 
-run test_comparison.cpp ;
-run test_comparison.cpp : : : <define>BOOST_UUID_NO_SIMD : test_comparison_no_simd ;
+run test_comparison.cpp
+   : : : <define>BOOST_UUID_REPORT_IMPLEMENTATION ;
+run test_comparison.cpp : : : <define>BOOST_UUID_NO_SIMD <define>BOOST_UUID_REPORT_IMPLEMENTATION : test_comparison_no_simd ;
 
 # test uuid_io.hpp
 
