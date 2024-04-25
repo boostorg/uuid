@@ -1,0 +1,152 @@
+[#uuid]
+== <boost/uuid/uuid.hpp>
+
+:idprefix: uuid_
+
+=== Synopsis
+
+[source,c++]
+----
+namespace boost {
+namespace uuids {
+
+class uuid {
+public:
+    typedef uint8_t value_type;
+    typedef uint8_t& reference;
+    typedef uint8_t const& const_reference;
+    typedef uint8_t* iterator;
+    typedef uint8_t const* const_iterator;
+    typedef std::size_t size_type;
+    typedef std::ptrdiff_t difference_type;
+
+    static constexpr size_type static_size() noexcept;
+
+    // iteration
+    iterator begin() noexcept;
+    iterator end() noexcept;
+    const_iterator begin() const noexcept;
+    const_iterator end() const noexcept;
+
+    constexpr size_type size() const noexcept;
+
+    bool is_nil() const noexcept;
+
+    enum variant_type {
+        variant_ncs, // NCS backward compatibility
+        variant_rfc_4122, // defined in RFC 4122 document
+        variant_microsoft, // Microsoft Corporation backward compatibility
+        variant_future // future definition
+    };
+    variant_type variant() const noexcept;
+
+    enum version_type {
+        version_unknown = -1,
+        version_time_based = 1,
+        version_dce_security = 2,
+        version_name_based_md5 = 3,
+        version_random_number_based = 4,
+        version_name_based_sha1 = 5
+    };
+    version_type version() const noexcept;
+
+    // Swap function
+    void swap(uuid& rhs) noexcept;
+
+    uint8_t data[static_size()];
+};
+
+// standard operators
+bool operator==(uuid const& lhs, uuid const& rhs) noexcept;
+bool operator!=(uuid const& lhs, uuid const& rhs) noexcept;
+bool operator<(uuid const& lhs, uuid const& rhs) noexcept;
+bool operator>(uuid const& lhs, uuid const& rhs) noexcept;
+bool operator<=(uuid const& lhs, uuid const& rhs) noexcept;
+bool operator>=(uuid const& lhs, uuid const& rhs) noexcept;
+
+void swap(uuid& lhs, uuid& rhs) noexcept;
+
+std::size_t hash_value(uuid const& u) noexcept;
+
+}} // namespace boost::uuids
+----
+
+=== Size
+
+The size of a *uuid* (in bytes) can be obtained either by calling the function `boost::uuids::uuid::size()` or by calling the static function `boost::uuids::uuid::static_size()`, both always return 16.
+
+```c++
+boost::uuids::uuid u;
+assert(16 == u.size());
+assert(16 == boost::uuids::uuid::static_size());
+```
+
+=== Iteration
+
+Both iterators and constant iterators are provided.
+
+```c++
+boost::uuids::uuid u;
+for (boost::uuids::uuid::const_iterator it=u.begin(); it!=u.end(); ++it) {
+    boost::uuids::uuid::value_type v = *it;
+}
+for (boost::uuids::uuid::iterator it=u.begin(); it!=u.end(); ++it) {
+    *it = 0;
+}
+```
+
+=== Nil uuid
+
+The function, `boost::uuids::uuid::is_nil()` returns true if and only if the *uuid* is equal to:
+```
+{00000000-0000-0000-0000-000000000000}
+```
+
+=== Variant
+
+Three bits of a *uuid* determine the variant.
+```c++
+boost::uuids::uuid u;
+boost::uuids::uuid::variant_type v = u.variant();
+```
+
+=== Version
+
+Four bits of a *uuid* determine the variant, that is the mechanism used to generate the *uuid*.
+
+```c++
+boost::uuids::uuid u;
+boost::uuids::uuid::version_type v = u.version();
+```
+
+=== Swap
+
+Both `boost::uuids::uuid::swap()` and `boost::uuids::swap()` are provided.
+
+```c++
+boost::uuids::uuid u1, u2;
+u1.swap(u2);
+swap(u1, u2);
+```
+
+=== Operators
+
+All of the standard numeric operators are defined for the *uuid* class. These include:
+
+```c++
+operator==
+operator!=
+operator<
+operator>
+operator<=
+operator>=
+```
+
+=== Hash Function
+
+This function allows **uuid**s to be used with https://www.boost.org/doc/libs/release/libs/container_hash/doc/html/hash.html#ref_boostcontainer_hashhash_hpp[boost::hash].
+
+```c++
+boost::hash<boost::uuids::uuid> uuid_hasher;
+std::size_t uuid_hash_value = uuid_hasher(boost::uuids::uuid());
+```

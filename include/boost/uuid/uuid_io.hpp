@@ -1,3 +1,6 @@
+#ifndef BOOST_UUID_UUID_IO_HPP_INCLUDED
+#define BOOST_UUID_UUID_IO_HPP_INCLUDED
+
 // Boost uuid_io.hpp header file  ----------------------------------------------//
 
 // Copyright 2009 Andy Tompkins.
@@ -9,14 +12,11 @@
 //  20 Mar 2009 - Initial Revision
 //  28 Nov 2009 - disabled deprecated warnings for MSVC
 
-#ifndef BOOST_UUID_IO_HPP
-#define BOOST_UUID_IO_HPP
-
 #include <boost/uuid/uuid.hpp>
+#include <boost/io/ios_state.hpp>
 #include <ios>
 #include <ostream>
 #include <istream>
-#include <boost/io/ios_state.hpp>
 #include <locale>
 #include <algorithm>
 
@@ -210,4 +210,4 @@ inline std::wstring to_wstring(uuid const& u)
 #pragma warning(pop) // Restore warnings to previous state.
 #endif
 
-#endif // BOOST_UUID_IO_HPP
+#endif // BOOST_UUID_UUID_IO_HPP_INCLUDED

@@ -1,0 +1,80 @@
+[#name_generator]
+== <boost/uuid/name_generator.hpp>
+
+:idprefix: name_generator_
+
+=== Synopsis
+
+[source,c++]
+----
+namespace boost {
+namespace uuids {
+
+template<class NameHashProvider>
+class basic_name_generator {
+public:
+    typedef uuid result_type;
+
+    explicit basic_name_generator(uuid const& namespace_uuid);
+
+    uuid operator()(const char* name) const;
+    uuid operator()(const wchar_t* name) const;
+    tempate <typename ch, typename char_traits, typename alloc>
+        uuid operator()(std::basic_string<ch, char_traits, alloc> const& name) const;
+    uuid operator()(void const* buffer, std::size_t byte_count) const;
+};
+
+typedef basic_name_generator<detail::md5> name_generator_md5;
+typedef basic_name_generator<detail::sha1> name_generator_sha1;
+typedef name_generator_sha1 name_generator; // deprecated
+typedef name_generator_sha1 name_generator_latest;
+
+}} //namespace boost::uuids
+----
+
+=== Name Generator
+
+RFC 4122 specifies that a name-based *uuid* is derived from content in a namespace. A *uuid* with identical content in an identical namespace shall yield the same *uuid* as long as the same hasing algorithm is used.
+
+==== Hashing Algorithms
+
+RFC 4122 defines two hashing mechanisms for *uuid* generation:
+
+* MD5
+* SHA1
+
+Since RFC 4122 was written, both of these hash algorithms have been rendered insecure. In anticipation of a new RFC for *uuid* arriving, `name_generator` has been deprecated, and replaced with:
+
+* `boost::uuids::name_generator_latest`
+* `boost::uuids::name_generator_md5`
+* `boost::uuids::name_generator_sha1`
+
+`name_generator`, while deprecated, remains a type alias for `name_generator_sha1` so the behavior is identical to previous releases. When the successor to SHA1 is chosen, it will be implemented under a new name similar to those above. If your application does not rely on stable hashing over time, you can use `name_generator_latest` to always use the latest hashing algorithm available.
+
+// todo: cross reference this
+Consumers are free to use their own hash provider as long as it satisfies the <<NameHashProvider>> concept.
+
+==== Namespaces
+
+There are four well-known namespaces defined in RFC https://tools.ietf.org/html/rfc4122#appendix-C[4122, Appendix C] which are defined as:
+
+```c++
+boost::uuids::ns::dns()     // == {6ba7b810-9dad-11d1-80b4-00c04fd430c8}
+boost::uuids::ns::url()     // == {6ba7b811-9dad-11d1-80b4-00c04fd430c8}
+boost::uuids::ns::oid()     // == {6ba7b812-9dad-11d1-80b4-00c04fd430c8}
+boost::uuids::ns::x500dn()  // == {6ba7b814-9dad-11d1-80b4-00c04fd430c8}
+```
+
+Of course, you are free to use your own namespace if you prefer. Here is an example of name generator usage:
+
+```c++
+boost::uuids::name_generator_sha1 gen(boost::uuids::ns::dns());
+boost::uuids::uuid udoc = gen("boost.org");
+std::cout << "boost.org uuid in dns namespace, sha1 version: " << udoc << std::endl;
+```
+
+produces the output:
+
+```txt
+boost.org uuid in dns namespace, sha1 version: 0043f363-bbb4-5369-840a-322df6ec1926
+```

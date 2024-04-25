@@ -1,3 +1,6 @@
+#ifndef BOOST_UUID_UUID_HPP_INCLUDED
+#define BOOST_UUID_UUID_HPP_INCLUDED
+
 // Boost uuid.hpp header file  ----------------------------------------------//
 
 // Copyright 2006 Andy Tompkins.
@@ -30,32 +33,20 @@
 //  02 Dec 2009 - removed BOOST_STATIC_CONSTANT - not all compilers like it
 //  29 Apr 2013 - added support for noexcept and constexpr, added optimizations for SSE/AVX
 
-#ifndef BOOST_UUID_HPP
-#define BOOST_UUID_HPP
-
-#include <cstddef>
-#include <boost/cstdint.hpp>
+#include <boost/uuid/uuid_clock.hpp>
+#include <boost/uuid/detail/endian.hpp>
+#include <boost/uuid/detail/hash_mix.hpp>
 #include <boost/uuid/detail/config.hpp>
-#ifndef BOOST_UUID_NO_TYPE_TRAITS
-#include <boost/type_traits/is_pod.hpp>
-#include <boost/type_traits/integral_constant.hpp>
-#endif
+#include <boost/type_traits/integral_constant.hpp> // for Serialization support
+#include <boost/config.hpp>
+#include <array>
+#include <typeindex> // cheapest std::hash
+#include <cstddef>
+#include <cstdint>
 
-#ifdef BOOST_HAS_PRAGMA_ONCE
-#pragma once
+#if defined(__cpp_impl_three_way_comparison) && __cpp_impl_three_way_comparison >= 201907L
+# include <compare>
 #endif
-
-#if defined(_MSC_VER)
-#pragma warning(push) // Save warning settings.
-#pragma warning(disable : 4996) // Disable deprecated std::swap_ranges, std::equal
-#endif
-
-#ifdef BOOST_NO_STDC_NAMESPACE
-namespace std {
-    using ::size_t;
-    using ::ptrdiff_t;
-} //namespace std
-#endif //BOOST_NO_STDC_NAMESPACE
 
 namespace boost {
 namespace uuids {
@@ -63,11 +54,12 @@ namespace uuids {
 struct uuid
 {
 public:
-    typedef uint8_t value_type;
-    typedef uint8_t& reference;
-    typedef uint8_t const& const_reference;
-    typedef uint8_t* iterator;
-    typedef uint8_t const* const_iterator;
+
+    typedef std::uint8_t value_type;
+    typedef std::uint8_t& reference;
+    typedef std::uint8_t const& const_reference;
+    typedef std::uint8_t* iterator;
+    typedef std::uint8_t const* const_iterator;
     typedef std::size_t size_type;
     typedef std::ptrdiff_t difference_type;
 
@@ -78,6 +70,7 @@ public:
     static BOOST_CONSTEXPR size_type static_size() BOOST_NOEXCEPT { return 16; }
 
 public:
+
     iterator begin() BOOST_NOEXCEPT { return data; }
     const_iterator begin() const BOOST_NOEXCEPT { return data; }
     iterator end() BOOST_NOEXCEPT { return data+size(); }
@@ -87,6 +80,10 @@ public:
 
     bool is_nil() const BOOST_NOEXCEPT;
 
+    // accessors
+
+    // variant
+
     enum variant_type
     {
         variant_ncs, // NCS backward compatibility
@@ -94,6 +91,7 @@ public:
         variant_microsoft, // Microsoft Corporation backward compatibility
         variant_future // future definition
     };
+
     variant_type variant() const BOOST_NOEXCEPT
     {
         // variant is stored in octet 7
@@ -111,6 +109,8 @@ public:
         }
     }
 
+    // version
+
     enum version_type
     {
         version_unknown = -1,
@@ -120,11 +120,12 @@ public:
         version_random_number_based = 4,
         version_name_based_sha1 = 5
     };
+
     version_type version() const BOOST_NOEXCEPT
     {
         // version is stored in octet 9
         // which is index 6, since indexes count backwards
-        uint8_t octet9 = data[6];
+        std::uint8_t octet9 = data[6];
         if ( (octet9 & 0xF0) == 0x10 ) {
             return version_time_based;
         } else if ( (octet9 & 0xF0) == 0x20 ) {
@@ -140,16 +141,57 @@ public:
         }
     }
 
+    // timestamp
+
+    using timestamp_type = std::uint64_t;
+
+    timestamp_type timestamp_v1() const BOOST_NOEXCEPT
+    {
+        std::uint32_t time_low = detail::load_big_u32( this->data + 0 );
+        std::uint16_t time_mid = detail::load_big_u16( this->data + 4 );
+        std::uint16_t time_hi = detail::load_big_u16( this->data + 6 ) & 0x0FFF;
+
+        return time_low | static_cast<std::uint64_t>( time_mid ) << 32 | static_cast<std::uint64_t>( time_hi ) << 48;
+    }
+
+    // time_point
+
+    uuid_clock::time_point time_point_v1() const BOOST_NOEXCEPT
+    {
+        return uuid_clock::from_timestamp( timestamp_v1() );
+    }
+
+    // clock_seq
+
+    using clock_seq_type = std::uint16_t;
+
+    clock_seq_type clock_seq() const BOOST_NOEXCEPT
+    {
+        return detail::load_big_u16( this->data + 8 ) & 0x3FFF;
+    }
+
+    // node_identifier
+
+    using node_type = std::array<std::uint8_t, 6>;
+
+    node_type node_identifier() const BOOST_NOEXCEPT
+    {
+        node_type node = {};
+
+        std::memcpy( node.data(), this->data + 10, 6 );
+        return node;
+    }
+
     // note: linear complexity
     void swap(uuid& rhs) BOOST_NOEXCEPT;
 
 public:
-    // or should it be array<uint8_t, 16>
-    uint8_t data[16];
+
+    std::uint8_t data[16];
 };
 
-bool operator== (uuid const& lhs, uuid const& rhs) BOOST_NOEXCEPT;
-bool operator< (uuid const& lhs, uuid const& rhs) BOOST_NOEXCEPT;
+inline bool operator== (uuid const& lhs, uuid const& rhs) BOOST_NOEXCEPT;
+inline bool operator< (uuid const& lhs, uuid const& rhs) BOOST_NOEXCEPT;
 
 inline bool operator!=(uuid const& lhs, uuid const& rhs) BOOST_NOEXCEPT
 {
@@ -170,43 +212,68 @@ inline bool operator>=(uuid const& lhs, uuid const& rhs) BOOST_NOEXCEPT
     return !(lhs < rhs);
 }
 
+#if defined(__cpp_impl_three_way_comparison) && __cpp_impl_three_way_comparison >= 201907L
+
+inline std::strong_ordering operator<=> (uuid const& lhs, uuid const& rhs) BOOST_NOEXCEPT;
+
+#endif
+
 inline void swap(uuid& lhs, uuid& rhs) BOOST_NOEXCEPT
 {
     lhs.swap(rhs);
 }
 
-// This is equivalent to boost::hash_range(u.begin(), u.end());
-inline std::size_t hash_value(uuid const& u) BOOST_NOEXCEPT
-{
-    std::size_t seed = 0;
-    for(uuid::const_iterator i=u.begin(), e=u.end(); i != e; ++i)
-    {
-        seed ^= static_cast<std::size_t>(*i) + 0x9e3779b9 + (seed << 6) + (seed >> 2);
-    }
+// hash_value
 
-    return seed;
+inline std::size_t hash_value( uuid const& u ) BOOST_NOEXCEPT
+{
+    std::uint64_t r = 0;
+
+    r = detail::hash_mix_mx( r + detail::load_little_u32( u.data +  0 ) );
+    r = detail::hash_mix_mx( r + detail::load_little_u32( u.data +  4 ) );
+    r = detail::hash_mix_mx( r + detail::load_little_u32( u.data +  8 ) );
+    r = detail::hash_mix_mx( r + detail::load_little_u32( u.data + 12 ) );
+
+    return static_cast<std::size_t>( detail::hash_mix_fmx( r ) );
 }
 
 }} //namespace boost::uuids
 
-#ifndef BOOST_UUID_NO_TYPE_TRAITS
-// type traits specializations
-namespace boost {
+// Boost.Serialization support
 
-template <>
-struct is_pod<uuids::uuid> : true_type {};
+// BOOST_CLASS_IMPLEMENTATION(boost::uuids::uuid, boost::serialization::primitive_type)
 
+namespace boost
+{
+namespace serialization
+{
+
+template<class T> struct implementation_level_impl;
+template<> struct implementation_level_impl<const uuids::uuid>: boost::integral_constant<int, 1> {};
+
+} // namespace serialization
 } // namespace boost
-#endif
+
+// std::hash support
+
+namespace std
+{
+    template<>
+    struct hash<boost::uuids::uuid>
+    {
+        std::size_t operator () (const boost::uuids::uuid& value) const BOOST_NOEXCEPT
+        {
+            return boost::uuids::hash_value(value);
+        }
+    };
+}
 
 #if defined(BOOST_UUID_USE_SSE2)
-#include <boost/uuid/detail/uuid_x86.ipp>
+# include <boost/uuid/detail/uuid_x86.ipp>
+#elif defined(__SIZEOF_INT128__)
+# include <boost/uuid/detail/uuid_uint128.ipp>
 #else
-#include <boost/uuid/detail/uuid_generic.ipp>
+# include <boost/uuid/detail/uuid_generic.ipp>
 #endif
 
-#if defined(_MSC_VER)
-#pragma warning(pop) // Restore warnings to previous state.
-#endif
-
-#endif // BOOST_UUID_HPP
+#endif // BOOST_UUID_UUID_HPP_INCLUDED

@@ -1,3 +1,6 @@
+#ifndef BOOST_UUID_UUID_GENERATORS_HPP_INCLUDED
+#define BOOST_UUID_UUID_GENERATORS_HPP_INCLUDED
+
 // Boost uuid_generators.hpp header file  ----------------------------------------------//
 
 // Copyright 2006 Andy Tompkins.
@@ -8,12 +11,12 @@
 // Revision History
 //  06 Feb 2006 - Initial Revision
 
-#ifndef BOOST_UUID_GENERATORS_HPP
-#define BOOST_UUID_GENERATORS_HPP
-
 #include <boost/uuid/nil_generator.hpp>
 #include <boost/uuid/string_generator.hpp>
+#include <boost/uuid/name_generator_sha1.hpp>
+#include <boost/uuid/name_generator_md5.hpp>
 #include <boost/uuid/name_generator.hpp>
 #include <boost/uuid/random_generator.hpp>
+#include <boost/uuid/time_generator_v1.hpp>
 
-#endif //BOOST_UUID_GENERATORS_HPP
+#endif //BOOST_UUID_UUID_GENERATORS_HPP_INCLUDED

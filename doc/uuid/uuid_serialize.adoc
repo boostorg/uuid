@@ -1,0 +1,22 @@
+[#uuid_serialize]
+== <boost/uuid/uuid_serialize.hpp>
+
+:idprefix: uuid_serialize_
+
+=== Synopsis
+
+[source,c++]
+----
+namespace boost {
+namespace uuids {
+
+BOOST_CLASS_IMPLEMENTATION(boost::uuids::uuid, boost::serialization::primitive_type)
+
+}} // namespace boost::uuids
+----
+
+=== Serialization
+
+Serialization is accomplished with the https://www.boost.org/libs/serialization/doc/index.html[Boost Serialization] library. A *uuid* is serialized as a https://www.boost.org/libs/serialization/doc/serialization.html#primitiveoperators[primitive type], thus only the *uuid* value will be saved to/loaded from an archive.
+
+Include `boost/uuid/uuid_serialize.hpp` to enable serialization for **uuid**s.

@@ -1,3 +1,6 @@
+#ifndef BOOST_UUID_STRING_GENERATOR_HPP_INCLUDED
+#define BOOST_UUID_STRING_GENERATOR_HPP_INCLUDED
+
 // Boost string_generator.hpp header file  ----------------------------------------------//
 
 // Copyright 2010 Andy Tompkins.
@@ -5,24 +8,14 @@
 // accompanying file LICENSE_1_0.txt or copy at
 // https://www.boost.org/LICENSE_1_0.txt)
 
-#ifndef BOOST_UUID_STRING_GENERATOR_HPP
-#define BOOST_UUID_STRING_GENERATOR_HPP
-
 #include <boost/uuid/uuid.hpp>
+#include <boost/throw_exception.hpp>
+#include <boost/config.hpp>
 #include <string>
 #include <cstring> // for strlen, wcslen
 #include <iterator>
 #include <algorithm> // for find
 #include <stdexcept>
-#include <boost/throw_exception.hpp>
-#include <boost/config.hpp>
-
-#ifdef BOOST_NO_STDC_NAMESPACE
-namespace std {
-    using ::strlen;
-    using ::wcslen;
-} //namespace std
-#endif //BOOST_NO_STDC_NAMESPACE
 
 namespace boost {
 namespace uuids {
@@ -195,5 +188,4 @@ private:
 
 }} // namespace boost::uuids
 
-#endif //BOOST_UUID_STRING_GENERATOR_HPP
-
+#endif // BOOST_UUID_STRING_GENERATOR_HPP_INCLUDED
