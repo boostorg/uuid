@@ -91,10 +91,16 @@ run test_random_generator.cpp ;
 lib atomic ;
 
 run test_time_generator_v1.cpp
-  : : : <toolset>gcc:<library>atomic <toolset>clang-linux:<library>atomic ;
+  : : :
+  <toolset>gcc:<library>atomic <toolset>clang-linux:<library>atomic
+    # gcc-13 -m32 hangs
+    <toolset>gcc-13,<address-model>32:<build>no ;
 
 run test_time_generator_v1_2.cpp
-  : : : <toolset>gcc:<library>atomic <toolset>clang-linux:<library>atomic ;
+  : : :
+    <toolset>gcc:<library>atomic <toolset>clang-linux:<library>atomic
+    # gcc-13 -m32 hangs
+    <toolset>gcc-13,<address-model>32:<build>no ;
 
 # test serializing uuids
 
