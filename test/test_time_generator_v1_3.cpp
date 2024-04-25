@@ -29,7 +29,7 @@ void threadfunc( std::atomic<time_generator_v1::state_type>& state, std::vector<
 
 int main()
 {
-    int const M = 4;
+    int const M = 8;
 
     std::thread th[ M ];
     std::vector<uuid> v[ M ];
