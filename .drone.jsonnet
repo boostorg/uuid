@@ -165,6 +165,13 @@ local windows_pipeline(name, image, environment, arch = "amd64") =
     ),
 
     linux_pipeline(
+        "Linux 23.04 GCC 13 32/64 -march=native",
+        "cppalliance/droneubuntu2304:1",
+        { TOOLSET: 'gcc', COMPILER: 'g++-13', CXXSTD: '11,14,17,20,2b', ADDRMD: '32,64', CXXFLAGS: '-march=native' },
+        "g++-13-multilib",
+    ),
+
+    linux_pipeline(
         "Linux 22.04 Clang 15",
         "cppalliance/droneubuntu2204:1",
         { TOOLSET: 'clang', COMPILER: 'clang++-15', CXXSTD: '11,14,17,20,2b' },
@@ -189,6 +196,13 @@ local windows_pipeline(name, image, environment, arch = "amd64") =
         "Linux 23.10 Clang 17 ASAN",
         "cppalliance/droneubuntu2310:1",
         { TOOLSET: 'clang', COMPILER: 'clang++-17', CXXSTD: '11,14,17,20,2b' } + asan,
+        "clang-17",
+    ),
+
+    linux_pipeline(
+        "Linux 23.10 Clang 17 -march=native",
+        "cppalliance/droneubuntu2310:1",
+        { TOOLSET: 'clang', COMPILER: 'clang++-17', CXXSTD: '11,14,17,20,2b', CXXFLAGS: '-march=native' },
         "clang-17",
     ),
 

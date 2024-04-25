@@ -6,8 +6,10 @@
 
 set -ex
 export PATH=~/.local/bin:/usr/local/bin:$PATH
+
 uname -a
 echo $DRONE_STAGE_MACHINE
+command -v lscpu && lscpu
 
 DRONE_BUILD_DIR=$(pwd)
 
@@ -20,8 +22,10 @@ cd boost-root
 git submodule update --init tools/boostdep
 cp -r $DRONE_BUILD_DIR/* libs/$LIBRARY
 python tools/boostdep/depinst/depinst.py $LIBRARY
-./bootstrap.sh
+CXXFLAGS= ./bootstrap.sh
 ./b2 -d0 headers
 
 echo "using $TOOLSET : : $COMPILER ;" > ~/user-config.jam
-./b2 -j2 libs/$LIBRARY/test toolset=$TOOLSET cxxstd=$CXXSTD variant=debug,release ${ADDRMD:+address-model=$ADDRMD} ${UBSAN:+undefined-sanitizer=norecover debug-symbols=on} ${ASAN:+address-sanitizer=norecover debug-symbols=on} ${LINKFLAGS:+linkflags=$LINKFLAGS}
+./b2 -j2 libs/$LIBRARY/test toolset=$TOOLSET cxxstd=$CXXSTD variant=debug,release \
+  ${ADDRMD:+address-model=$ADDRMD} ${CXXFLAGS:+cxxflags=$CXXFLAGS} ${LINKFLAGS:+linkflags=$LINKFLAGS} \
+  ${UBSAN:+undefined-sanitizer=norecover debug-symbols=on} ${ASAN:+address-sanitizer=norecover debug-symbols=on}
