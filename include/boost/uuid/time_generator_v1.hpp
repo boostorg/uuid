@@ -26,6 +26,7 @@ public:
     {
         std::uint64_t timestamp;
         std::uint16_t clock_seq;
+        std::uint16_t padding[ 3 ];
     };
 
 private:
