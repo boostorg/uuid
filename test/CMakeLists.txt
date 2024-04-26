@@ -8,14 +8,17 @@ if(NOT HAVE_BOOST_TEST)
   return()
 endif()
 
+set(THREADS_PREFER_PTHREAD_FLAG ON)
+find_package(Threads REQUIRED)
+
 set(BOOST_TEST_LINK_LIBRARIES Boost::uuid Boost::core)
 
-boost_test(TYPE run SOURCES test_uuid.cpp LINK_LIBRARIES Boost::container_hash)
-boost_test(TYPE run SOURCES test_uuid.cpp LINK_LIBRARIES Boost::container_hash COMPILE_DEFINITIONS BOOST_UUID_NO_SIMD=1 NAME test_uuid_no_simd)
+boost_test(TYPE run SOURCES test_uuid.cpp LINK_LIBRARIES Boost::container_hash COMPILE_DEFINITIONS BOOST_UUID_REPORT_IMPLEMENTATION=1)
+boost_test(TYPE run SOURCES test_uuid.cpp LINK_LIBRARIES Boost::container_hash COMPILE_DEFINITIONS BOOST_UUID_NO_SIMD=1 BOOST_UUID_REPORT_IMPLEMENTATION=1 NAME test_uuid_no_simd)
 boost_test(TYPE run SOURCES test_uuid_2.cpp)
 
-boost_test(TYPE run SOURCES test_comparison.cpp)
-boost_test(TYPE run SOURCES test_comparison.cpp COMPILE_DEFINITIONS BOOST_UUID_NO_SIMD=1 NAME test_comparison_no_simd)
+boost_test(TYPE run SOURCES test_comparison.cpp COMPILE_DEFINITIONS BOOST_UUID_REPORT_IMPLEMENTATION=1)
+boost_test(TYPE run SOURCES test_comparison.cpp COMPILE_DEFINITIONS BOOST_UUID_NO_SIMD=1 BOOST_UUID_REPORT_IMPLEMENTATION=1 NAME test_comparison_no_simd)
 
 boost_test(TYPE run SOURCES test_include1.cpp test_include2.cpp)
 
@@ -27,8 +30,10 @@ boost_test(TYPE run SOURCES test_nil_generator.cpp)
 boost_test(TYPE run SOURCES test_name_generator.cpp)
 boost_test(TYPE run SOURCES test_string_generator.cpp)
 boost_test(TYPE run SOURCES test_random_generator.cpp LINK_LIBRARIES Boost::random)
+
 boost_test(TYPE run SOURCES test_time_generator_v1.cpp LINK_LIBRARIES $<$<CXX_COMPILER_ID:GNU>:atomic>)
 boost_test(TYPE run SOURCES test_time_generator_v1_2.cpp LINK_LIBRARIES $<$<CXX_COMPILER_ID:GNU>:atomic>)
+boost_test(TYPE run SOURCES test_time_generator_v1_3.cpp LINK_LIBRARIES $<$<CXX_COMPILER_ID:GNU>:atomic> Threads::Threads)
 
 boost_test(TYPE run SOURCES test_tagging.cpp)
 

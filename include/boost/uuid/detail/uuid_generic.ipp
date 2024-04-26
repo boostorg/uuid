@@ -8,6 +8,13 @@
 #include <boost/uuid/detail/endian.hpp>
 #include <cstdint>
 
+#if defined(BOOST_UUID_REPORT_IMPLEMENTATION)
+
+#include <boost/config/pragma_message.hpp>
+BOOST_PRAGMA_MESSAGE( "Using uuid_generic.ipp" )
+
+#endif
+
 namespace boost {
 namespace uuids {
 
