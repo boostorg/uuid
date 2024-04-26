@@ -98,10 +98,14 @@ run test_time_generator_v1.cpp
 
 run test_time_generator_v1_2.cpp
   : : : <toolset>gcc:<library>atomic <toolset>clang-linux:<library>atomic
+        <toolset>gcc-13:<build>no
+        <toolset>gcc-14:<build>no
         <toolset>gcc-4.8,<address-model>32:<build>no ;
 
 run test_time_generator_v1_3.cpp
   : : : <toolset>gcc:<library>atomic <toolset>clang-linux:<library>atomic
+        <toolset>gcc-13:<build>no
+        <toolset>gcc-14:<build>no
         <toolset>gcc-4.8,<address-model>32:<build>no ;
 
 # test serializing uuids
