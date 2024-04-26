@@ -40,7 +40,7 @@ int main()
         std::set<uuid> set;
 
         uuid::node_type node{{ 0x01, 0x02, 0x03, 0x04, 0x05, 0x06 }};
-        std::atomic< time_generator_v1::state_type > state{{ 0, 0x2222, {} }};
+        std::atomic< time_generator_v1::state_type > state{{ 0, 0x2222 }};
 
         time_generator_v1 gen( node, state );
 

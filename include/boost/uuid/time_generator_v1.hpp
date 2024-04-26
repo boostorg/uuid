@@ -9,6 +9,8 @@
 #include <boost/uuid/uuid_clock.hpp>
 #include <boost/uuid/detail/random_provider.hpp>
 #include <boost/uuid/detail/endian.hpp>
+#include <boost/config.hpp>
+#include <boost/config/workaround.hpp>
 #include <atomic>
 #include <cstdint>
 #include <cstring>
@@ -26,7 +28,13 @@ public:
     {
         std::uint64_t timestamp;
         std::uint16_t clock_seq;
-        std::uint16_t padding[ 3 ];
+
+// https://gcc.gnu.org/bugzilla/show_bug.cgi?id=114865
+#if BOOST_WORKAROUND(BOOST_LIBSTDCXX_VERSION, >= 130000)
+
+        std::uint16_t padding[ 3 ] = {};
+
+#endif
     };
 
 private:
