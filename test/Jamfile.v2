@@ -54,29 +54,11 @@ rule test_headers
     return $(all_rules) ;
 }
 
-<<<<<<< HEAD
-# disabled in UBSAN builds due to issues in Boost.Serialization
-if ! [ os.environ UBSAN_OPTIONS ]
-{
-test-suite uuid-serialization :
-    # test serializing uuids
-    [ run test_serialization.cpp /boost/serialization//boost_serialization ]
-
-    # TODO - This test fails to like with boost_wserialization
-    # [ run test_wserialization.cpp
-    #     /boost/serialization//boost_serialization
-    #     /boost/serialization//boost_wserialization
-    #     : : : <dependency>../../config/test/all//BOOST_NO_STD_WSTREAMBUF
-    # ]
-    ;
-}
-=======
 alias test_headers : [ test_headers ] ;
 
 # test inclucing all .hpp files in 2 translations units
 # to look for issues when using multiple translation units
 # eg. missing inline on a global functionstate is not missing
->>>>>>> upstream/develop
 
 run test_include1.cpp test_include2.cpp ;
 
@@ -87,12 +69,7 @@ run test_uuid.cpp
 run test_uuid.cpp : : : <define>BOOST_UUID_NO_SIMD <define>BOOST_UUID_REPORT_IMPLEMENTATION : test_uuid_no_simd ;
 run test_uuid_2.cpp ;
 
-<<<<<<< HEAD
-    # test uuid_io.hpp
-    [ run test_io.cpp /boost/lexical_cast//boost_lexical_cast ]
-=======
 # test comparison
->>>>>>> upstream/develop
 
 run test_comparison.cpp
    : : : <define>BOOST_UUID_REPORT_IMPLEMENTATION ;
@@ -106,12 +83,7 @@ run test_io.cpp ;
 
 run test_uuid_clock.cpp ;
 
-<<<<<<< HEAD
-    # a small benchmark test for random generation
-    [ run test_bench_random.cpp /boost/timer//boost_timer : : : <toolset>clang-cloudabi:<build>no ]
-=======
 # test generators
->>>>>>> upstream/develop
 
 run test_nil_generator.cpp ;
 run test_name_generator.cpp ;
@@ -134,8 +106,8 @@ run test_time_generator_v1_3.cpp
 
 # test serializing uuids
 
-run test_serialization.cpp /boost//serialization : : : <undefined-sanitizer>norecover:<link>static ;
-# run test_wserialization.cpp /boost//serialization /boost//wserialization ;
+run test_serialization.cpp /boost/serialization//boost_serialization : : : <undefined-sanitizer>norecover:<link>static ;
+# run test_wserialization.cpp /boost/serialization//boost_serialization /boost/serialization//boost_wserialization ;
 
 # test tagging an object
 
@@ -175,7 +147,7 @@ run test_msvc_simd_bug981648_main.cpp test_msvc_simd_bug981648_foo.cpp : : : <va
 
 # a small benchmark test for random generation
 
-run test_bench_random.cpp /boost//timer : : : <toolset>clang-cloudabi:<build>no ;
+run test_bench_random.cpp /boost/timer//boost_timer : : : <toolset>clang-cloudabi:<build>no ;
 
 # tests for the header-only random provider
 
