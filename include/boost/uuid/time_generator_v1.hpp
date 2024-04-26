@@ -31,9 +31,15 @@ public:
 
 // https://gcc.gnu.org/bugzilla/show_bug.cgi?id=114865
 #if BOOST_WORKAROUND(BOOST_LIBSTDCXX_VERSION, >= 130000)
+# if BOOST_CXX_VERSION >= 201402L
 
         std::uint16_t padding[ 3 ] = {};
 
+# else
+
+        std::uint16_t padding[ 3 ];
+
+# endif
 #endif
     };
 
