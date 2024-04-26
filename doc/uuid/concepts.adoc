@@ -29,6 +29,8 @@ In this table, G is a type meeting the requirements of NameHashProvider:
 
 |`void G::get_digest(typename G::digest_type&)`
 |Copies the digest into the supplied parameter. Called once.
-unsigned char G::get_version() const	Returns the RFC 4122 version for the hashing algorithm (4 bits) in 0x07.
+
+|`unsigned char G::get_version() const`
+|Returns the RFC 4122 version for the hashing algorithm (4 bits).
 
 |===
