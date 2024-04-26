@@ -108,6 +108,8 @@ run test_time_generator_v1_3.cpp
         <toolset>gcc-14:<build>no
         <toolset>gcc-4.8,<address-model>32:<build>no ;
 
+run test_gcc_pr114865.cpp : : : <toolset>gcc:<library>atomic <toolset>clang-linux:<library>atomic ;
+
 # test serializing uuids
 
 run test_serialization.cpp /boost//serialization : : : <undefined-sanitizer>norecover:<link>static ;
