@@ -8,10 +8,6 @@
 // accompanying file LICENSE_1_0.txt or copy at
 // https://www.boost.org/LICENSE_1_0.txt)
 
-// Revision History
-//  20 Mar 2009 - Initial Revision
-//  28 Nov 2009 - disabled deprecated warnings for MSVC
-
 #include <boost/uuid/uuid.hpp>
 #include <boost/io/ios_state.hpp>
 #include <ios>

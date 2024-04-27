@@ -17,10 +17,8 @@ target_link_libraries(boost_uuid
     Boost::assert
     Boost::config
     Boost::io
-    Boost::predef
     Boost::throw_exception
     Boost::type_traits
-    Boost::winapi
 )
 
 target_compile_features(boost_uuid INTERFACE cxx_std_11)

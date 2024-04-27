@@ -10,12 +10,13 @@
 // accompanying file LICENSE_1_0.txt or copy at
 //  https://www.boost.org/LICENSE_1_0.txt)
 
+#include <boost/uuid/name_generator_md5.hpp>
 #include <boost/uuid/name_generator_sha1.hpp>
 
 namespace boost {
 namespace uuids {
 
-// The default name generator
+// Only provided for compatibility with 1.85 and earlier
 typedef name_generator_sha1 name_generator;
 
 // Only provided for compatibility with 1.85 and earlier
