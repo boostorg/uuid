@@ -8,31 +8,6 @@
 // accompanying file LICENSE_1_0.txt or copy at
 // https://www.boost.org/LICENSE_1_0.txt)
 
-// Revision History
-//  06 Feb 2006 - Initial Revision
-//  09 Nov 2006 - fixed variant and version bits for v4 guids
-//  13 Nov 2006 - added serialization
-//  17 Nov 2006 - added name-based guid creation
-//  20 Nov 2006 - add fixes for gcc (from Tim Blechmann)
-//  07 Mar 2007 - converted to header only
-//  10 May 2007 - removed need for Boost.Thread
-//              - added better seed - thanks Peter Dimov
-//              - removed null()
-//              - replaced byte_count() and output_bytes() with size() and begin() and end()
-//  11 May 2007 - fixed guid(ByteInputIterator first, ByteInputIterator last)
-//              - optimized operator>>
-//  14 May 2007 - converted from guid to uuid
-//  29 May 2007 - uses new implementation of sha1
-//  01 Jun 2007 - removed using namespace directives
-//  09 Nov 2007 - moved implementation to uuid.ipp file
-//  12 Nov 2007 - moved serialize code to uuid_serialize.hpp file
-//  25 Feb 2008 - moved to namespace boost::uuids
-//  19 Mar 2009 - changed to a POD, reorganized files
-//  28 Nov 2009 - disabled deprecated warnings for MSVC
-//  30 Nov 2009 - used BOOST_STATIC_CONSTANT
-//  02 Dec 2009 - removed BOOST_STATIC_CONSTANT - not all compilers like it
-//  29 Apr 2013 - added support for noexcept and constexpr, added optimizations for SSE/AVX
-
 #include <boost/uuid/uuid_clock.hpp>
 #include <boost/uuid/detail/endian.hpp>
 #include <boost/uuid/detail/hash_mix.hpp>

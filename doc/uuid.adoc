@@ -11,6 +11,7 @@
 :leveloffset: +1
 
 include::uuid/introduction.adoc[]
+include::uuid/changes.adoc[]
 include::uuid/configuration.adoc[]
 include::uuid/examples.adoc[]
 include::uuid/reference.adoc[]
@@ -18,3 +19,4 @@ include::uuid/concepts.adoc[]
 include::uuid/design_notes.adoc[]
 include::uuid/acknowledgements.adoc[]
 include::uuid/copyright.adoc[]
+include::uuid/history.adoc[]
