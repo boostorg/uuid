@@ -6,14 +6,14 @@
 // https://www.boost.org/LICENSE_1_0.txt
 
 // This header is only provided for compatibility with
-// Boost release 1.84 and earlier.
+// Boost release 1.85 and earlier.
 
 #include <boost/uuid/detail/basic_name_generator.hpp>
 
 namespace boost {
 namespace uuids {
 
-// Only provided for compatibility with 1.84
+// Only provided for compatibility with 1.85
 using detail::basic_name_generator;
 
 } // uuids
