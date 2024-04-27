@@ -17,10 +17,8 @@ set(deps
 assert
 config
 io
-predef
 throw_exception
 type_traits
-winapi
 
 # Secondary dependencies
 
