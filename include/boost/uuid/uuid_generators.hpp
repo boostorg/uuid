@@ -8,13 +8,8 @@
 // accompanying file LICENSE_1_0.txt or copy at
 // https://www.boost.org/LICENSE_1_0.txt)
 
-// Revision History
-//  06 Feb 2006 - Initial Revision
-
 #include <boost/uuid/nil_generator.hpp>
 #include <boost/uuid/string_generator.hpp>
-#include <boost/uuid/name_generator_sha1.hpp>
-#include <boost/uuid/name_generator_md5.hpp>
 #include <boost/uuid/name_generator.hpp>
 #include <boost/uuid/random_generator.hpp>
 #include <boost/uuid/time_generator_v1.hpp>
