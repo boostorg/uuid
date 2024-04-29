@@ -6,9 +6,33 @@
 #include <boost/uuid/uuid_io.hpp>
 #include <boost/uuid/random_generator.hpp>
 #include <boost/core/lightweight_test.hpp>
+#include <boost/config.hpp>
+#include <boost/config/pragma_message.hpp>
 #include <random>
 #include <vector>
 #include <cstring>
+
+#if !defined(__cpp_impl_three_way_comparison)
+
+BOOST_PRAGMA_MESSAGE( "Three way comparisons not tested because __cpp_impl_three_way_comparison is not defined" )
+
+#elif __cpp_impl_three_way_comparison < 201907L
+
+BOOST_PRAGMA_MESSAGE( "Three way comparisons not tested because __cpp_impl_three_way_comparison is " BOOST_STRINGIZE(__cpp_impl_three_way_comparison) )
+
+#elif !defined(__cpp_lib_three_way_comparison)
+
+BOOST_PRAGMA_MESSAGE( "Three way comparisons not tested because __cpp_lib_three_way_comparison is not defined" )
+
+#elif __cpp_lib_three_way_comparison < 201907L
+
+BOOST_PRAGMA_MESSAGE( "Three way comparisons not tested because __cpp_lib_three_way_comparison is " BOOST_STRINGIZE(__cpp_lib_three_way_comparison) )
+
+#else
+
+BOOST_PRAGMA_MESSAGE( "Three way comparisons are tested: __cpp_impl_three_way_comparison is " BOOST_STRINGIZE(__cpp_impl_three_way_comparison) ", __cpp_lib_three_way_comparison is " BOOST_STRINGIZE(__cpp_lib_three_way_comparison) )
+
+#endif
 
 using namespace boost::uuids;
 

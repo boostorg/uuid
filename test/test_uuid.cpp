@@ -213,8 +213,7 @@ int main()
         BOOST_TEST_GE( u4, u6 );
         BOOST_TEST_GE( u4, u7 );
 
-#if defined(__cpp_impl_three_way_comparison) && __cpp_impl_three_way_comparison >= 201907L && \
-  defined(__cpp_lib_three_way_comparison) && __cpp_lib_three_way_comparison >= 201907L
+#if defined(BOOST_UUID_HAS_THREE_WAY_COMPARISON)
 
         constexpr auto eq = std::strong_ordering::equal;
         constexpr auto lt = std::strong_ordering::less;

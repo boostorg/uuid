@@ -48,8 +48,7 @@ inline bool operator<( uuid const& lhs, uuid const& rhs ) BOOST_NOEXCEPT
     return v1 < v2;
 }
 
-#if defined(__cpp_impl_three_way_comparison) && __cpp_impl_three_way_comparison >= 201907L && \
-  defined(__cpp_lib_three_way_comparison) && __cpp_lib_three_way_comparison >= 201907L
+#if defined(BOOST_UUID_HAS_THREE_WAY_COMPARISON)
 
 inline std::strong_ordering operator<=> (uuid const& lhs, uuid const& rhs) BOOST_NOEXCEPT
 {
