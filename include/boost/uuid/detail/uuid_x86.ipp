@@ -66,7 +66,7 @@ namespace boost {
 namespace uuids {
 namespace detail {
 
-BOOST_FORCEINLINE __m128i load_unaligned_si128(const std::uint8_t* p) BOOST_NOEXCEPT
+BOOST_FORCEINLINE __m128i load_unaligned_si128(const std::uint8_t* p) noexcept
 {
 #if !defined(BOOST_UUID_DETAIL_MSVC_BUG981648) || defined(BOOST_UUID_USE_AVX)
     return _mm_loadu_si128(reinterpret_cast< const __m128i* >(p));
@@ -81,7 +81,7 @@ BOOST_FORCEINLINE __m128i load_unaligned_si128(const std::uint8_t* p) BOOST_NOEX
 #endif
 }
 
-BOOST_FORCEINLINE void compare(uuid const& lhs, uuid const& rhs, std::uint32_t& cmp, std::uint32_t& rcmp) BOOST_NOEXCEPT
+BOOST_FORCEINLINE void compare(uuid const& lhs, uuid const& rhs, std::uint32_t& cmp, std::uint32_t& rcmp) noexcept
 {
     __m128i mm_left = uuids::detail::load_unaligned_si128(lhs.data);
     __m128i mm_right = uuids::detail::load_unaligned_si128(rhs.data);
@@ -129,7 +129,7 @@ BOOST_FORCEINLINE void compare(uuid const& lhs, uuid const& rhs, std::uint32_t& 
 
 } // namespace detail
 
-inline bool uuid::is_nil() const BOOST_NOEXCEPT
+inline bool uuid::is_nil() const noexcept
 {
     __m128i mm = uuids::detail::load_unaligned_si128(data);
 #if defined(BOOST_UUID_USE_SSE41)
@@ -140,7 +140,7 @@ inline bool uuid::is_nil() const BOOST_NOEXCEPT
 #endif
 }
 
-inline void uuid::swap(uuid& rhs) BOOST_NOEXCEPT
+inline void uuid::swap(uuid& rhs) noexcept
 {
     __m128i mm_this = uuids::detail::load_unaligned_si128(data);
     __m128i mm_rhs = uuids::detail::load_unaligned_si128(rhs.data);
@@ -148,7 +148,7 @@ inline void uuid::swap(uuid& rhs) BOOST_NOEXCEPT
     _mm_storeu_si128(reinterpret_cast< __m128i* >(data), mm_rhs);
 }
 
-inline bool operator== (uuid const& lhs, uuid const& rhs) BOOST_NOEXCEPT
+inline bool operator== (uuid const& lhs, uuid const& rhs) noexcept
 {
     __m128i mm_left = uuids::detail::load_unaligned_si128(lhs.data);
     __m128i mm_right = uuids::detail::load_unaligned_si128(rhs.data);
@@ -162,7 +162,7 @@ inline bool operator== (uuid const& lhs, uuid const& rhs) BOOST_NOEXCEPT
 #endif
 }
 
-inline bool operator< (uuid const& lhs, uuid const& rhs) BOOST_NOEXCEPT
+inline bool operator< (uuid const& lhs, uuid const& rhs) noexcept
 {
     std::uint32_t cmp, rcmp;
     uuids::detail::compare(lhs, rhs, cmp, rcmp);
@@ -171,7 +171,7 @@ inline bool operator< (uuid const& lhs, uuid const& rhs) BOOST_NOEXCEPT
 
 #if defined(BOOST_UUID_HAS_THREE_WAY_COMPARISON)
 
-inline std::strong_ordering operator<=> (uuid const& lhs, uuid const& rhs) BOOST_NOEXCEPT
+inline std::strong_ordering operator<=> (uuid const& lhs, uuid const& rhs) noexcept
 {
     std::uint32_t cmp, rcmp;
     uuids::detail::compare(lhs, rhs, cmp, rcmp);

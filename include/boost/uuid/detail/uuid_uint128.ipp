@@ -17,13 +17,13 @@ BOOST_PRAGMA_MESSAGE( "Using uuid_uint128.ipp" )
 namespace boost {
 namespace uuids {
 
-inline bool uuid::is_nil() const BOOST_NOEXCEPT
+inline bool uuid::is_nil() const noexcept
 {
     __uint128_t v = detail::load_native_u128( this->data );
     return v == 0;
 }
 
-inline void uuid::swap( uuid& rhs ) BOOST_NOEXCEPT
+inline void uuid::swap( uuid& rhs ) noexcept
 {
     __uint128_t v1 = detail::load_native_u128( this->data );
     __uint128_t v2 = detail::load_native_u128( rhs.data );
@@ -32,7 +32,7 @@ inline void uuid::swap( uuid& rhs ) BOOST_NOEXCEPT
     detail::store_native_u128( rhs.data, v1 );
 }
 
-inline bool operator==( uuid const& lhs, uuid const& rhs ) BOOST_NOEXCEPT
+inline bool operator==( uuid const& lhs, uuid const& rhs ) noexcept
 {
     __uint128_t v1 = detail::load_native_u128( lhs.data );
     __uint128_t v2 = detail::load_native_u128( rhs.data );
@@ -40,7 +40,7 @@ inline bool operator==( uuid const& lhs, uuid const& rhs ) BOOST_NOEXCEPT
     return v1 == v2;
 }
 
-inline bool operator<( uuid const& lhs, uuid const& rhs ) BOOST_NOEXCEPT
+inline bool operator<( uuid const& lhs, uuid const& rhs ) noexcept
 {
     __uint128_t v1 = detail::load_big_u128( lhs.data );
     __uint128_t v2 = detail::load_big_u128( rhs.data );
@@ -50,7 +50,7 @@ inline bool operator<( uuid const& lhs, uuid const& rhs ) BOOST_NOEXCEPT
 
 #if defined(BOOST_UUID_HAS_THREE_WAY_COMPARISON)
 
-inline std::strong_ordering operator<=> (uuid const& lhs, uuid const& rhs) BOOST_NOEXCEPT
+inline std::strong_ordering operator<=> (uuid const& lhs, uuid const& rhs) noexcept
 {
     __uint128_t v1 = detail::load_big_u128( lhs.data );
     __uint128_t v2 = detail::load_big_u128( rhs.data );
