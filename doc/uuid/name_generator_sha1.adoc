@@ -57,10 +57,10 @@ name_generator_sha1 gen( ns::dns() );
 
 uuid udoc = gen( "boost.org" );
 
-std::cout << "boost.org UUID in DNS namespace, SHA1 version: " << udoc << std::endl;
+std::cout << "\"boost.org\" UUID in DNS namespace, SHA1 version: " << udoc << std::endl;
 
 // Output:
-//   boost.org UUID in DNS namespace, SHA1 version: 0043f363-bbb4-5369-840a-322df6ec1926
+//   "boost.org" UUID in DNS namespace, SHA1 version: 0043f363-bbb4-5369-840a-322df6ec1926
 ```
 
 ```cpp
@@ -68,6 +68,21 @@ uuid operator()( wchar_t const * name ) const;
 ```
 
 Returns: :: A name-based UUID version 5 produced from a digest of the namespace passed to the constructor and the string `name`, converted to octets formed from a little-endian serialization of the characters of `name` converted to `uint32_t`.
+
+Example: ::
++
+```cpp
+using namespace boost::uuids;
+
+name_generator_sha1 gen( ns::dns() );
+
+uuid udoc = gen( L"boost.org" );
+
+std::cout << "L\"boost.org\" UUID in DNS namespace, SHA1 version: " << udoc << std::endl;
+
+// Output:
+//   L"boost.org" UUID in DNS namespace, SHA1 version: c31c5016-3493-5dc2-8484-5813d495cc18
+```
 
 ```cpp
 template<class Ch, class Traits, class Alloc>

@@ -67,7 +67,7 @@ using namespace boost::uuids;
 string_generator gen;
 
 uuid u1 = gen( std::string( "0123456789abcdef0123456789abcdef" ) );
-uuid u2 = gen( std::wstring( L"01234567-89AB-CDEF-0123-456789ABCDEF ") );
+uuid u2 = gen( std::wstring( L"01234567-89AB-CDEF-0123-456789ABCDEF" ) );
 ```
 
 ```cpp

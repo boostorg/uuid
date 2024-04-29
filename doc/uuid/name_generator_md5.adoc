@@ -59,10 +59,10 @@ name_generator_md5 gen( ns::dns() );
 
 uuid udoc = gen( "boost.org" );
 
-std::cout << "boost.org UUID in DNS namespace, MD5 version: " << udoc << std::endl;
+std::cout << "\"boost.org\" UUID in DNS namespace, MD5 version: " << udoc << std::endl;
 
 // Output:
-//   boost.org UUID in DNS namespace, MD5 version: 0043f363-bbb4-5369-840a-322df6ec1926
+//   "boost.org" UUID in DNS namespace, MD5 version: 888eca9c-e655-31a2-a46b-a2a821f6b150
 ```
 
 ```cpp
@@ -70,6 +70,21 @@ uuid operator()( wchar_t const * name ) const;
 ```
 
 Returns: :: A name-based UUID version 5 produced from a digest of the namespace passed to the constructor and the string `name`, converted to octets formed from a little-endian serialization of the characters of `name` converted to `uint32_t`.
+
+Example: ::
++
+```cpp
+using namespace boost::uuids;
+
+name_generator_md5 gen( ns::dns() );
+
+uuid udoc = gen( L"boost.org" );
+
+std::cout << "L\"boost.org\" UUID in DNS namespace, MD5 version: " << udoc << std::endl;
+
+// Output:
+//   L"boost.org" UUID in DNS namespace, MD5 version: 48149232-8cda-361b-b355-0bdb71d2cab3
+```
 
 ```cpp
 template<class Ch, class Traits, class Alloc>
