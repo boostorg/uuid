@@ -22,6 +22,8 @@ import testing ;
 
 path-constant HERE : . ;
 
+run print_config_info.cpp ;
+
 rule test_headers
 {
     local all_rules = ;
