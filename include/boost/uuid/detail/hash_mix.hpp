@@ -19,7 +19,7 @@ namespace detail {
 
 // prospector -p mul,xorr -t 1000
 // score = 592.20293470138972
-inline std::uint64_t hash_mix_mx( std::uint64_t x )
+inline std::uint64_t hash_mix_mx( std::uint64_t x ) noexcept
 {
     x *= 0xD96AAA55;
     x ^= x >> 16;
@@ -29,7 +29,7 @@ inline std::uint64_t hash_mix_mx( std::uint64_t x )
 // prospector -p mul:0xD96AAA55,xorr:16,mul,xorr -t 1000
 // score = 79.5223047689704
 // (with mx prepended)
-inline std::uint64_t hash_mix_fmx( std::uint64_t x )
+inline std::uint64_t hash_mix_fmx( std::uint64_t x ) noexcept
 {
     x *= 0x7DF954AB;
     x ^= x >> 16;
