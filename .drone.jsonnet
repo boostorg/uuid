@@ -97,142 +97,30 @@ local windows_pipeline(name, image, environment, arch = "amd64") =
 
 [
     linux_pipeline(
-        "Linux 23.04 GCC 13 32 C++11",
-        "cppalliance/droneubuntu2304:1",
-        { TOOLSET: 'gcc', COMPILER: 'g++-13', CXXSTD: '11', ADDRMD: '32' },
+        "Linux 24.04 GCC 13",
+        "cppalliance/droneubuntu2404:1",
+        { TOOLSET: 'gcc', COMPILER: 'g++-13', CXXSTD: '11,14,17,20,23' },
         "g++-13-multilib",
     ),
 
     linux_pipeline(
-        "Linux 23.04 GCC 13 64 C++11",
-        "cppalliance/droneubuntu2304:1",
-        { TOOLSET: 'gcc', COMPILER: 'g++-13', CXXSTD: '11', ADDRMD: '64' },
-        "g++-13-multilib",
-    ),
-
-    linux_pipeline(
-        "Linux 23.04 GCC 13 32 C++14",
-        "cppalliance/droneubuntu2304:1",
-        { TOOLSET: 'gcc', COMPILER: 'g++-13', CXXSTD: '14', ADDRMD: '32' },
-        "g++-13-multilib",
-    ),
-
-    linux_pipeline(
-        "Linux 23.04 GCC 13 64 C++14",
-        "cppalliance/droneubuntu2304:1",
-        { TOOLSET: 'gcc', COMPILER: 'g++-13', CXXSTD: '14', ADDRMD: '64' },
-        "g++-13-multilib",
-    ),
-
-    linux_pipeline(
-        "Linux 23.04 GCC 13 32 C++17",
-        "cppalliance/droneubuntu2304:1",
-        { TOOLSET: 'gcc', COMPILER: 'g++-13', CXXSTD: '17', ADDRMD: '32' },
-        "g++-13-multilib",
-    ),
-
-    linux_pipeline(
-        "Linux 23.04 GCC 13 64 C++17",
-        "cppalliance/droneubuntu2304:1",
-        { TOOLSET: 'gcc', COMPILER: 'g++-13', CXXSTD: '17', ADDRMD: '64' },
-        "g++-13-multilib",
-    ),
-
-    linux_pipeline(
-        "Linux 23.04 GCC 13 32 C++20",
-        "cppalliance/droneubuntu2304:1",
-        { TOOLSET: 'gcc', COMPILER: 'g++-13', CXXSTD: '20', ADDRMD: '32' },
-        "g++-13-multilib",
-    ),
-
-    linux_pipeline(
-        "Linux 23.04 GCC 13 64 C++20",
-        "cppalliance/droneubuntu2304:1",
-        { TOOLSET: 'gcc', COMPILER: 'g++-13', CXXSTD: '20', ADDRMD: '64' },
-        "g++-13-multilib",
-    ),
-
-    linux_pipeline(
-        "Linux 23.04 GCC 13 32 C++23",
-        "cppalliance/droneubuntu2304:1",
-        { TOOLSET: 'gcc', COMPILER: 'g++-13', CXXSTD: '23', ADDRMD: '32' },
-        "g++-13-multilib",
-    ),
-
-    linux_pipeline(
-        "Linux 23.04 GCC 13 64 C++23",
-        "cppalliance/droneubuntu2304:1",
-        { TOOLSET: 'gcc', COMPILER: 'g++-13', CXXSTD: '23', ADDRMD: '64' },
-        "g++-13-multilib",
-    ),
-
-    linux_pipeline(
-        "Linux 24.04 GCC 14 32 C++11",
+        "Linux 24.04 GCC 14",
         "cppalliance/droneubuntu2404:1",
-        { TOOLSET: 'gcc', COMPILER: 'g++-14', CXXSTD: '11', ADDRMD: '32' },
+        { TOOLSET: 'gcc', COMPILER: 'g++-14', CXXSTD: '11,14,17,20,23' },
         "g++-14-multilib",
     ),
 
     linux_pipeline(
-        "Linux 24.04 GCC 14 64 C++11",
+        "Linux 24.04 Clang 18, libstdc++ 13",
         "cppalliance/droneubuntu2404:1",
-        { TOOLSET: 'gcc', COMPILER: 'g++-14', CXXSTD: '11', ADDRMD: '64' },
-        "g++-14-multilib",
+        { TOOLSET: 'clang', COMPILER: 'clang++-18', CXXSTD: '11,14,17,20,23' },
+        "clang-18 g++-13-multilib",
     ),
 
     linux_pipeline(
-        "Linux 24.04 GCC 14 32 C++14",
+        "Linux 24.04 Clang 18, libstdc++ 14",
         "cppalliance/droneubuntu2404:1",
-        { TOOLSET: 'gcc', COMPILER: 'g++-14', CXXSTD: '14', ADDRMD: '32' },
-        "g++-14-multilib",
-    ),
-
-    linux_pipeline(
-        "Linux 24.04 GCC 14 64 C++14",
-        "cppalliance/droneubuntu2404:1",
-        { TOOLSET: 'gcc', COMPILER: 'g++-14', CXXSTD: '14', ADDRMD: '64' },
-        "g++-14-multilib",
-    ),
-
-    linux_pipeline(
-        "Linux 24.04 GCC 14 32 C++17",
-        "cppalliance/droneubuntu2404:1",
-        { TOOLSET: 'gcc', COMPILER: 'g++-14', CXXSTD: '17', ADDRMD: '32' },
-        "g++-14-multilib",
-    ),
-
-    linux_pipeline(
-        "Linux 24.04 GCC 14 64 C++17",
-        "cppalliance/droneubuntu2404:1",
-        { TOOLSET: 'gcc', COMPILER: 'g++-14', CXXSTD: '17', ADDRMD: '64' },
-        "g++-14-multilib",
-    ),
-
-    linux_pipeline(
-        "Linux 24.04 GCC 14 32 C++20",
-        "cppalliance/droneubuntu2404:1",
-        { TOOLSET: 'gcc', COMPILER: 'g++-14', CXXSTD: '20', ADDRMD: '32' },
-        "g++-14-multilib",
-    ),
-
-    linux_pipeline(
-        "Linux 24.04 GCC 14 64 C++20",
-        "cppalliance/droneubuntu2404:1",
-        { TOOLSET: 'gcc', COMPILER: 'g++-14', CXXSTD: '20', ADDRMD: '64' },
-        "g++-14-multilib",
-    ),
-
-    linux_pipeline(
-        "Linux 24.04 GCC 14 32 C++23",
-        "cppalliance/droneubuntu2404:1",
-        { TOOLSET: 'gcc', COMPILER: 'g++-14', CXXSTD: '23', ADDRMD: '32' },
-        "g++-14-multilib",
-    ),
-
-    linux_pipeline(
-        "Linux 24.04 GCC 14 64 C++23",
-        "cppalliance/droneubuntu2404:1",
-        { TOOLSET: 'gcc', COMPILER: 'g++-14', CXXSTD: '23', ADDRMD: '64' },
-        "g++-14-multilib",
+        { TOOLSET: 'clang', COMPILER: 'clang++-18', CXXSTD: '11,14,17,20,23' },
+        "clang-18 g++-14-multilib",
     ),
 ]
