@@ -185,23 +185,23 @@ local windows_pipeline(name, image, environment, arch = "amd64") =
     ),
 
     linux_pipeline(
-        "Linux 24.04 GCC 14 32/64 UBSAN",
+        "Linux 24.04 GCC 14 UBSAN",
         "cppalliance/droneubuntu2404:1",
-        { TOOLSET: 'gcc', COMPILER: 'g++-14', CXXSTD: '11,14,17,20,2b', ADDRMD: '32,64' } + ubsan,
+        { TOOLSET: 'gcc', COMPILER: 'g++-14', CXXSTD: '11,14,17,20,2b' } + ubsan,
         "g++-14-multilib",
     ),
 
     linux_pipeline(
-        "Linux 24.04 GCC 14 32/64 ASAN",
+        "Linux 24.04 GCC 14 ASAN",
         "cppalliance/droneubuntu2404:1",
-        { TOOLSET: 'gcc', COMPILER: 'g++-14', CXXSTD: '11,14,17,20,2b', ADDRMD: '32,64' } + asan,
+        { TOOLSET: 'gcc', COMPILER: 'g++-14', CXXSTD: '11,14,17,20,2b' } + asan,
         "g++-14-multilib",
     ),
 
     linux_pipeline(
-        "Linux 24.04 GCC 14 32/64 -march=native",
+        "Linux 24.04 GCC 14 -march=native",
         "cppalliance/droneubuntu2404:1",
-        { TOOLSET: 'gcc', COMPILER: 'g++-14', CXXSTD: '11,14,17,20,2b', ADDRMD: '32,64', CXXFLAGS: '-march=native' },
+        { TOOLSET: 'gcc', COMPILER: 'g++-14', CXXSTD: '11,14,17,20,2b', CXXFLAGS: '-march=native' },
         "g++-14-multilib",
     ),
 
