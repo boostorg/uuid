@@ -60,13 +60,13 @@ public:
 
     // size
 
-    BOOST_CONSTEXPR size_type size() const BOOST_NOEXCEPT { return static_size(); }
+    constexpr size_type size() const BOOST_NOEXCEPT { return static_size(); }
 
     // This does not work on some compilers
     // They seem to want the variable defined in
     // a cpp file
     //BOOST_STATIC_CONSTANT(size_type, static_size = 16);
-    static BOOST_CONSTEXPR size_type static_size() BOOST_NOEXCEPT { return 16; }
+    static constexpr size_type static_size() BOOST_NOEXCEPT { return 16; }
 
     // is_nil
 
