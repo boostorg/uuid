@@ -16,12 +16,14 @@
 * Improved quality and speed of `hash_value`.
 * Removed platform-specific entropy providers; the implementation now
   uses `std::random_device` as the source of entropy.
-* Since `basic_name_generator` has only two valid instantiations, both of
+* Since `basic_name_generator` had only two valid instantiations, both of
   which are already provided (`name_generator_md5` and `name_generator_sha1`),
   it was made a private implementation detail and is no longer part of the
   public interface.
 * While `name_generator` and `name_generator_latest` are still provided for
   compatibility, their use is no longer encouraged.
+* The definitions of the well-known RFC 4122 namespaces have been moved to
+  their own header, `boost/uuid/namespaces.hpp`.
 * Added `operator\<\=>`.
 * The generic (non-SIMD) implementations of `is_nil`, `operator==`,
   `operator<`, `swap`, and `operator\<\=>` now use `__uint128_t` operations
