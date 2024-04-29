@@ -1,6 +1,7 @@
 [#reference]
 = Reference
 
+include::uuid_all.adoc[]
 include::uuid.adoc[]
 include::uuid_generators.adoc[]
 include::nil_generator.adoc[]
