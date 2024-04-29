@@ -12,25 +12,21 @@
 #include <vector>
 #include <cstring>
 
-#if !defined(__cpp_impl_three_way_comparison)
+#if defined(BOOST_UUID_HAS_THREE_WAY_COMPARISON)
+
+BOOST_PRAGMA_MESSAGE( "Three way comparisons are tested because BOOST_UUID_HAS_THREE_WAY_COMPARISON=" BOOST_STRINGIZE(BOOST_UUID_HAS_THREE_WAY_COMPARISON) )
+
+#elif !defined(__cpp_impl_three_way_comparison)
 
 BOOST_PRAGMA_MESSAGE( "Three way comparisons not tested because __cpp_impl_three_way_comparison is not defined" )
-
-#elif __cpp_impl_three_way_comparison < 201907L
-
-BOOST_PRAGMA_MESSAGE( "Three way comparisons not tested because __cpp_impl_three_way_comparison is " BOOST_STRINGIZE(__cpp_impl_three_way_comparison) )
 
 #elif !defined(__cpp_lib_three_way_comparison)
 
 BOOST_PRAGMA_MESSAGE( "Three way comparisons not tested because __cpp_lib_three_way_comparison is not defined" )
 
-#elif __cpp_lib_three_way_comparison < 201907L
-
-BOOST_PRAGMA_MESSAGE( "Three way comparisons not tested because __cpp_lib_three_way_comparison is " BOOST_STRINGIZE(__cpp_lib_three_way_comparison) )
-
 #else
 
-BOOST_PRAGMA_MESSAGE( "Three way comparisons are tested: __cpp_impl_three_way_comparison is " BOOST_STRINGIZE(__cpp_impl_three_way_comparison) ", __cpp_lib_three_way_comparison is " BOOST_STRINGIZE(__cpp_lib_three_way_comparison) )
+BOOST_PRAGMA_MESSAGE( "Three way comparisons not tested: __cpp_impl_three_way_comparison=" BOOST_STRINGIZE(__cpp_impl_three_way_comparison) ", __cpp_lib_three_way_comparison=" BOOST_STRINGIZE(__cpp_lib_three_way_comparison) )
 
 #endif
 
@@ -65,8 +61,7 @@ void test_comparison( uuid const& u1, uuid const& u2 )
         BOOST_TEST_GE( u1, u2 );
     }
 
-#if defined(__cpp_impl_three_way_comparison) && __cpp_impl_three_way_comparison >= 201907L && \
-  defined(__cpp_lib_three_way_comparison) && __cpp_lib_three_way_comparison >= 201907L
+#if defined(BOOST_UUID_HAS_THREE_WAY_COMPARISON)
 
     constexpr auto eq = std::strong_ordering::equal;
     constexpr auto lt = std::strong_ordering::less;

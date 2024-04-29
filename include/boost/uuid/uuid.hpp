@@ -22,14 +22,13 @@
 #if defined(__cpp_impl_three_way_comparison) && __cpp_impl_three_way_comparison >= 201907L && defined(__has_include)
 # if __has_include(<compare>)
 #  include <compare>
+#  if defined(__cpp_lib_three_way_comparison) && __cpp_lib_three_way_comparison >= 201907L
+#   define BOOST_UUID_HAS_THREE_WAY_COMPARISON 1
+#  elif defined(_LIBCPP_VERSION)
+//  https://github.com/llvm/llvm-project/issues/73953
+#   define BOOST_UUID_HAS_THREE_WAY_COMPARISON 2
+#  endif
 # endif
-#endif
-
-#if defined(__cpp_impl_three_way_comparison) && __cpp_impl_three_way_comparison >= 201907L && \
-  defined(__cpp_lib_three_way_comparison) && __cpp_lib_three_way_comparison >= 201907L
-
-# define BOOST_UUID_HAS_THREE_WAY_COMPARISON
-
 #endif
 
 namespace boost {
