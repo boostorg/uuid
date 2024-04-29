@@ -17,13 +17,18 @@ public:
 
     std::uint8_t data[ 16 ];
 
+public:
+
     // iteration
 
     using value_type = std::uint8_t;
+
     using reference = std::uint8_t&;
     using const_reference = std::uint8_t const&;
+
     using iterator = std::uint8_t*;
     using const_iterator = std::uint8_t const*;
+
     using size_type = std::size_t;
     using difference_type = std::ptrdiff_t;
 

@@ -10,26 +10,52 @@
 namespace boost {
 namespace uuids {
 
-struct nil_generator {
+struct nil_generator
+{
     typedef uuid result_type;
-
-    uuid operator()() const;
+    uuid operator()() const noexcept;
 };
-uuid nil_uuid();
+
+uuid nil_uuid() noexcept;
 
 }} //namespace boost::uuids
 ----
 
-=== Nil Generator
+=== nil_generator
 
-The `boost::uuids::nil_generator` class always generates a nil *uuid*.
+The `nil_generator` class always generates a nil `uuid`.
 
-```c++
-boost::uuids::nil_generator gen;
-boost::uuids::uuid u = gen();
-assert(u.is_nil() == true);
+```cpp
+uuid operator()() const noexcept;
+```
 
-// or for convenience
-boost::uuids::uuid u = boost::uuids::nil_uuid();
-assert(u.is_nil() == true);
+Returns: :: A nil UUID.
+
+Example: ::
++
+```cpp
+using namespace boost::uuid;
+
+nil_generator gen;
+uuid u = gen();
+
+assert( u.is_nil() );
+```
+
+=== nil_uuid
+
+```cpp
+uuid nil_uuid() noexcept;
+```
+
+Returns: :: A nil UUID.
+
+Example: ::
++
+```cpp
+using namespace boost::uuid;
+
+uuid u = nil_uuid();
+
+assert( u.is_nil() );
 ```

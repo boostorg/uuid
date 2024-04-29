@@ -5,7 +5,7 @@
 
 === Synopsis
 
-This file includes all the uuid generators for convenience.
+This convenience header includes all the UUID generators.
 
 
 [source,c++]

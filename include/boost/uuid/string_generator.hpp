@@ -30,24 +30,28 @@ namespace uuids {
 // {01234567-89ab-cdef-0123-456789abcdef}
 // {0123456789abcdef0123456789abcdef}
 // others?
-struct string_generator {
+struct string_generator
+{
     typedef uuid result_type;
-    
-    template <typename ch, typename char_traits, typename alloc>
-    uuid operator()(std::basic_string<ch, char_traits, alloc> const& s) const {
+
+    template<class Ch, class Traits, class Alloc>
+    uuid operator()( std::basic_string<Ch, Traits, Alloc> const& s ) const
+    {
         return operator()(s.begin(), s.end());
     }
 
-    uuid operator()(char const*const s) const {
-        return operator()(s, s+std::strlen(s));
+    uuid operator()( char const* s ) const
+    {
+        return operator()( s, s + std::strlen( s ) );
     }
 
-    uuid operator()(wchar_t const*const s) const {
-        return operator()(s, s+std::wcslen(s));
+    uuid operator()( wchar_t const* s ) const
+    {
+        return operator()( s, s + std::wcslen( s ) );
     }
 
-    template <typename CharIterator>
-    uuid operator()(CharIterator begin, CharIterator end) const
+    template<class CharIterator>
+    uuid operator()( CharIterator begin, CharIterator end ) const
     {
         typedef typename std::iterator_traits<CharIterator>::value_type char_type;
 

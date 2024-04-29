@@ -4,7 +4,7 @@
 // Copyright 2006 Andy Tompkins
 // Copyright 2024 Peter Dimov
 // Distributed under the Boost Software License, Version 1.0.
-// https://www.boost.org/LICENSE_1_0.txt)
+// https://www.boost.org/LICENSE_1_0.txt
 
 #include <boost/uuid/uuid_clock.hpp>
 #include <boost/uuid/detail/endian.hpp>
