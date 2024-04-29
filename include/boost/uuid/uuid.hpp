@@ -1,11 +1,9 @@
 #ifndef BOOST_UUID_UUID_HPP_INCLUDED
 #define BOOST_UUID_UUID_HPP_INCLUDED
 
-// Boost uuid.hpp header file  ----------------------------------------------//
-
-// Copyright 2006 Andy Tompkins.
-// Distributed under the Boost Software License, Version 1.0. (See
-// accompanying file LICENSE_1_0.txt or copy at
+// Copyright 2006 Andy Tompkins
+// Copyright 2024 Peter Dimov
+// Distributed under the Boost Software License, Version 1.0.
 // https://www.boost.org/LICENSE_1_0.txt)
 
 #include <boost/uuid/uuid_clock.hpp>
@@ -38,6 +36,14 @@ struct uuid
 {
 public:
 
+    // data
+
+    std::uint8_t data[ 16 ];
+
+public:
+
+    // iteration
+
     typedef std::uint8_t value_type;
     typedef std::uint8_t& reference;
     typedef std::uint8_t const& const_reference;
@@ -46,24 +52,25 @@ public:
     typedef std::size_t size_type;
     typedef std::ptrdiff_t difference_type;
 
+    iterator begin() BOOST_NOEXCEPT { return data; }
+    const_iterator begin() const BOOST_NOEXCEPT { return data; }
+
+    iterator end() BOOST_NOEXCEPT { return data + size(); }
+    const_iterator end() const BOOST_NOEXCEPT { return data + size(); }
+
+    // size
+
+    BOOST_CONSTEXPR size_type size() const BOOST_NOEXCEPT { return static_size(); }
+
     // This does not work on some compilers
-    // They seem to want the variable definec in
+    // They seem to want the variable defined in
     // a cpp file
     //BOOST_STATIC_CONSTANT(size_type, static_size = 16);
     static BOOST_CONSTEXPR size_type static_size() BOOST_NOEXCEPT { return 16; }
 
-public:
-
-    iterator begin() BOOST_NOEXCEPT { return data; }
-    const_iterator begin() const BOOST_NOEXCEPT { return data; }
-    iterator end() BOOST_NOEXCEPT { return data+size(); }
-    const_iterator end() const BOOST_NOEXCEPT { return data+size(); }
-
-    BOOST_CONSTEXPR size_type size() const BOOST_NOEXCEPT { return static_size(); }
+    // is_nil
 
     bool is_nil() const BOOST_NOEXCEPT;
-
-    // accessors
 
     // variant
 
@@ -165,45 +172,46 @@ public:
         return node;
     }
 
-    // note: linear complexity
-    void swap(uuid& rhs) BOOST_NOEXCEPT;
+    // swap
 
-public:
-
-    std::uint8_t data[16];
+    void swap( uuid& rhs ) BOOST_NOEXCEPT;
 };
 
-inline bool operator== (uuid const& lhs, uuid const& rhs) BOOST_NOEXCEPT;
-inline bool operator< (uuid const& lhs, uuid const& rhs) BOOST_NOEXCEPT;
+// operators
 
-inline bool operator!=(uuid const& lhs, uuid const& rhs) BOOST_NOEXCEPT
+inline bool operator==( uuid const& lhs, uuid const& rhs ) BOOST_NOEXCEPT;
+inline bool operator< ( uuid const& lhs, uuid const& rhs ) BOOST_NOEXCEPT;
+
+inline bool operator!=( uuid const& lhs, uuid const& rhs ) BOOST_NOEXCEPT
 {
     return !(lhs == rhs);
 }
 
-inline bool operator>(uuid const& lhs, uuid const& rhs) BOOST_NOEXCEPT
+inline bool operator>( uuid const& lhs, uuid const& rhs ) BOOST_NOEXCEPT
 {
     return rhs < lhs;
 }
-inline bool operator<=(uuid const& lhs, uuid const& rhs) BOOST_NOEXCEPT
+inline bool operator<=( uuid const& lhs, uuid const& rhs ) BOOST_NOEXCEPT
 {
     return !(rhs < lhs);
 }
 
-inline bool operator>=(uuid const& lhs, uuid const& rhs) BOOST_NOEXCEPT
+inline bool operator>=( uuid const& lhs, uuid const& rhs ) BOOST_NOEXCEPT
 {
     return !(lhs < rhs);
 }
 
 #if defined(BOOST_UUID_HAS_THREE_WAY_COMPARISON)
 
-inline std::strong_ordering operator<=> (uuid const& lhs, uuid const& rhs) BOOST_NOEXCEPT;
+inline std::strong_ordering operator<=>( uuid const& lhs, uuid const& rhs ) BOOST_NOEXCEPT;
 
 #endif
 
-inline void swap(uuid& lhs, uuid& rhs) BOOST_NOEXCEPT
+// swap
+
+inline void swap( uuid& lhs, uuid& rhs ) BOOST_NOEXCEPT
 {
-    lhs.swap(rhs);
+    lhs.swap( rhs );
 }
 
 // hash_value
@@ -241,15 +249,16 @@ template<> struct implementation_level_impl<const uuids::uuid>: boost::integral_
 
 namespace std
 {
-    template<>
-    struct hash<boost::uuids::uuid>
+
+template<> struct hash<boost::uuids::uuid>
+{
+    std::size_t operator()( boost::uuids::uuid const& value ) const BOOST_NOEXCEPT
     {
-        std::size_t operator () (const boost::uuids::uuid& value) const BOOST_NOEXCEPT
-        {
-            return boost::uuids::hash_value(value);
-        }
-    };
-}
+        return boost::uuids::hash_value( value );
+    }
+};
+
+} // namespace std
 
 #if defined(BOOST_UUID_USE_SSE2)
 # include <boost/uuid/detail/uuid_x86.ipp>
