@@ -11,71 +11,85 @@ namespace boost {
 namespace uuids {
 
 template <typename ch, typename char_traits>
-    std::basic_ostream<ch, char_traits>& operator<<(std::basic_ostream<ch, char_traits> &os, uuid const& u);
+  std::basic_ostream<ch, char_traits>&
+    operator<<( std::basic_ostream<ch, char_traits> &os, uuid const& u );
 
 template <typename ch, typename char_traits>
-    std::basic_istream<ch, char_traits>& operator>>(std::basic_istream<ch, char_traits> &is, uuid &u);
+  std::basic_istream<ch, char_traits>&
+    operator>>( std::basic_istream<ch, char_traits> &is, uuid& u );
 
 template<class OutputIterator>
-    OutputIterator to_chars(uuid const& u, OutputIterator out);
+  OutputIterator to_chars( uuid const& u, OutputIterator out );
 
-bool to_chars(uuid const& u, char* first, char* last);
+bool to_chars( uuid const& u, char* first, char* last );
 
-std::string to_string(uuid const& u);
-std::wstring to_wstring(uuid const& u);
+std::string to_string( uuid const& u );
+std::wstring to_wstring( uuid const& u );
 
 }} // namespace boost::uuids
 ----
 
 === Stream Operators
 
-The standard input and output stream operators `<<` and `>>` are provided by including `boost/uuid/uuid_io.hpp`. The string representation of a *uuid* is `hhhhhhhh-hhhh-hhhh-hhhh-hhhhhhhhhhhh` where `h` is hexadecimal.
+The standard input and output stream operators `<<` and `>>` are provided by including `boost/uuid/uuid_io.hpp`.
+The string representation of a `uuid` is `hhhhhhhh-hhhh-hhhh-hhhh-hhhhhhhhhhhh` where `h` is a hexadecimal digit.
 
 ```c++
-boost::uuids::uuid u1; // initialize uuid
+using namespace boost::uuids;
+
+uuid u1 = random_generator()();
 
 std::stringstream ss;
 ss << u1;
 
-boost::uuids::uuid u2;
+uuid u2;
 ss >> u2;
 
-assert(u1, u2);
+assert( u1 == u2 );
 ```
 
 One can also use https://www.boost.org/doc/libs/release/doc/html/boost_lexical_cast/synopsis.html[boost::lexical_cast].
 
 ```c++
-boost::uuids::uuid u1; // initialize uuid
+using namespace boost::uuids;
 
-std::string s = boost::lexical_cast<std::string>(u);
-boost::uuids::uuid u2 = boost::lexical_cast<boost::uuids::uuid>(s);
+uuid u1 = random_generator()();
 
-assert(u1 == u2);
+std::string s = boost::lexical_cast<std::string>( u1 );
+uuid u2 = boost::lexical_cast<uuid>( s );
+
+assert( u1 == u2 );
 ```
 
-=== To Chars
+=== to_chars
 
-The function `to_chars` is a fast non-allocating (and non-throwing if the iterator does not throw) function to write a *uuid* to a string buffer. It writes exactly 36 characters to the iterator on success (not null-terminated).
+The function `to_chars` is a fast non-allocating (and non-throwing if the iterator does not throw) function to write a `uuid` to a string buffer.
+It writes exactly 36 characters to the iterator on success (not null-terminated).
 
 ```c++
-boost::uuids::uuid u; // initialize uuid
+using namespace boost::uuids;
 
-char buf[36];
-boost::uuids::to_chars(u, buf);
+uuid u = random_generator()();
+
+char buf[ 36 ];
+
+to_chars( u, buf );
 // OR
-bool ret = boost::uuids::to_chars(u, std::begin(buf), std::end(buf));
-assert(ret);
+bool ret = to_chars( u, std::begin(buf), std::end(buf) );
+assert( ret );
 ```
 
-=== To String
+=== to_string
 
-The functions `to_string` and `to_wstring` are provided as a convenience to convert a *uuid* to a string. They are also likely faster than the stream operators or using https://www.boost.org/doc/libs/release/doc/html/boost_lexical_cast/synopsis.html[boost::lexical_cast].
+The functions `to_string` and `to_wstring` are provided as a convenience to convert a `uuid` to a string.
+They are also likely faster than the stream operators or using https://www.boost.org/doc/libs/release/doc/html/boost_lexical_cast/synopsis.html[boost::lexical_cast].
 
 ```c++
-boost::uuids::uuid u; // initialize uuid
+using namespace boost::uuids;
 
-std::string s1 = to_string(u);
+uuid u = random_generator()();
 
-std::wstring s2 = to_wstring(u);
+std::string s1 = to_string( u );
+
+std::wstring s2 = to_wstring( u );
 ```
