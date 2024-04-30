@@ -10,6 +10,7 @@ export PATH=~/.local/bin:/usr/local/bin:$PATH
 uname -a
 echo $DRONE_STAGE_MACHINE
 command -v lscpu && lscpu
+$COMPILER -v
 
 DRONE_BUILD_DIR=$(pwd)
 
