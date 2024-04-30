@@ -7,8 +7,8 @@
 
 * {cpp}03 is no longer supported, a {cpp}11 compiler is required.
   This includes GCC 4.8 or later, MSVC 14.0 or later, and MinGW-w64.
-* Removed direct dependencies on Core, Move, NumericConversion, StaticAssert,
-  TTI, Random, ContainerHash. The library now only has six Boost dependencies
+* Removed direct dependencies on Core, Io, Move, NumericConversion, StaticAssert,
+  TTI, Random, ContainerHash. The library now only has five Boost dependencies
   (as opposed to 39 in Boost 1.85.)
 * Moved `std::hash` support from `uuid_hash.hpp` to `uuid.hpp`.
 * Moved serialization support from `uuid_serialize.hpp` to `uuid.hpp`.
