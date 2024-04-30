@@ -220,8 +220,6 @@ inline std::string to_string( uuid const& u )
     return result;
 }
 
-#ifndef BOOST_NO_STD_WSTRING
-
 inline std::wstring to_wstring( uuid const& u )
 {
     std::wstring result( 36, wchar_t() );
@@ -229,8 +227,6 @@ inline std::wstring to_wstring( uuid const& u )
     to_chars( u, &result[0] );
     return result;
 }
-
-#endif
 
 }} //namespace boost::uuids
 
