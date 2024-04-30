@@ -45,4 +45,5 @@
   resolution as specified in RFC 4122.
 * Accessors for the timestamp, the time point, the clock sequence, and the
   node identifier have been added to `uuid`.
-
+* Improved the `what()` strings of the `std::runtime_error` exceptions
+  thrown by `string_generator`.
