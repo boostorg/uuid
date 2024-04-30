@@ -1,5 +1,5 @@
 [#name_generator_md5]
-== <boost/uuid/name_generator_md5.hpp>
+== <boost/uuid/{zwsp}name_generator_md5.hpp>
 
 :idprefix: name_generator_md5_
 
@@ -21,7 +21,7 @@ public:
     explicit name_generator_md5( uuid const& namespace_uuid ) noexcept;
 
     uuid operator()( char const* name ) const noexcept;
-    uuid operator()( wchar_t const * name ) const noexcept;
+    uuid operator()( wchar_t const* name ) const noexcept;
 
     template<class Ch, class Traits, class Alloc>
       uuid operator()( std::basic_string<Ch, Traits, Alloc> const& name ) const noexcept;
@@ -38,21 +38,21 @@ The class `name_generator_md5` generates name-based version 3 UUIDs (using MD5 a
 
 There is no reason to use `name_generator_md5` except for compatibility. `name_generator_sha1` should be preferred in almost all cases.
 
-```cpp
+```
 explicit name_generator_md5( uuid const& namespace_uuid );
 ```
 
 Effects: :: Constructs a `name_generator_md5` that uses `namespace_uuid` as the namespace.
 
-```cpp
+```
 uuid operator()( char const* name ) const;
 ```
 
-Returns: :: A name-based UUID version 5 produced from a digest of the namespace passed to the constructor and the characters of the string `name`, treated as octets.
+Returns: :: A name-based UUID version 3 produced from a digest of the namespace passed to the constructor and the characters of the string `name`, treated as octets.
 
 Example: ::
 +
-```cpp
+```
 using namespace boost::uuids;
 
 name_generator_md5 gen( ns::dns() );
@@ -65,15 +65,15 @@ std::cout << "\"boost.org\" UUID in DNS namespace, MD5 version: " << udoc << std
 //   "boost.org" UUID in DNS namespace, MD5 version: 888eca9c-e655-31a2-a46b-a2a821f6b150
 ```
 
-```cpp
-uuid operator()( wchar_t const * name ) const;
+```
+uuid operator()( wchar_t const* name ) const;
 ```
 
-Returns: :: A name-based UUID version 5 produced from a digest of the namespace passed to the constructor and the string `name`, converted to octets formed from a little-endian serialization of the characters of `name` converted to `uint32_t`.
+Returns: :: A name-based UUID version 3 produced from a digest of the namespace passed to the constructor and the string `name`, converted to octets formed from a little-endian serialization of the characters of `name` converted to `uint32_t`.
 
 Example: ::
 +
-```cpp
+```
 using namespace boost::uuids;
 
 name_generator_md5 gen( ns::dns() );
@@ -86,7 +86,7 @@ std::cout << "L\"boost.org\" UUID in DNS namespace, MD5 version: " << udoc << st
 //   L"boost.org" UUID in DNS namespace, MD5 version: 48149232-8cda-361b-b355-0bdb71d2cab3
 ```
 
-```cpp
+```
 template<class Ch, class Traits, class Alloc>
   uuid operator()( std::basic_string<Ch, Traits, Alloc> const& name ) const;
 ```
@@ -95,8 +95,8 @@ Requires: :: `Ch` must be either `char` or `wchar_t`.
 
 Returns: :: As if `operator()( name.c_str() )`.
 
-```cpp
+```
 uuid operator()( void const* buffer, std::size_t byte_count ) const;
 ```
 
-Returns: :: A name-based UUID version 5 produced from a digest of the namespace passed to the constructor and the octets in the range `[(char const*)buffer, (char const*)buffer + byte_count)`.
+Returns: :: A name-based UUID version 3 produced from a digest of the namespace passed to the constructor and the `byte_count` octets starting from `buffer`.

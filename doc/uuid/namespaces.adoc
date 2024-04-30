@@ -23,26 +23,26 @@ uuid x500dn() noexcept;
 
 This header provides definitions of the four namespaces defined in https://tools.ietf.org/html/rfc4122#appendix-C[RFC 4122, Appendix C].
 
-```cpp
+```
 uuid dns() noexcept;
 ```
 
 Returns: :: The DNS namespace UUID from RFC 4122, `{6ba7b810-9dad-11d1-80b4-00c04fd430c8}`.
 
-```cpp
+```
 uuid url() noexcept;
 ```
 
 Returns: :: The URL namespace UUID from RFC 4122, `{6ba7b811-9dad-11d1-80b4-00c04fd430c8}`.
 
 
-```cpp
+```
 uuid oid() noexcept;
 ```
 
 Returns: :: The OID namespace UUID from RFC 4122, `{6ba7b812-9dad-11d1-80b4-00c04fd430c8}`.
 
-```cpp
+```
 uuid x500dn() noexcept;
 ```
 

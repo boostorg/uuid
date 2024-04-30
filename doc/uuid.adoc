@@ -12,6 +12,7 @@
 
 include::uuid/introduction.adoc[]
 include::uuid/changes.adoc[]
+
 include::uuid/configuration.adoc[]
 include::uuid/examples.adoc[]
 include::uuid/reference.adoc[]

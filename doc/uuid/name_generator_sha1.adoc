@@ -1,5 +1,5 @@
 [#name_generator_sha1]
-== <boost/uuid/name_generator_sha1.hpp>
+== <boost/uuid/{zwsp}name_generator_sha1.hpp>
 
 :idprefix: name_generator_sha1_
 
@@ -21,7 +21,7 @@ public:
     explicit name_generator_sha1( uuid const& namespace_uuid ) noexcept;
 
     uuid operator()( char const* name ) const noexcept;
-    uuid operator()( wchar_t const * name ) const noexcept;
+    uuid operator()( wchar_t const* name ) const noexcept;
 
     template<class Ch, class Traits, class Alloc>
       uuid operator()( std::basic_string<Ch, Traits, Alloc> const& name ) const noexcept;
@@ -36,13 +36,13 @@ public:
 
 The class `name_generator_sha1` generates name-based version 5 UUIDs (using SHA1 as the hashing algorithm.)
 
-```cpp
+```
 explicit name_generator_sha1( uuid const& namespace_uuid );
 ```
 
 Effects: :: Constructs a `name_generator_sha1` that uses `namespace_uuid` as the namespace.
 
-```cpp
+```
 uuid operator()( char const* name ) const;
 ```
 
@@ -50,7 +50,7 @@ Returns: :: A name-based UUID version 5 produced from a digest of the namespace 
 
 Example: ::
 +
-```cpp
+```
 using namespace boost::uuids;
 
 name_generator_sha1 gen( ns::dns() );
@@ -63,15 +63,15 @@ std::cout << "\"boost.org\" UUID in DNS namespace, SHA1 version: " << udoc << st
 //   "boost.org" UUID in DNS namespace, SHA1 version: 0043f363-bbb4-5369-840a-322df6ec1926
 ```
 
-```cpp
-uuid operator()( wchar_t const * name ) const;
+```
+uuid operator()( wchar_t const* name ) const;
 ```
 
 Returns: :: A name-based UUID version 5 produced from a digest of the namespace passed to the constructor and the string `name`, converted to octets formed from a little-endian serialization of the characters of `name` converted to `uint32_t`.
 
 Example: ::
 +
-```cpp
+```
 using namespace boost::uuids;
 
 name_generator_sha1 gen( ns::dns() );
@@ -84,7 +84,7 @@ std::cout << "L\"boost.org\" UUID in DNS namespace, SHA1 version: " << udoc << s
 //   L"boost.org" UUID in DNS namespace, SHA1 version: c31c5016-3493-5dc2-8484-5813d495cc18
 ```
 
-```cpp
+```
 template<class Ch, class Traits, class Alloc>
   uuid operator()( std::basic_string<Ch, Traits, Alloc> const& name ) const;
 ```
@@ -93,8 +93,8 @@ Requires: :: `Ch` must be either `char` or `wchar_t`.
 
 Returns: :: As if `operator()( name.c_str() )`.
 
-```cpp
+```
 uuid operator()( void const* buffer, std::size_t byte_count ) const;
 ```
 
-Returns: :: A name-based UUID version 5 produced from a digest of the namespace passed to the constructor and the octets in the range `[(char const*)buffer, (char const*)buffer + byte_count)`.
+Returns: :: A name-based UUID version 5 produced from a digest of the namespace passed to the constructor and the `byte_count` octets starting from `buffer`.

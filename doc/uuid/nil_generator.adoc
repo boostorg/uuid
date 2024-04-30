@@ -25,7 +25,7 @@ uuid nil_uuid() noexcept;
 
 The `nil_generator` class always generates a nil `uuid`.
 
-```cpp
+```
 uuid operator()() const noexcept;
 ```
 
@@ -33,7 +33,7 @@ Returns: :: A nil UUID.
 
 Example: ::
 +
-```cpp
+```
 using namespace boost::uuid;
 
 nil_generator gen;
@@ -44,7 +44,7 @@ assert( u.is_nil() );
 
 === nil_uuid
 
-```cpp
+```
 uuid nil_uuid() noexcept;
 ```
 
@@ -52,7 +52,7 @@ Returns: :: A nil UUID.
 
 Example: ::
 +
-```cpp
+```
 using namespace boost::uuid;
 
 uuid u = nil_uuid();

@@ -50,7 +50,7 @@ hhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhh
 
 Invalid input will generate a `std::runtime_error` exception.
 
-```cpp
+```
 template<class Ch, class Traits, class Alloc>
   uuid operator()( std::basic_string<Ch, Traits, Alloc> const& s ) const;
 ```
@@ -61,7 +61,7 @@ Effects: :: Parses the string `s` into a `uuid` and returns the result.
 
 Example: ::
 +
-```cpp
+```
 using namespace boost::uuids;
 
 string_generator gen;
@@ -70,7 +70,7 @@ uuid u1 = gen( std::string( "0123456789abcdef0123456789abcdef" ) );
 uuid u2 = gen( std::wstring( L"01234567-89AB-CDEF-0123-456789ABCDEF" ) );
 ```
 
-```cpp
+```
 uuid operator()( char const* s ) const;
 uuid operator()( wchar_t const* s ) const;
 ```
@@ -79,7 +79,7 @@ Effects: :: Parses the string `s` into a `uuid` and returns the result.
 
 Example: ::
 +
-```cpp
+```
 using namespace boost::uuids;
 
 string_generator gen;
@@ -88,7 +88,7 @@ uuid u1 = gen( "{01234567-89ab-cdef-0123-456789abcdef}" );
 uuid u2 = gen( L"01234567-89ab-cdef-0123-456789abcdef" );
 ```
 
-```cpp
+```
 template<class CharIterator>
   uuid operator()( CharIterator begin, CharIterator end ) const;
 ```
@@ -99,7 +99,7 @@ Effects: :: Parses the character sequence `[begin, end)` into a `uuid` and retur
 
 Example: ::
 +
-```cpp
+```
 using namespace boost::uuids;
 
 string_generator gen;

@@ -123,14 +123,14 @@ template<> struct std::hash<boost::uuids::uuid>;
 
 Both constant and mutable iterators are provided.
 
-```cpp
+```
 iterator begin() noexcept;
 const_iterator begin() const noexcept;
 ```
 
 Returns: :: `data + 0`.
 
-```cpp
+```
 iterator end() noexcept;
 const_iterator end() const noexcept;
 ```
@@ -139,7 +139,7 @@ Returns: :: `data + 16`.
 
 Example: ::
 +
-```cpp
+```
 using namespace boost::uuids;
 
 uuid u;
@@ -160,7 +160,7 @@ for( uuid::iterator it = u.begin(); it != u.end(); ++it )
 
 The size of a `uuid` (in octets) is fixed at 16.
 
-```cpp
+```
 constexpr size_type size() const noexcept;
 ```
 ```
@@ -171,7 +171,7 @@ Returns: :: `16`.
 
 Example: ::
 +
-```cpp
+```
 using namespace boost::uuids;
 
 uuid u;
@@ -182,7 +182,7 @@ static_assert( uuid::static_size() == 16 );
 
 === is_nil
 
-```cpp
+```
 bool is_nil() const noexcept;
 ```
 
@@ -192,7 +192,7 @@ Returns: :: `true` when the `uuid` is equal to the nil UUID, `{00000000-0000-000
 
 Three bits of a `uuid` determine the variant.
 
-```cpp
+```
 variant_type variant() const noexcept;
 ```
 
@@ -202,7 +202,7 @@ Returns: :: The UUID variant; usually `variant_rfc_4122` for non-nil UUIDs.
 
 Four bits of a `uuid` determine the version, that is the mechanism used to generate the `uuid`.
 
-```cpp
+```
 version_type version() const noexcept;
 ```
 
@@ -210,27 +210,27 @@ Returns: :: The UUID version.
 
 === Time-based Fields
 
-```cpp
+```
 timestamp_type timestamp_v1() const noexcept;
 ```
 
 Returns: :: The UUIDv1 timestamp (number of 100ns intervals since 00:00:00.00, 15 October 1582).
   The value is only meaningful for version 1 UUIDs.
 
-```cpp
+```
 uuid_clock::time_point time_point_v1() const noexcept;
 ```
 
 Returns: :: The timestamp of a version 1 UUID, expressed as a `<chrono>` `time_point`.
 
-```cpp
+```
 clock_seq_type clock_seq() const noexcept;
 ```
 
 Returns: :: The clock sequence of a time-based UUID.
   The value is only meaningful for time-based UUIDs (version 1 and version 6).
 
-```cpp
+```
 node_type node_identifier() const noexcept;
 ```
 
@@ -239,7 +239,7 @@ Returns: :: The node identifier of a time-based UUID.
 
 === Swap
 
-```cpp
+```
 void swap( uuid& rhs ) noexcept;
 ```
 
@@ -247,43 +247,43 @@ Effects: :: Exchanges the values of `*this` and `rhs`.
 
 === Operators
 
-```cpp
+```
 bool operator==( uuid const& lhs, uuid const& rhs ) noexcept;
 ```
 
 Returns: :: As if `std::memcmp( lhs.data, rhs.data, 16 ) == 0`.
 
-```cpp
+```
 bool operator!=( uuid const& lhs, uuid const& rhs ) noexcept;
 ```
 
 Returns: :: `!(lhs == rhs)`.
 
-```cpp
+```
 bool operator<( uuid const& lhs, uuid const& rhs ) noexcept;
 ```
 
 Returns: :: As if `std::memcmp( lhs.data, rhs.data, 16 ) < 0`.
 
-```cpp
+```
 bool operator>( uuid const& lhs, uuid const& rhs ) noexcept;
 ```
 
 Returns: :: `rhs < lhs`.
 
-```cpp
+```
 bool operator<=( uuid const& lhs, uuid const& rhs ) noexcept;
 ```
 
 Returns: :: `!(rhs < lhs)`.
 
-```cpp
+```
 bool operator>=( uuid const& lhs, uuid const& rhs ) noexcept;
 ```
 
 Returns: :: `!(lhs < rhs)`.
 
-```cpp
+```
 std::strong_ordering operator<=>( uuid const& lhs, uuid const& rhs ) noexcept;
 ```
 
@@ -291,7 +291,7 @@ Returns: :: As if `std::memcmp( lhs.data, rhs.data, 16 ) \<\=> 0`.
 
 === Free Swap
 
-```cpp
+```
 void swap( uuid& lhs, uuid& rhs ) noexcept;
 ```
 
@@ -301,7 +301,7 @@ Effects: :: `lhs.swap( rhs );`
 
 This function allows instances of `uuid` to be used with https://www.boost.org/doc/libs/release/libs/container_hash/doc/html/hash.html#ref_boostcontainer_hashhash_hpp[boost::hash].
 
-```cpp
+```
 std::size_t hash_value( uuid const& u ) noexcept;
 ```
 
@@ -309,13 +309,13 @@ Returns: :: The hash value of the `uuid`.
 
 Example: ::
 +
-```cpp
+```
 boost::unordered_flat_map<boost::uuids::uuid, int> hash_map;
 ```
 
 === Serialization
 
-```cpp
+```
 BOOST_CLASS_IMPLEMENTATION(boost::uuids::uuid, boost::serialization::primitive_type)
 ```
 
@@ -325,14 +325,14 @@ BOOST_CLASS_IMPLEMENTATION(boost::uuids::uuid, boost::serialization::primitive_t
 
 This specialization allows instances of `uuid` to be used with `std::hash`.
 
-```cpp
+```
 template<> struct std::hash<boost::uuids::uuid>
 {
     std::size_t operator()( boost::uuids::uuid const& v ) const noexcept;
 }
 ```
 
-```cpp
+```
 std::size_t operator()( boost::uuids::uuid const& v ) const noexcept;
 ```
 
@@ -340,6 +340,6 @@ Returns: :: `boost::uuids::hash_value( v )`.
 
 Example: ::
 +
-```cpp
+```
 std::unordered_map<boost::uuids::uuid, int> hash_map;
 ```

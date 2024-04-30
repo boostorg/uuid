@@ -1,5 +1,5 @@
 [#basic_random_generator]
-== <boost/uuid/basic_random_generator.hpp>
+== <boost/uuid/{zwsp}basic_random_generator.hpp>
 
 :idprefix: basic_random_generator_
 
@@ -24,8 +24,9 @@ public:
     typedef uuid result_type;
 
     basic_random_generator();
-    explicit basic_random_generator(UniformRandomNumberGenerator& gen);
-    explicit basic_random_generator(UniformRandomNumberGenerator* pGen);
+
+    explicit basic_random_generator( UniformRandomNumberGenerator& gen );
+    explicit basic_random_generator( UniformRandomNumberGenerator* pGen );
 
     result_type operator()();
 };
@@ -35,13 +36,15 @@ public:
 
 === basic_random_generator
 
-The class template `basic_random_generator` class generates a random number based UUID from a random number generator
+The class template `basic_random_generator` generates a version 4 random number-based UUID from a random number generator
 (one that conforms to the standard concept https://en.cppreference.com/w/cpp/named_req/UniformRandomBitGenerator[UniformRandomBitGenerator]
 or to the Boost.Random concept https://www.boost.org/doc/libs/1_85_0/doc/html/boost_random/reference.html#boost_random.reference.concepts.uniform_random_number_generator[UniformRandomNumberGenerator]).
-The default constructor will properly seed the random number generator if it requires the behavior for proper operation.
+
+The default constructor will seed the random number generator with entropy obtained from `std::random_device`.
+
 Additional constructors allow you to provide your own `UniformRandomNumberGenerator` and you are responsible for properly seeding it if necessary.
 
-```cpp
+```
 basic_random_generator();
 ```
 
@@ -51,39 +54,39 @@ Effects: :: Value-initializes `g_` and initializes `p_` to `nullptr`.
   `generate( first, last )` member function that fills the range
   `[first, last)` using entropy obtained from `std::random_device`.
 
-NOTE: Random number generators conforming to the standard https://en.cppreference.com/w/cpp/named_req/RandomNumberEngine[RandomNumberEngine]
+NOTE: Random number generators conforming to the standard concept https://en.cppreference.com/w/cpp/named_req/RandomNumberEngine[RandomNumberEngine]
   or the Boost.Random concept https://www.boost.org/doc/libs/1_85_0/doc/html/boost_random/reference.html#boost_random.reference.concepts.pseudo_random_number_generator[PseudoRandomNumberGenerator]
   provide such `seed` member functions.
 
-```cpp
-explicit basic_random_generator(UniformRandomNumberGenerator& gen);
+```
+explicit basic_random_generator( UniformRandomNumberGenerator& gen );
 ```
 
 Effects: :: Value-initializes `g_` and initializes `p_` to `&gen`.
 
-```cpp
-explicit basic_random_generator(UniformRandomNumberGenerator* pGen);
+```
+explicit basic_random_generator( UniformRandomNumberGenerator* pGen );
 ```
 
 Effects: :: Value-initializes `g_` and initializes `p_` to `pGen`.
 
-```cpp
+```
 result_type operator()();
 ```
 
 Effects: :: Generates and returns a version 4 UUID using random numbers
-  obtained from `*p_`, if `p_ != nullptr`, and from `g_`, otherwise.
+  obtained from `*p_`, if `p_ != nullptr`, or from `g_`, otherwise.
 
 Example: ::
 +
-```cpp
+```
 using namespace boost::uuids;
 
 basic_random_generator<boost::mt19937> bulkgen;
 
 for( int i = 0; i < 1000; ++i )
 {
-    u = bulkgen();
+    uuid u = bulkgen();
     // do something with u
 }
 ```
