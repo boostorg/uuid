@@ -10,7 +10,8 @@
 namespace boost {
 namespace uuids {
 
-class uuid {
+class uuid
+{
 public:
 
     // data
@@ -49,7 +50,8 @@ public:
 
     // variant
 
-    enum variant_type {
+    enum variant_type
+    {
         variant_ncs, // NCS backward compatibility
         variant_rfc_4122, // defined in RFC 4122 document
         variant_microsoft, // Microsoft Corporation backward compatibility
@@ -60,13 +62,17 @@ public:
 
     // version
 
-    enum version_type {
+    enum version_type
+    {
         version_unknown = -1,
         version_time_based = 1,
         version_dce_security = 2,
         version_name_based_md5 = 3,
         version_random_number_based = 4,
-        version_name_based_sha1 = 5
+        version_name_based_sha1 = 5,
+        version_time_based_v6 = 6,
+        version_time_based_v7 = 7,
+        version_custom_v8 = 8
     };
 
     version_type version() const noexcept;
@@ -79,6 +85,9 @@ public:
 
     timestamp_type timestamp_v1() const noexcept;
     uuid_clock::time_point time_point_v1() const noexcept;
+
+    timestamp_type timestamp_v6() const noexcept;
+    uuid_clock::time_point time_point_v6() const noexcept;
 
     clock_seq_type clock_seq() const noexcept;
     node_type node_identifier() const noexcept;
@@ -222,6 +231,19 @@ uuid_clock::time_point time_point_v1() const noexcept;
 ```
 
 Returns: :: The timestamp of a version 1 UUID, expressed as a `<chrono>` `time_point`.
+
+```
+timestamp_type timestamp_v6() const noexcept;
+```
+
+Returns: :: The UUIDv6 timestamp (number of 100ns intervals since 00:00:00.00, 15 October 1582).
+  The value is only meaningful for version 6 UUIDs.
+
+```
+uuid_clock::time_point time_point_v6() const noexcept;
+```
+
+Returns: :: The timestamp of a version 6 UUID, expressed as a `<chrono>` `time_point`.
 
 ```
 clock_seq_type clock_seq() const noexcept;
