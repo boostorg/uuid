@@ -10,18 +10,27 @@
 namespace boost {
 namespace uuids {
 
-template <typename ch, typename char_traits>
-  std::basic_ostream<ch, char_traits>&
-    operator<<( std::basic_ostream<ch, char_traits> &os, uuid const& u );
+// stream insertion
 
-template <typename ch, typename char_traits>
-  std::basic_istream<ch, char_traits>&
-    operator>>( std::basic_istream<ch, char_traits> &is, uuid& u );
+template<class Ch, class Traits>
+  std::basic_ostream<Ch, Traits>&
+    operator<<( std::basic_ostream<Ch, Traits>& os, uuid const& u );
+
+// stream extraction
+
+template<class Ch, class Traits>
+  std::basic_istream<Ch, Traits>&
+    operator>>( std::basic_istream<Ch, Traits>& is, uuid& u );
+
+// to_chars
 
 template<class OutputIterator>
   OutputIterator to_chars( uuid const& u, OutputIterator out );
 
-bool to_chars( uuid const& u, char* first, char* last );
+bool to_chars( uuid const& u, char* first, char* last ) noexcept;
+bool to_chars( uuid const& u, wchar_t* first, wchar_t* last ) noexcept;
+
+// to_string
 
 std::string to_string( uuid const& u );
 std::wstring to_wstring( uuid const& u );
@@ -29,12 +38,57 @@ std::wstring to_wstring( uuid const& u );
 }} // namespace boost::uuids
 ----
 
-=== Stream Operators
+=== Stream Insertion
 
-The standard input and output stream operators `<<` and `>>` are provided by including `boost/uuid/uuid_io.hpp`.
-The string representation of a `uuid` is `hhhhhhhh-hhhh-hhhh-hhhh-hhhhhhhhhhhh` where `h` is a hexadecimal digit.
+```
+template<class Ch, class Traits>
+  std::basic_ostream<Ch, Traits>&
+    operator<<( std::basic_ostream<Ch, Traits>& os, uuid const& u );
+```
 
-```c++
+Requires: :: `Ch` must be either `char` or `wchar_t`.
+
+Effects: :: Inserts the string representation of `u` into the output stream `os`.
++
+The string representation of a `uuid` is `hhhhhhhh-hhhh-hhhh-hhhh-hhhhhhhhhhhh`, where `h` is a lowercase hexadecimal digit.
+
+NOTE: This operator also enables the use of
+  https://www.boost.org/doc/libs/release/doc/html/boost_lexical_cast/synopsis.html[boost::lexical_cast]
+  to convert a `uuid` to a string.
+
+Example: ::
++
+```
+using namespace boost::uuids;
+
+uuid u1 = random_generator()();
+
+std::cout << u1 << std::endl;
+
+std::string s1 = boost::lexical_cast<std::string>( u1 );
+
+std::cout << s1 << std::endl;
+```
+
+=== Stream Extraction
+
+```
+template<class Ch, class Traits>
+  std::basic_istream<Ch, Traits>&
+    operator>>( std::basic_istream<Ch, Traits>& is, uuid& u );
+```
+
+Requires: :: `Ch` must be either `char` or `wchar_t`.
+
+Effects: :: Parses a `uuid` string representation from `is` and stores the result into `u`.
+
+NOTE: This operator also enables the use of
+  https://www.boost.org/doc/libs/release/doc/html/boost_lexical_cast/synopsis.html[boost::lexical_cast]
+  to convert a string to a `uuid`.
+
+Example: ::
++
+```
 using namespace boost::uuids;
 
 uuid u1 = random_generator()();
@@ -42,49 +96,78 @@ uuid u1 = random_generator()();
 std::stringstream ss;
 ss << u1;
 
-uuid u2;
-ss >> u2;
+uuid u2 = boost::lexical_cast<uuid>( ss.str() );
 
 assert( u1 == u2 );
-```
 
-One can also use https://www.boost.org/doc/libs/release/doc/html/boost_lexical_cast/synopsis.html[boost::lexical_cast].
+uuid u3;
+ss >> u3;
 
-```c++
-using namespace boost::uuids;
-
-uuid u1 = random_generator()();
-
-std::string s = boost::lexical_cast<std::string>( u1 );
-uuid u2 = boost::lexical_cast<uuid>( s );
-
-assert( u1 == u2 );
+assert( u1 == u3 );
 ```
 
 === to_chars
 
-The function `to_chars` is a fast non-allocating (and non-throwing if the iterator does not throw) function to write a `uuid` to a string buffer.
-It writes exactly 36 characters to the iterator on success (not null-terminated).
+```
+template<class OutputIterator>
+  OutputIterator to_chars( uuid const& u, OutputIterator out );
+```
 
-```c++
+Effects: :: Outputs the string representation of `u` (exactly 36 characters of type `char`) to the output iterator `out`.
+
+Example: ::
++
+```
+using namespace boost::uuids;
+
+uuid u1 = random_generator()();
+
+std::vector<char> v;
+
+to_chars( u1, std::back_inserter( v ) );
+```
+
+```
+bool to_chars( uuid const& u, char* first, char* last ) noexcept;
+```
+```
+bool to_chars( uuid const& u, wchar_t* first, wchar_t* last ) noexcept;
+```
+
+Effects: :: If `last - first >= 36`, writes the string representation of `u` (exactly 36 characters, not null terminated) into the buffer starting at `first` and returns `true`. Otherwise, returns `false`.
+
+Example: ::
++
+```
 using namespace boost::uuids;
 
 uuid u = random_generator()();
 
 char buf[ 36 ];
 
-to_chars( u, buf );
-// OR
-bool ret = to_chars( u, std::begin(buf), std::end(buf) );
+bool ret = to_chars( u, std::begin( buf ), std::end( buf ) );
 assert( ret );
+
+std::cout << std::string( buf, 36 ) << std::endl;
 ```
 
 === to_string
 
 The functions `to_string` and `to_wstring` are provided as a convenience to convert a `uuid` to a string.
-They are also likely faster than the stream operators or using https://www.boost.org/doc/libs/release/doc/html/boost_lexical_cast/synopsis.html[boost::lexical_cast].
+They are likely to be more efficient than https://www.boost.org/doc/libs/release/doc/html/boost_lexical_cast/synopsis.html[boost::lexical_cast].
 
-```c++
+```
+std::string to_string( uuid const& u );
+```
+```
+std::wstring to_wstring( uuid const& u );
+```
+
+Returns: :: A string containing the string representation of `u`.
+
+Example: ::
++
+```
 using namespace boost::uuids;
 
 uuid u = random_generator()();

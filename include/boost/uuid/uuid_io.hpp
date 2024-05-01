@@ -13,6 +13,7 @@
 #include <istream>
 #include <locale>
 #include <algorithm>
+#include <string>
 
 #if defined(_MSC_VER)
 #pragma warning(push) // Save warning settings.
@@ -24,7 +25,7 @@ namespace uuids {
 
 namespace detail {
 
-inline char to_char( unsigned i )
+inline char to_char( unsigned i ) noexcept
 {
     if( i <= 9 )
     {
@@ -37,7 +38,7 @@ inline char to_char( unsigned i )
     }
 }
 
-inline wchar_t to_wchar( unsigned i )
+inline wchar_t to_wchar( unsigned i ) noexcept
 {
     if( i <= 9 )
     {
@@ -49,7 +50,7 @@ inline wchar_t to_wchar( unsigned i )
     }
 }
 
-inline char* to_chars( uuid const& u, char* out )
+inline char* to_chars( uuid const& u, char* out ) noexcept
 {
     std::size_t i = 0;
 
@@ -70,7 +71,7 @@ inline char* to_chars( uuid const& u, char* out )
     return out;
 }
 
-inline wchar_t* to_chars( uuid const& u, wchar_t* out )
+inline wchar_t* to_chars( uuid const& u, wchar_t* out ) noexcept
 {
     std::size_t i = 0;
 
@@ -102,7 +103,7 @@ OutputIterator to_chars( uuid const& u, OutputIterator out )
     return std::copy_n( tmp, 36, out );
 }
 
-inline bool to_chars( uuid const& u, char* first, char* last )
+inline bool to_chars( uuid const& u, char* first, char* last ) noexcept
 {
     if( last - first < 36 )
     {
@@ -113,7 +114,7 @@ inline bool to_chars( uuid const& u, char* first, char* last )
     return true;
 }
 
-inline bool to_chars( uuid const& u, wchar_t* first, wchar_t* last )
+inline bool to_chars( uuid const& u, wchar_t* first, wchar_t* last ) noexcept
 {
     if( last - first < 36 )
     {
