@@ -109,7 +109,9 @@ public:
         version_name_based_md5 = 3,
         version_random_number_based = 4,
         version_name_based_sha1 = 5,
-        version_time_based_v6 = 6
+        version_time_based_v6 = 6,
+        version_time_based_v7 = 7,
+        version_custom_v8 = 8
     };
 
     version_type version() const noexcept
@@ -129,6 +131,10 @@ public:
             return version_name_based_sha1;
         } else if ( (octet9 & 0xF0) == 0x60 ) {
             return version_time_based_v6;
+        } else if ( (octet9 & 0xF0) == 0x70 ) {
+            return version_time_based_v7;
+        } else if ( (octet9 & 0xF0) == 0x80 ) {
+            return version_custom_v8;
         } else {
             return version_unknown;
         }

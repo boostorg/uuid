@@ -71,7 +71,7 @@ int main()
         uuid u = uuid_from_string( "017F22E2-79B0-7CC3-98C4-DC0C0C07398F" );
 
         BOOST_TEST_EQ( u.variant(), uuid::variant_rfc_4122 );
-        BOOST_TEST_EQ( u.version(), uuid::version_unknown );
+        BOOST_TEST_EQ( u.version(), uuid::version_time_based_v7 );
         // BOOST_TEST_EQ( u.timestamp_v7(), 0x017F22E279B0 );
     }
 
@@ -80,7 +80,15 @@ int main()
         uuid u = uuid_from_string( "2489E9AD-2EE2-8E00-8EC9-32D5F69181C0" );
 
         BOOST_TEST_EQ( u.variant(), uuid::variant_rfc_4122 );
-        BOOST_TEST_EQ( u.version(), uuid::version_unknown );
+        BOOST_TEST_EQ( u.version(), uuid::version_custom_v8 );
+    }
+
+    // B.2, UUIDv8
+    {
+        uuid u = uuid_from_string( "5c146b14-3c52-8afd-938a-375d0df1fbf6" );
+
+        BOOST_TEST_EQ( u.variant(), uuid::variant_rfc_4122 );
+        BOOST_TEST_EQ( u.version(), uuid::version_custom_v8 );
     }
 
     return boost::report_errors();
