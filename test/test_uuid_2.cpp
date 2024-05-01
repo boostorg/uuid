@@ -60,8 +60,8 @@ int main()
         uuid u = uuid_from_string( "1EC9414C-232A-6B00-B3C8-9F6BDECED846" );
 
         BOOST_TEST_EQ( u.variant(), uuid::variant_rfc_4122 );
-        BOOST_TEST_EQ( u.version(), uuid::version_unknown );
-        // BOOST_TEST_EQ( u.timestamp_v6(), 0x1EC9414C232AB00 );
+        BOOST_TEST_EQ( u.version(), uuid::version_time_based_v6 );
+        BOOST_TEST_EQ( u.timestamp_v6(), 0x1EC9414C232AB00 );
         BOOST_TEST_EQ( u.clock_seq(), 0x33C8 );
         BOOST_TEST( u.node_identifier() == node );
     }

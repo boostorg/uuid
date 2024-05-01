@@ -108,7 +108,8 @@ public:
         version_dce_security = 2,
         version_name_based_md5 = 3,
         version_random_number_based = 4,
-        version_name_based_sha1 = 5
+        version_name_based_sha1 = 5,
+        version_time_based_v6 = 6
     };
 
     version_type version() const noexcept
@@ -126,6 +127,8 @@ public:
             return version_random_number_based;
         } else if ( (octet9 & 0xF0) == 0x50 ) {
             return version_name_based_sha1;
+        } else if ( (octet9 & 0xF0) == 0x60 ) {
+            return version_time_based_v6;
         } else {
             return version_unknown;
         }
@@ -144,11 +147,25 @@ public:
         return time_low | static_cast<std::uint64_t>( time_mid ) << 32 | static_cast<std::uint64_t>( time_hi ) << 48;
     }
 
+    timestamp_type timestamp_v6() const noexcept
+    {
+        std::uint32_t time_high = detail::load_big_u32( this->data + 0 );
+        std::uint16_t time_mid = detail::load_big_u16( this->data + 4 );
+        std::uint16_t time_low = detail::load_big_u16( this->data + 6 ) & 0x0FFF;
+
+        return time_low | static_cast<std::uint64_t>( time_mid ) << 12 | static_cast<std::uint64_t>( time_high ) << 28;
+    }
+
     // time_point
 
     uuid_clock::time_point time_point_v1() const noexcept
     {
         return uuid_clock::from_timestamp( timestamp_v1() );
+    }
+
+    uuid_clock::time_point time_point_v6() const noexcept
+    {
+        return uuid_clock::from_timestamp( timestamp_v6() );
     }
 
     // clock_seq
