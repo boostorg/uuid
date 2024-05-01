@@ -1,14 +1,13 @@
 #ifndef BOOST_UUID_UUID_IO_HPP_INCLUDED
 #define BOOST_UUID_UUID_IO_HPP_INCLUDED
 
-// Boost uuid_io.hpp header file  ----------------------------------------------//
-
-// Copyright 2009 Andy Tompkins.
-// Distributed under the Boost Software License, Version 1.0. (See
-// accompanying file LICENSE_1_0.txt or copy at
-// https://www.boost.org/LICENSE_1_0.txt)
+// Copyright 2009 Andy Tompkins
+// Copyright 2024 Peter Dimov
+// Distributed under the Boost Software License, Version 1.0.
+// https://www.boost.org/LICENSE_1_0.txt
 
 #include <boost/uuid/uuid.hpp>
+#include <boost/uuid/detail/to_chars.hpp>
 #include <iosfwd>
 #include <istream>
 #include <locale>
@@ -23,76 +22,7 @@
 namespace boost {
 namespace uuids {
 
-namespace detail {
-
-inline char to_char( unsigned i ) noexcept
-{
-    if( i <= 9 )
-    {
-        return static_cast<char>( '0' + i );
-    }
-    else
-    {
-        // 'a'..'f' are actually consecutive in EBCDIC
-        return static_cast<char>( 'a' + ( i - 10 ) );
-    }
-}
-
-inline wchar_t to_wchar( unsigned i ) noexcept
-{
-    if( i <= 9 )
-    {
-        return static_cast<wchar_t>( L'0' + i );
-    }
-    else
-    {
-        return static_cast<wchar_t>( L'a' + ( i - 10 ) );
-    }
-}
-
-inline char* to_chars( uuid const& u, char* out ) noexcept
-{
-    std::size_t i = 0;
-
-    for( uuid::const_iterator it_data = u.begin(); it_data != u.end(); ++it_data, ++i )
-    {
-        const unsigned hi = ((*it_data) >> 4) & 0x0F;
-        *out++ = detail::to_char( hi );
-
-        const unsigned lo = (*it_data) & 0x0F;
-        *out++ = detail::to_char( lo );
-
-        if( i == 3 || i == 5 || i == 7 || i == 9 )
-        {
-            *out++ = '-';
-        }
-    }
-
-    return out;
-}
-
-inline wchar_t* to_chars( uuid const& u, wchar_t* out ) noexcept
-{
-    std::size_t i = 0;
-
-    for( uuid::const_iterator it_data = u.begin(); it_data != u.end(); ++it_data, ++i )
-    {
-        const unsigned hi = ((*it_data) >> 4) & 0x0F;
-        *out++ = detail::to_wchar( hi );
-
-        const unsigned lo = (*it_data) & 0x0F;
-        *out++ = detail::to_wchar( lo );
-
-        if( i == 3 || i == 5 || i == 7 || i == 9 )
-        {
-            *out++ = L'-';
-        }
-    }
-
-    return out;
-}
-
-} // namespace detail
+// to_chars
 
 template<class OutputIterator>
 OutputIterator to_chars( uuid const& u, OutputIterator out )
@@ -125,6 +55,8 @@ inline bool to_chars( uuid const& u, wchar_t* first, wchar_t* last ) noexcept
     return true;
 }
 
+// operator<<
+
 template<class Ch, class Traits>
 std::basic_ostream<Ch, Traits>& operator<<( std::basic_ostream<Ch, Traits>& os, uuid const& u )
 {
@@ -134,6 +66,8 @@ std::basic_ostream<Ch, Traits>& operator<<( std::basic_ostream<Ch, Traits>& os, 
     os << tmp;
     return os;
 }
+
+// operator>>
 
 template<class Ch, class Traits>
 std::basic_istream<Ch, Traits>& operator>>( std::basic_istream<Ch, Traits>& is, uuid& u )
@@ -212,12 +146,14 @@ std::basic_istream<Ch, Traits>& operator>>( std::basic_istream<Ch, Traits>& is, 
     return is;
 }
 
+// to_string
+
 inline std::string to_string( uuid const& u )
 {
     std::string result( 36, char() );
 
     // string::data() returns const char* before C++17
-    to_chars( u, &result[0] );
+    detail::to_chars( u, &result[0] );
     return result;
 }
 
@@ -225,7 +161,7 @@ inline std::wstring to_wstring( uuid const& u )
 {
     std::wstring result( 36, wchar_t() );
 
-    to_chars( u, &result[0] );
+    detail::to_chars( u, &result[0] );
     return result;
 }
 
