@@ -72,12 +72,14 @@ inline time_generator_v7::state_type time_generator_v7::get_new_state( state_typ
         return newst;
     }
 
-    // otherwise, increment the counter
+    // if time_in_ms has gone backwards, we can't be monotonic
+    if( time_ms < ( oldst >> 16 ) )
+    {
+        return newst;
+    }
 
-    newst |= oldst & 0x3F;
-    ++newst;
-
-    return newst;
+    // otherwise, use the old value and increment the counter
+    return oldst + 1;
 }
 
 // operator()
