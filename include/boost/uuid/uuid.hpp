@@ -162,6 +162,12 @@ public:
         return time_low | static_cast<std::uint64_t>( time_mid ) << 12 | static_cast<std::uint64_t>( time_high ) << 28;
     }
 
+    timestamp_type timestamp_v7() const noexcept
+    {
+        std::uint64_t time_and_version = detail::load_big_u64( this->data + 0 );
+        return time_and_version >> 16;
+    }
+
     // time_point
 
     uuid_clock::time_point time_point_v1() const noexcept
@@ -172,6 +178,11 @@ public:
     uuid_clock::time_point time_point_v6() const noexcept
     {
         return uuid_clock::from_timestamp( timestamp_v6() );
+    }
+
+    std::chrono::time_point<std::chrono::system_clock, std::chrono::milliseconds> time_point_v7() const noexcept
+    {
+        return std::chrono::time_point<std::chrono::system_clock, std::chrono::milliseconds>( std::chrono::milliseconds( timestamp_v7() ) );
     }
 
     // clock_seq

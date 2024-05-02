@@ -42,6 +42,8 @@ boost_test(TYPE run SOURCES test_time_generator_v6.cpp LINK_LIBRARIES $<$<CXX_CO
 boost_test(TYPE run SOURCES test_time_generator_v6_2.cpp LINK_LIBRARIES $<$<CXX_COMPILER_ID:GNU>:atomic>)
 boost_test(TYPE run SOURCES test_time_generator_v6_3.cpp LINK_LIBRARIES $<$<CXX_COMPILER_ID:GNU>:atomic> Threads::Threads)
 
+boost_test(TYPE run SOURCES test_time_generator_v7.cpp)
+
 boost_test(TYPE run SOURCES test_tagging.cpp)
 
 boost_test(TYPE run SOURCES test_uuid_class.cpp)
