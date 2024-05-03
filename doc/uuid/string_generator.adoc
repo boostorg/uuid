@@ -12,7 +12,7 @@ namespace uuids {
 
 struct string_generator
 {
-    typedef uuid result_type;
+    using result_type = uuid;
 
     template<class Ch, class Traits, class Alloc>
       uuid operator()( std::basic_string<Ch, Traits, Alloc> const& s ) const;

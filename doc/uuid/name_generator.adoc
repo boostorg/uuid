@@ -15,8 +15,8 @@ namespace uuids {
 
 // only provided for backward compatibility
 
-typedef name_generator_sha1 name_generator;
-typedef name_generator_sha1 name_generator_latest;
+using name_generator = name_generator_sha1;
+using name_generator_latest = name_generator_sha1;
 
 }} //namespace boost::uuids
 ----

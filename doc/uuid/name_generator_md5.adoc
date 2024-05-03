@@ -16,7 +16,7 @@ class name_generator_md5
 {
 public:
 
-    typedef uuid result_type;
+    using result_type = uuid;
 
     explicit name_generator_md5( uuid const& namespace_uuid ) noexcept;
 
