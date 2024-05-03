@@ -16,7 +16,7 @@ uuid url() noexcept;
 uuid oid() noexcept;
 uuid x500dn() noexcept;
 
-}}} //namespace boost::uuids::ns
+}}} // namespace boost::uuids::ns
 ----
 
 === Namespaces
