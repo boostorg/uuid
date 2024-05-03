@@ -58,11 +58,9 @@ int main()
     BOOST_TEST_EQ(u, wcorrect_sha1);
     BOOST_TEST_EQ(u.variant(), boost::uuids::uuid::variant_rfc_4122);
 
-#ifndef BOOST_NO_STD_WSTRING
     u = gen(std::wstring(L"www.widgets.com"));
     BOOST_TEST_EQ(u, wcorrect_sha1);
     BOOST_TEST_EQ(u.variant(), boost::uuids::uuid::variant_rfc_4122);
-#endif
 
     char name[] = "www.widgets.com";
     u = gen(name, 15);

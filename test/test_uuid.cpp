@@ -119,9 +119,9 @@ int main()
             , { 0x30, boost::uuids::uuid::version_name_based_md5 }
             , { 0x40, boost::uuids::uuid::version_random_number_based }
             , { 0x50, boost::uuids::uuid::version_name_based_sha1 }
-            , { 0x60, boost::uuids::uuid::version_unknown }
-            , { 0x70, boost::uuids::uuid::version_unknown }
-            , { 0x80, boost::uuids::uuid::version_unknown }
+            , { 0x60, boost::uuids::uuid::version_time_based_v6 }
+            , { 0x70, boost::uuids::uuid::version_time_based_v7 }
+            , { 0x80, boost::uuids::uuid::version_custom_v8 }
             , { 0x90, boost::uuids::uuid::version_unknown }
             , { 0xa0, boost::uuids::uuid::version_unknown }
             , { 0xb0, boost::uuids::uuid::version_unknown }
@@ -213,7 +213,7 @@ int main()
         BOOST_TEST_GE( u4, u6 );
         BOOST_TEST_GE( u4, u7 );
 
-#if defined(__cpp_impl_three_way_comparison) && __cpp_impl_three_way_comparison >= 201907L
+#if defined(BOOST_UUID_HAS_THREE_WAY_COMPARISON)
 
         constexpr auto eq = std::strong_ordering::equal;
         constexpr auto lt = std::strong_ordering::less;

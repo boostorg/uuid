@@ -1,12 +1,10 @@
 #ifndef BOOST_UUID_UUID_HPP_INCLUDED
 #define BOOST_UUID_UUID_HPP_INCLUDED
 
-// Boost uuid.hpp header file  ----------------------------------------------//
-
-// Copyright 2006 Andy Tompkins.
-// Distributed under the Boost Software License, Version 1.0. (See
-// accompanying file LICENSE_1_0.txt or copy at
-// https://www.boost.org/LICENSE_1_0.txt)
+// Copyright 2006 Andy Tompkins
+// Copyright 2024 Peter Dimov
+// Distributed under the Boost Software License, Version 1.0.
+// https://www.boost.org/LICENSE_1_0.txt
 
 #include <boost/uuid/uuid_clock.hpp>
 #include <boost/uuid/detail/endian.hpp>
@@ -19,8 +17,16 @@
 #include <cstddef>
 #include <cstdint>
 
-#if defined(__cpp_impl_three_way_comparison) && __cpp_impl_three_way_comparison >= 201907L
-# include <compare>
+#if defined(__cpp_impl_three_way_comparison) && __cpp_impl_three_way_comparison >= 201907L && defined(__has_include)
+# if __has_include(<compare>)
+#  include <compare>
+#  if defined(__cpp_lib_three_way_comparison) && __cpp_lib_three_way_comparison >= 201907L
+#   define BOOST_UUID_HAS_THREE_WAY_COMPARISON __cpp_lib_three_way_comparison
+#  elif defined(_LIBCPP_VERSION)
+//  https://github.com/llvm/llvm-project/issues/73953
+#   define BOOST_UUID_HAS_THREE_WAY_COMPARISON _LIBCPP_VERSION
+#  endif
+# endif
 #endif
 
 namespace boost {
@@ -30,6 +36,14 @@ struct uuid
 {
 public:
 
+    // data
+
+    std::uint8_t data[ 16 ];
+
+public:
+
+    // iteration
+
     typedef std::uint8_t value_type;
     typedef std::uint8_t& reference;
     typedef std::uint8_t const& const_reference;
@@ -38,24 +52,25 @@ public:
     typedef std::size_t size_type;
     typedef std::ptrdiff_t difference_type;
 
+    iterator begin() noexcept { return data; }
+    const_iterator begin() const noexcept { return data; }
+
+    iterator end() noexcept { return data + size(); }
+    const_iterator end() const noexcept { return data + size(); }
+
+    // size
+
+    constexpr size_type size() const noexcept { return static_size(); }
+
     // This does not work on some compilers
-    // They seem to want the variable definec in
+    // They seem to want the variable defined in
     // a cpp file
     //BOOST_STATIC_CONSTANT(size_type, static_size = 16);
-    static BOOST_CONSTEXPR size_type static_size() BOOST_NOEXCEPT { return 16; }
+    static constexpr size_type static_size() noexcept { return 16; }
 
-public:
+    // is_nil
 
-    iterator begin() BOOST_NOEXCEPT { return data; }
-    const_iterator begin() const BOOST_NOEXCEPT { return data; }
-    iterator end() BOOST_NOEXCEPT { return data+size(); }
-    const_iterator end() const BOOST_NOEXCEPT { return data+size(); }
-
-    BOOST_CONSTEXPR size_type size() const BOOST_NOEXCEPT { return static_size(); }
-
-    bool is_nil() const BOOST_NOEXCEPT;
-
-    // accessors
+    bool is_nil() const noexcept;
 
     // variant
 
@@ -67,7 +82,7 @@ public:
         variant_future // future definition
     };
 
-    variant_type variant() const BOOST_NOEXCEPT
+    variant_type variant() const noexcept
     {
         // variant is stored in octet 7
         // which is index 8, since indexes count backwards
@@ -93,10 +108,13 @@ public:
         version_dce_security = 2,
         version_name_based_md5 = 3,
         version_random_number_based = 4,
-        version_name_based_sha1 = 5
+        version_name_based_sha1 = 5,
+        version_time_based_v6 = 6,
+        version_time_based_v7 = 7,
+        version_custom_v8 = 8
     };
 
-    version_type version() const BOOST_NOEXCEPT
+    version_type version() const noexcept
     {
         // version is stored in octet 9
         // which is index 6, since indexes count backwards
@@ -111,6 +129,12 @@ public:
             return version_random_number_based;
         } else if ( (octet9 & 0xF0) == 0x50 ) {
             return version_name_based_sha1;
+        } else if ( (octet9 & 0xF0) == 0x60 ) {
+            return version_time_based_v6;
+        } else if ( (octet9 & 0xF0) == 0x70 ) {
+            return version_time_based_v7;
+        } else if ( (octet9 & 0xF0) == 0x80 ) {
+            return version_custom_v8;
         } else {
             return version_unknown;
         }
@@ -120,7 +144,7 @@ public:
 
     using timestamp_type = std::uint64_t;
 
-    timestamp_type timestamp_v1() const BOOST_NOEXCEPT
+    timestamp_type timestamp_v1() const noexcept
     {
         std::uint32_t time_low = detail::load_big_u32( this->data + 0 );
         std::uint16_t time_mid = detail::load_big_u16( this->data + 4 );
@@ -129,18 +153,43 @@ public:
         return time_low | static_cast<std::uint64_t>( time_mid ) << 32 | static_cast<std::uint64_t>( time_hi ) << 48;
     }
 
+    timestamp_type timestamp_v6() const noexcept
+    {
+        std::uint32_t time_high = detail::load_big_u32( this->data + 0 );
+        std::uint16_t time_mid = detail::load_big_u16( this->data + 4 );
+        std::uint16_t time_low = detail::load_big_u16( this->data + 6 ) & 0x0FFF;
+
+        return time_low | static_cast<std::uint64_t>( time_mid ) << 12 | static_cast<std::uint64_t>( time_high ) << 28;
+    }
+
+    timestamp_type timestamp_v7() const noexcept
+    {
+        std::uint64_t time_and_version = detail::load_big_u64( this->data + 0 );
+        return time_and_version >> 16;
+    }
+
     // time_point
 
-    uuid_clock::time_point time_point_v1() const BOOST_NOEXCEPT
+    uuid_clock::time_point time_point_v1() const noexcept
     {
         return uuid_clock::from_timestamp( timestamp_v1() );
+    }
+
+    uuid_clock::time_point time_point_v6() const noexcept
+    {
+        return uuid_clock::from_timestamp( timestamp_v6() );
+    }
+
+    std::chrono::time_point<std::chrono::system_clock, std::chrono::milliseconds> time_point_v7() const noexcept
+    {
+        return std::chrono::time_point<std::chrono::system_clock, std::chrono::milliseconds>( std::chrono::milliseconds( timestamp_v7() ) );
     }
 
     // clock_seq
 
     using clock_seq_type = std::uint16_t;
 
-    clock_seq_type clock_seq() const BOOST_NOEXCEPT
+    clock_seq_type clock_seq() const noexcept
     {
         return detail::load_big_u16( this->data + 8 ) & 0x3FFF;
     }
@@ -149,7 +198,7 @@ public:
 
     using node_type = std::array<std::uint8_t, 6>;
 
-    node_type node_identifier() const BOOST_NOEXCEPT
+    node_type node_identifier() const noexcept
     {
         node_type node = {};
 
@@ -157,50 +206,51 @@ public:
         return node;
     }
 
-    // note: linear complexity
-    void swap(uuid& rhs) BOOST_NOEXCEPT;
+    // swap
 
-public:
-
-    std::uint8_t data[16];
+    void swap( uuid& rhs ) noexcept;
 };
 
-inline bool operator== (uuid const& lhs, uuid const& rhs) BOOST_NOEXCEPT;
-inline bool operator< (uuid const& lhs, uuid const& rhs) BOOST_NOEXCEPT;
+// operators
 
-inline bool operator!=(uuid const& lhs, uuid const& rhs) BOOST_NOEXCEPT
+inline bool operator==( uuid const& lhs, uuid const& rhs ) noexcept;
+inline bool operator< ( uuid const& lhs, uuid const& rhs ) noexcept;
+
+inline bool operator!=( uuid const& lhs, uuid const& rhs ) noexcept
 {
     return !(lhs == rhs);
 }
 
-inline bool operator>(uuid const& lhs, uuid const& rhs) BOOST_NOEXCEPT
+inline bool operator>( uuid const& lhs, uuid const& rhs ) noexcept
 {
     return rhs < lhs;
 }
-inline bool operator<=(uuid const& lhs, uuid const& rhs) BOOST_NOEXCEPT
+inline bool operator<=( uuid const& lhs, uuid const& rhs ) noexcept
 {
     return !(rhs < lhs);
 }
 
-inline bool operator>=(uuid const& lhs, uuid const& rhs) BOOST_NOEXCEPT
+inline bool operator>=( uuid const& lhs, uuid const& rhs ) noexcept
 {
     return !(lhs < rhs);
 }
 
-#if defined(__cpp_impl_three_way_comparison) && __cpp_impl_three_way_comparison >= 201907L
+#if defined(BOOST_UUID_HAS_THREE_WAY_COMPARISON)
 
-inline std::strong_ordering operator<=> (uuid const& lhs, uuid const& rhs) BOOST_NOEXCEPT;
+inline std::strong_ordering operator<=>( uuid const& lhs, uuid const& rhs ) noexcept;
 
 #endif
 
-inline void swap(uuid& lhs, uuid& rhs) BOOST_NOEXCEPT
+// swap
+
+inline void swap( uuid& lhs, uuid& rhs ) noexcept
 {
-    lhs.swap(rhs);
+    lhs.swap( rhs );
 }
 
 // hash_value
 
-inline std::size_t hash_value( uuid const& u ) BOOST_NOEXCEPT
+inline std::size_t hash_value( uuid const& u ) noexcept
 {
     std::uint64_t r = 0;
 
@@ -233,15 +283,16 @@ template<> struct implementation_level_impl<const uuids::uuid>: boost::integral_
 
 namespace std
 {
-    template<>
-    struct hash<boost::uuids::uuid>
+
+template<> struct hash<boost::uuids::uuid>
+{
+    std::size_t operator()( boost::uuids::uuid const& value ) const noexcept
     {
-        std::size_t operator () (const boost::uuids::uuid& value) const BOOST_NOEXCEPT
-        {
-            return boost::uuids::hash_value(value);
-        }
-    };
-}
+        return boost::uuids::hash_value( value );
+    }
+};
+
+} // namespace std
 
 #if defined(BOOST_UUID_USE_SSE2)
 # include <boost/uuid/detail/uuid_x86.ipp>

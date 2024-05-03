@@ -10,6 +10,7 @@
 // accompanying file LICENSE_1_0.txt or copy at
 //  https://www.boost.org/LICENSE_1_0.txt)
 
+#include <boost/uuid/namespaces.hpp>
 #include <boost/uuid/uuid.hpp>
 #include <boost/uuid/detail/static_assert.hpp>
 #include <boost/config.hpp>
@@ -21,47 +22,61 @@ namespace boost {
 namespace uuids {
 namespace detail {
 
-//! \brief Generate a name based UUID using
-//!        the provided hashing algorithm that
-//!        implements the NameHashProvider concept.
 template<class HashAlgo>
 class basic_name_generator
 {
-  public:
+private:
+
+    uuid namespace_uuid_;
+
+public:
+
     typedef uuid result_type;
     typedef typename HashAlgo::digest_type digest_type;
 
-    explicit basic_name_generator(uuid const& namespace_uuid_)
-        : namespace_uuid(namespace_uuid_)
+    explicit basic_name_generator( uuid const& namespace_uuid ) noexcept
+        : namespace_uuid_( namespace_uuid )
     {}
 
-    uuid operator()(const char* name) const {
+    uuid operator()( char const* name ) const noexcept
+    {
         HashAlgo hash;
-        hash.process_bytes(namespace_uuid.begin(), namespace_uuid.size());
-        process_characters(hash, name, std::strlen(name));
-        return hash_to_uuid(hash);
+
+        hash.process_bytes( namespace_uuid_.begin(), namespace_uuid_.size() );
+        process_characters( hash, name, std::strlen( name ) );
+
+        return hash_to_uuid( hash );
     }
 
-    uuid operator()(const wchar_t* name) const {
+    uuid operator()( wchar_t const* name ) const noexcept
+    {
         HashAlgo hash;
-        hash.process_bytes(namespace_uuid.begin(), namespace_uuid.size());
-        process_characters(hash, name, std::wcslen(name));
-        return hash_to_uuid(hash);
+
+        hash.process_bytes( namespace_uuid_.begin(), namespace_uuid_.size() );
+        process_characters( hash, name, std::wcslen( name ) );
+
+        return hash_to_uuid( hash );
     }
 
-    template <typename ch, typename char_traits, typename alloc>
-    uuid operator()(std::basic_string<ch, char_traits, alloc> const& name) const {
+    template<class Ch, class Traits, class Alloc>
+    uuid operator()( std::basic_string<Ch, Traits, Alloc> const& name ) const noexcept
+    {
         HashAlgo hash;
-        hash.process_bytes(namespace_uuid.begin(), namespace_uuid.size());
-        process_characters(hash, name.c_str(), name.length());
-        return hash_to_uuid(hash);
+
+        hash.process_bytes( namespace_uuid_.begin(), namespace_uuid_.size() );
+        process_characters( hash, name.c_str(), name.length() );
+
+        return hash_to_uuid( hash );
     }
 
-    uuid operator()(void const* buffer, std::size_t byte_count) const {
+    uuid operator()( void const* buffer, std::size_t byte_count ) const noexcept
+    {
         HashAlgo hash;
-        hash.process_bytes(namespace_uuid.begin(), namespace_uuid.size());
-        hash.process_bytes(buffer, byte_count);
-        return hash_to_uuid(hash);
+
+        hash.process_bytes( namespace_uuid_.begin(), namespace_uuid_.size() );
+        hash.process_bytes( buffer, byte_count );
+
+        return hash_to_uuid( hash );
     }
 
 private:
@@ -70,29 +85,33 @@ private:
     // sizeof(wchar_t).  We want the name string on any
     // platform / compiler to generate the same uuid
     // except for char
-    template <typename char_type>
-    void process_characters(HashAlgo& hash, char_type const*const characters, std::size_t count) const {
-        BOOST_UUID_STATIC_ASSERT(sizeof(uint32_t) >= sizeof(char_type));
+    template<class Ch>
+    void process_characters( HashAlgo& hash, Ch const* characters, std::size_t count ) const noexcept
+    {
+        BOOST_UUID_STATIC_ASSERT( sizeof(std::uint32_t) >= sizeof(Ch) );
 
-        for (std::size_t i=0; i<count; i++) {
-            std::size_t c = characters[i];
-            hash.process_byte(static_cast<unsigned char>((c >>  0) & 0xFF));
-            hash.process_byte(static_cast<unsigned char>((c >>  8) & 0xFF));
-            hash.process_byte(static_cast<unsigned char>((c >> 16) & 0xFF));
-            hash.process_byte(static_cast<unsigned char>((c >> 24) & 0xFF));
+        for( std::size_t i = 0; i < count; ++i)
+        {
+            std::size_t c = characters[ i ];
+
+            hash.process_byte( static_cast<unsigned char>( (c >>  0) & 0xFF ) );
+            hash.process_byte( static_cast<unsigned char>( (c >>  8) & 0xFF ) );
+            hash.process_byte( static_cast<unsigned char>( (c >> 16) & 0xFF ) );
+            hash.process_byte( static_cast<unsigned char>( (c >> 24) & 0xFF ) );
         }
     }
 
-    void process_characters(HashAlgo& hash, char const*const characters, std::size_t count) const {
-        hash.process_bytes(characters, count);
+    void process_characters( HashAlgo& hash, char const* characters, std::size_t count ) const noexcept
+    {
+        hash.process_bytes( characters, count );
     }
 
-    uuid hash_to_uuid(HashAlgo& hash) const
+    uuid hash_to_uuid( HashAlgo& hash ) const noexcept
     {
         digest_type digest;
         hash.get_digest(digest);
 
-        BOOST_UUID_STATIC_ASSERT(sizeof(digest_type) >= 16);
+        BOOST_UUID_STATIC_ASSERT( sizeof(digest_type) >= 16 );
 
         uuid u;
         std::memcpy( u.data, digest, 16 );
@@ -108,44 +127,9 @@ private:
 
         return u;
     }
-
-private:
-    uuid namespace_uuid;
 };
 
 } // namespace detail
-
-namespace ns {
-
-BOOST_FORCEINLINE uuid dns() {
-    uuid result = {{
-        0x6b, 0xa7, 0xb8, 0x10, 0x9d, 0xad, 0x11, 0xd1 ,
-        0x80, 0xb4, 0x00, 0xc0, 0x4f, 0xd4, 0x30, 0xc8 }};
-    return result;
-}
-
-BOOST_FORCEINLINE uuid url() {
-    uuid result = {{
-        0x6b, 0xa7, 0xb8, 0x11, 0x9d, 0xad, 0x11, 0xd1 ,
-        0x80, 0xb4, 0x00, 0xc0, 0x4f, 0xd4, 0x30, 0xc8 }};
-    return result;
-}
-
-BOOST_FORCEINLINE uuid oid() {
-    uuid result = {{
-        0x6b, 0xa7, 0xb8, 0x12, 0x9d, 0xad, 0x11, 0xd1 ,
-        0x80, 0xb4, 0x00, 0xc0, 0x4f, 0xd4, 0x30, 0xc8 }};
-    return result;
-}
-
-BOOST_FORCEINLINE uuid x500dn() {
-    uuid result = {{
-        0x6b, 0xa7, 0xb8, 0x14, 0x9d, 0xad, 0x11, 0xd1 ,
-        0x80, 0xb4, 0x00, 0xc0, 0x4f, 0xd4, 0x30, 0xc8 }};
-    return result;
-}
-
-} // ns
 } // uuids
 } // boost
 

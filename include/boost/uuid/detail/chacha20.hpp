@@ -23,12 +23,12 @@ private:
 
 private:
 
-    static inline std::uint32_t rotl( std::uint32_t x, int n )
+    static inline std::uint32_t rotl( std::uint32_t x, int n ) noexcept
     {
         return ( x << n ) | ( x >> (32 - n) );
     }
 
-    static inline void quarter_round( std::uint32_t (&x)[ 16 ], int a, int b, int c, int d )
+    static inline void quarter_round( std::uint32_t (&x)[ 16 ], int a, int b, int c, int d ) noexcept
     {
         x[ a ] += x[ b ]; x[ d ] = rotl( x[d] ^ x[a], 16 );
         x[ c ] += x[ d ]; x[ b ] = rotl( x[b] ^ x[c], 12 );
@@ -36,7 +36,7 @@ private:
         x[ c ] += x[ d ]; x[ b ] = rotl( x[b] ^ x[c],  7 );
     }
 
-    void get_next_block()
+    void get_next_block() noexcept
     {
         for( int i = 0; i < 16; ++i )
         {
@@ -67,7 +67,7 @@ public:
 
     using result_type = std::uint32_t;
 
-    chacha20_12(): index_( 16 )
+    chacha20_12() noexcept: index_( 16 )
     {
         state_[ 0 ] = 0x61707865;
         state_[ 1 ] = 0x3320646e;
@@ -80,7 +80,7 @@ public:
         }
     }
 
-    chacha20_12( std::uint32_t const (&key)[ 8 ], std::uint32_t const (&nonce)[ 2 ] ): index_( 16 )
+    chacha20_12( std::uint32_t const (&key)[ 8 ], std::uint32_t const (&nonce)[ 2 ] ) noexcept: index_( 16 )
     {
         state_[ 0 ] = 0x61707865;
         state_[ 1 ] = 0x3320646e;
@@ -100,7 +100,7 @@ public:
     }
 
     // only needed because basic_random_generator looks for it
-    void seed()
+    void seed() noexcept
     {
         index_ = 16;
 
@@ -121,17 +121,17 @@ public:
         state_[ 13 ] = 0;
     }
 
-    static constexpr result_type min()
+    static constexpr result_type min() noexcept
     {
         return std::numeric_limits<result_type>::min();
     }
 
-    static constexpr result_type max()
+    static constexpr result_type max() noexcept
     {
         return std::numeric_limits<result_type>::max();
     }
 
-    result_type operator()()
+    result_type operator()() noexcept
     {
         if( index_ == 16 )
         {

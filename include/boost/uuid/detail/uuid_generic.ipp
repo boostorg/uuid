@@ -18,7 +18,7 @@ BOOST_PRAGMA_MESSAGE( "Using uuid_generic.ipp" )
 namespace boost {
 namespace uuids {
 
-inline bool uuid::is_nil() const BOOST_NOEXCEPT
+inline bool uuid::is_nil() const noexcept
 {
     std::uint64_t v = detail::load_native_u64( this->data + 0 );
     std::uint64_t w = detail::load_native_u64( this->data + 8 );
@@ -26,7 +26,7 @@ inline bool uuid::is_nil() const BOOST_NOEXCEPT
     return v == 0 && w == 0;
 }
 
-inline void uuid::swap( uuid& rhs ) BOOST_NOEXCEPT
+inline void uuid::swap( uuid& rhs ) noexcept
 {
     std::uint64_t v1 = detail::load_native_u64( this->data + 0 );
     std::uint64_t w1 = detail::load_native_u64( this->data + 8 );
@@ -41,7 +41,7 @@ inline void uuid::swap( uuid& rhs ) BOOST_NOEXCEPT
     detail::store_native_u64( rhs.data + 8, w1 );
 }
 
-inline bool operator==( uuid const& lhs, uuid const& rhs ) BOOST_NOEXCEPT
+inline bool operator==( uuid const& lhs, uuid const& rhs ) noexcept
 {
     std::uint64_t v1 = detail::load_native_u64( lhs.data + 0 );
     std::uint64_t w1 = detail::load_native_u64( lhs.data + 8 );
@@ -52,7 +52,7 @@ inline bool operator==( uuid const& lhs, uuid const& rhs ) BOOST_NOEXCEPT
     return v1 == v2 && w1 == w2;
 }
 
-inline bool operator<( uuid const& lhs, uuid const& rhs ) BOOST_NOEXCEPT
+inline bool operator<( uuid const& lhs, uuid const& rhs ) noexcept
 {
     std::uint64_t v1 = detail::load_big_u64( lhs.data + 0 );
     std::uint64_t w1 = detail::load_big_u64( lhs.data + 8 );
@@ -63,9 +63,9 @@ inline bool operator<( uuid const& lhs, uuid const& rhs ) BOOST_NOEXCEPT
     return v1 < v2 || ( !( v2 < v1 ) && w1 < w2 );
 }
 
-#if defined(__cpp_impl_three_way_comparison) && __cpp_impl_three_way_comparison >= 201907L
+#if defined(BOOST_UUID_HAS_THREE_WAY_COMPARISON)
 
-inline std::strong_ordering operator<=> (uuid const& lhs, uuid const& rhs) BOOST_NOEXCEPT
+inline std::strong_ordering operator<=> (uuid const& lhs, uuid const& rhs) noexcept
 {
     std::uint64_t v1 = detail::load_big_u64( lhs.data + 0 );
     std::uint64_t w1 = detail::load_big_u64( lhs.data + 8 );

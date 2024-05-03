@@ -16,7 +16,6 @@ set(deps
 
 assert
 config
-io
 throw_exception
 type_traits
 

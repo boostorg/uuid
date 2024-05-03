@@ -14,20 +14,16 @@
 namespace boost {
 namespace uuids {
 
-// only provided for compatibility with 1.85
-class random_generator_mt19937: public basic_random_generator<std::mt19937>
-{
-};
-
-// only provided for compatibility with 1.85
-class random_generator_pure: public basic_random_generator<detail::random_device>
-{
-};
-
 // the default random generator
 class random_generator: public basic_random_generator<detail::chacha20_12>
 {
 };
+
+// only provided for compatibility with 1.85
+using random_generator_mt19937 = basic_random_generator<std::mt19937>;
+
+// only provided for compatibility with 1.85
+using random_generator_pure = basic_random_generator<detail::random_device>;
 
 }} // namespace boost::uuids
 

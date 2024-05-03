@@ -18,9 +18,7 @@
 namespace boost {
 namespace uuids {
 
-//! generate a random-based uuid
-//! \param[in]  UniformRandomNumberGenerator  see Boost.Random documentation
-template <typename UniformRandomNumberGenerator>
+template<class UniformRandomNumberGenerator>
 class basic_random_generator
 {
 private:

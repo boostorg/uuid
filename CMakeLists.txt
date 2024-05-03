@@ -16,7 +16,6 @@ target_link_libraries(boost_uuid
   INTERFACE
     Boost::assert
     Boost::config
-    Boost::io
     Boost::throw_exception
     Boost::type_traits
 )

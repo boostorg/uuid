@@ -38,7 +38,6 @@ void uufail(const std::string& in)
     BOOST_TEST_EQ(true, ss.fail());
 }
 
-#ifndef BOOST_NO_STD_WSTRING
 void uufail(const std::wstring& in)
 {
     uuid out;
@@ -47,7 +46,6 @@ void uufail(const std::wstring& in)
     ss >> out;
     BOOST_TEST_EQ(true, ss.fail());
 }
-#endif
 
 void uuroundtrip(const uuid& in, const std::string& expect)
 {
@@ -64,7 +62,6 @@ void uuroundtrip(const uuid& in, const std::string& expect)
     BOOST_TEST_EQ(in, out);
 }
 
-#ifndef BOOST_NO_STD_WSTRING
 void uuroundtrip(const uuid& in, const std::wstring& expect)
 {
     std::wstringstream ss;
@@ -79,9 +76,8 @@ void uuroundtrip(const uuid& in, const std::wstring& expect)
     BOOST_TEST_EQ(false, ss2.fail());
     BOOST_TEST   (in == out);
 }
-#endif
 
-int main(int, char*[])
+int main()
 {
     const uuid u1 = {{0}};
     const uuid u2 = {{0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15}};
@@ -103,11 +99,9 @@ int main(int, char*[])
     ss7 << std::left << std::setfill('*') << std::setw(45) << u2;
     BOOST_TEST_EQ(ss7.str(), "00010203-0405-0607-0809-0a0b0c0d0e0f*********");
 
-#ifndef BOOST_NO_STD_WSTRING
     uuroundtrip(u1, L"00000000-0000-0000-0000-000000000000");
     uuroundtrip(u2, L"00010203-0405-0607-0809-0a0b0c0d0e0f");
     uuroundtrip(u3, L"12345678-90ab-cdef-1234-567890abcdef");
-#endif
 
     const char raw[36] = { '0', '1', '2', '3', '4', '5', '6', '7', '-',
         '8', '9', 'a', 'b', '-',
@@ -124,7 +118,6 @@ int main(int, char*[])
     uufail("G1234567-89AB-CDEF-0123-456789abcdef");
     uufail("01234567-89AB-CDEF-0123-456789abcdeg");
 
-#ifndef BOOST_NO_STD_WSTRING
     uufail(L"01234567-89ab-cdef-");
     uufail(L"01234567-89ab-cdef-0123456789abcdef");
     uufail(L"01234567-89ab-cdef0123-456789abcdef");
@@ -133,7 +126,6 @@ int main(int, char*[])
     uufail(L"{12345678-90ab-cdef-1234-567890abcdef}");  // stream is not as flexible as string
     uufail(L"G1234567-89AB-CDEF-0123-456789abcdef");
     uufail(L"01234567-89AB-CDEF-0123-456789abcdeg");
-#endif
 
 #if defined(HAVE_LEXICAL_CAST)
     // lexical_cast depends on sprintf which is not available in cloudlibc
@@ -143,13 +135,11 @@ int main(int, char*[])
     BOOST_TEST(boost::lexical_cast<std::string>(u3) == std::string("12345678-90ab-cdef-1234-567890abcdef"));
     BOOST_TEST(boost::lexical_cast<uuid>("12345678-90ab-cdef-1234-567890abcdef") == u3);
 
-#ifndef BOOST_NO_STD_WSTRING
     BOOST_TEST(boost::lexical_cast<std::wstring>(u1) == std::wstring(L"00000000-0000-0000-0000-000000000000"));
     BOOST_TEST(boost::lexical_cast<uuid>(L"00000000-0000-0000-0000-000000000000") == u1);
 
     BOOST_TEST(boost::lexical_cast<std::wstring>(u3) == std::wstring(L"12345678-90ab-cdef-1234-567890abcdef"));
     BOOST_TEST(boost::lexical_cast<uuid>(L"12345678-90ab-cdef-1234-567890abcdef") == u3);
-#endif
 
 #endif
 
@@ -189,11 +179,8 @@ int main(int, char*[])
     BOOST_TEST(to_string(u1) == std::string("00000000-0000-0000-0000-000000000000"));
     BOOST_TEST(to_string(u3) == std::string("12345678-90ab-cdef-1234-567890abcdef"));
 
-#ifndef BOOST_NO_STD_WSTRING
     BOOST_TEST(to_wstring(u1) == std::wstring(L"00000000-0000-0000-0000-000000000000"));
     BOOST_TEST(to_wstring(u3) == std::wstring(L"12345678-90ab-cdef-1234-567890abcdef"));
-#endif
 
     return boost::report_errors();
 }
-

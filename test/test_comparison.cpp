@@ -6,9 +6,29 @@
 #include <boost/uuid/uuid_io.hpp>
 #include <boost/uuid/random_generator.hpp>
 #include <boost/core/lightweight_test.hpp>
+#include <boost/config.hpp>
+#include <boost/config/pragma_message.hpp>
 #include <random>
 #include <vector>
 #include <cstring>
+
+#if defined(BOOST_UUID_HAS_THREE_WAY_COMPARISON)
+
+BOOST_PRAGMA_MESSAGE( "Three way comparisons are tested: BOOST_UUID_HAS_THREE_WAY_COMPARISON=" BOOST_STRINGIZE(BOOST_UUID_HAS_THREE_WAY_COMPARISON) )
+
+#elif !defined(__cpp_impl_three_way_comparison)
+
+BOOST_PRAGMA_MESSAGE( "Three way comparisons not tested because __cpp_impl_three_way_comparison is not defined" )
+
+#elif !defined(__cpp_lib_three_way_comparison)
+
+BOOST_PRAGMA_MESSAGE( "Three way comparisons not tested because __cpp_lib_three_way_comparison is not defined" )
+
+#else
+
+BOOST_PRAGMA_MESSAGE( "Three way comparisons not tested: __cpp_impl_three_way_comparison=" BOOST_STRINGIZE(__cpp_impl_three_way_comparison) ", __cpp_lib_three_way_comparison=" BOOST_STRINGIZE(__cpp_lib_three_way_comparison) )
+
+#endif
 
 using namespace boost::uuids;
 
@@ -41,7 +61,7 @@ void test_comparison( uuid const& u1, uuid const& u2 )
         BOOST_TEST_GE( u1, u2 );
     }
 
-#if defined(__cpp_impl_three_way_comparison) && __cpp_impl_three_way_comparison >= 201907L
+#if defined(BOOST_UUID_HAS_THREE_WAY_COMPARISON)
 
     constexpr auto eq = std::strong_ordering::equal;
     constexpr auto lt = std::strong_ordering::less;

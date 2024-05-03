@@ -46,52 +46,52 @@ namespace detail {
 
 #if defined(__GNUC__) || defined(__clang__)
 
-inline std::uint16_t byteswap( std::uint16_t x )
+inline std::uint16_t byteswap( std::uint16_t x ) noexcept
 {
     return __builtin_bswap16( x );
 }
 
-inline std::uint32_t byteswap( std::uint32_t x )
+inline std::uint32_t byteswap( std::uint32_t x ) noexcept
 {
     return __builtin_bswap32( x );
 }
 
-inline std::uint64_t byteswap( std::uint64_t x )
+inline std::uint64_t byteswap( std::uint64_t x ) noexcept
 {
     return __builtin_bswap64( x );
 }
 
 #elif defined(_MSC_VER)
 
-inline std::uint16_t byteswap( std::uint16_t x )
+inline std::uint16_t byteswap( std::uint16_t x ) noexcept
 {
     return _byteswap_ushort( x );
 }
 
-inline std::uint32_t byteswap( std::uint32_t x )
+inline std::uint32_t byteswap( std::uint32_t x ) noexcept
 {
     return _byteswap_ulong( x );
 }
 
-inline std::uint64_t byteswap( std::uint64_t x )
+inline std::uint64_t byteswap( std::uint64_t x ) noexcept
 {
     return _byteswap_uint64( x );
 }
 
 #else
 
-inline std::uint16_t byteswap( std::uint16_t x )
+inline std::uint16_t byteswap( std::uint16_t x ) noexcept
 {
     return static_cast<std::uint16_t>( x << 8 | x >> 8 );
 }
 
-inline std::uint32_t byteswap( std::uint32_t x )
+inline std::uint32_t byteswap( std::uint32_t x ) noexcept
 {
     std::uint32_t step16 = x << 16 | x >> 16;
     return ((step16 << 8) & 0xff00ff00) | ((step16 >> 8) & 0x00ff00ff);
 }
 
-inline std::uint64_t byteswap( std::uint64_t x )
+inline std::uint64_t byteswap( std::uint64_t x ) noexcept
 {
     std::uint64_t step32 = x << 32 | x >> 32;
     std::uint64_t step16 = (step32 & 0x0000FFFF0000FFFFULL) << 16 | (step32 & 0xFFFF0000FFFF0000ULL) >> 16;
@@ -102,7 +102,7 @@ inline std::uint64_t byteswap( std::uint64_t x )
 
 #if defined(__SIZEOF_INT128__)
 
-inline __uint128_t byteswap( __uint128_t x )
+inline __uint128_t byteswap( __uint128_t x ) noexcept
 {
     return ( static_cast<__uint128_t>( detail::byteswap( static_cast<std::uint64_t>( x ) ) ) << 64 ) | detail::byteswap( static_cast<std::uint64_t>( x >> 64 ) );
 }
@@ -111,14 +111,14 @@ inline __uint128_t byteswap( __uint128_t x )
 
 // load_*_u16
 
-inline std::uint16_t load_native_u16( void const* p )
+inline std::uint16_t load_native_u16( void const* p ) noexcept
 {
     std::uint16_t tmp;
     std::memcpy( &tmp, p, sizeof( tmp ) );
     return tmp;
 }
 
-inline std::uint16_t load_little_u16( void const* p )
+inline std::uint16_t load_little_u16( void const* p ) noexcept
 {
     std::uint16_t tmp;
     std::memcpy( &tmp, p, sizeof( tmp ) );
@@ -134,7 +134,7 @@ inline std::uint16_t load_little_u16( void const* p )
 #endif
 }
 
-inline std::uint16_t load_big_u16( void const* p )
+inline std::uint16_t load_big_u16( void const* p ) noexcept
 {
     std::uint16_t tmp;
     std::memcpy( &tmp, p, sizeof( tmp ) );
@@ -152,14 +152,14 @@ inline std::uint16_t load_big_u16( void const* p )
 
 // load_*_u32
 
-inline std::uint32_t load_native_u32( void const* p )
+inline std::uint32_t load_native_u32( void const* p ) noexcept
 {
     std::uint32_t tmp;
     std::memcpy( &tmp, p, sizeof( tmp ) );
     return tmp;
 }
 
-inline std::uint32_t load_little_u32( void const* p )
+inline std::uint32_t load_little_u32( void const* p ) noexcept
 {
     std::uint32_t tmp;
     std::memcpy( &tmp, p, sizeof( tmp ) );
@@ -175,7 +175,7 @@ inline std::uint32_t load_little_u32( void const* p )
 #endif
 }
 
-inline std::uint32_t load_big_u32( void const* p )
+inline std::uint32_t load_big_u32( void const* p ) noexcept
 {
     std::uint32_t tmp;
     std::memcpy( &tmp, p, sizeof( tmp ) );
@@ -193,14 +193,14 @@ inline std::uint32_t load_big_u32( void const* p )
 
 // load_*_u64
 
-inline std::uint64_t load_native_u64( void const* p )
+inline std::uint64_t load_native_u64( void const* p ) noexcept
 {
     std::uint64_t tmp;
     std::memcpy( &tmp, p, sizeof( tmp ) );
     return tmp;
 }
 
-inline std::uint64_t load_little_u64( void const* p )
+inline std::uint64_t load_little_u64( void const* p ) noexcept
 {
     std::uint64_t tmp;
     std::memcpy( &tmp, p, sizeof( tmp ) );
@@ -216,7 +216,7 @@ inline std::uint64_t load_little_u64( void const* p )
 #endif
 }
 
-inline std::uint64_t load_big_u64( void const* p )
+inline std::uint64_t load_big_u64( void const* p ) noexcept
 {
     std::uint64_t tmp;
     std::memcpy( &tmp, p, sizeof( tmp ) );
@@ -236,14 +236,14 @@ inline std::uint64_t load_big_u64( void const* p )
 
 #if defined(__SIZEOF_INT128__)
 
-inline __uint128_t load_native_u128( void const* p )
+inline __uint128_t load_native_u128( void const* p ) noexcept
 {
     __uint128_t tmp;
     std::memcpy( &tmp, p, sizeof( tmp ) );
     return tmp;
 }
 
-inline __uint128_t load_little_u128( void const* p )
+inline __uint128_t load_little_u128( void const* p ) noexcept
 {
     __uint128_t tmp;
     std::memcpy( &tmp, p, sizeof( tmp ) );
@@ -259,7 +259,7 @@ inline __uint128_t load_little_u128( void const* p )
 #endif
 }
 
-inline __uint128_t load_big_u128( void const* p )
+inline __uint128_t load_big_u128( void const* p ) noexcept
 {
     __uint128_t tmp;
     std::memcpy( &tmp, p, sizeof( tmp ) );
@@ -279,12 +279,12 @@ inline __uint128_t load_big_u128( void const* p )
 
 // store_*_u16
 
-inline void store_native_u16( void* p, std::uint16_t v )
+inline void store_native_u16( void* p, std::uint16_t v ) noexcept
 {
     std::memcpy( p, &v, sizeof( v ) );
 }
 
-inline void store_little_u16( void* p, std::uint16_t v )
+inline void store_little_u16( void* p, std::uint16_t v ) noexcept
 {
 #if BOOST_UUID_BYTE_ORDER != BOOST_UUID_ORDER_LITTLE_ENDIAN
 
@@ -295,7 +295,7 @@ inline void store_little_u16( void* p, std::uint16_t v )
     std::memcpy( p, &v, sizeof( v ) );
 }
 
-inline void store_big_u16( void* p, std::uint16_t v )
+inline void store_big_u16( void* p, std::uint16_t v ) noexcept
 {
 #if BOOST_UUID_BYTE_ORDER != BOOST_UUID_ORDER_BIG_ENDIAN
 
@@ -308,12 +308,12 @@ inline void store_big_u16( void* p, std::uint16_t v )
 
 // store_*_u32
 
-inline void store_native_u32( void* p, std::uint32_t v )
+inline void store_native_u32( void* p, std::uint32_t v ) noexcept
 {
     std::memcpy( p, &v, sizeof( v ) );
 }
 
-inline void store_little_u32( void* p, std::uint32_t v )
+inline void store_little_u32( void* p, std::uint32_t v ) noexcept
 {
 #if BOOST_UUID_BYTE_ORDER != BOOST_UUID_ORDER_LITTLE_ENDIAN
 
@@ -324,7 +324,7 @@ inline void store_little_u32( void* p, std::uint32_t v )
     std::memcpy( p, &v, sizeof( v ) );
 }
 
-inline void store_big_u32( void* p, std::uint32_t v )
+inline void store_big_u32( void* p, std::uint32_t v ) noexcept
 {
 #if BOOST_UUID_BYTE_ORDER != BOOST_UUID_ORDER_BIG_ENDIAN
 
@@ -337,12 +337,12 @@ inline void store_big_u32( void* p, std::uint32_t v )
 
 // store_*_u64
 
-inline void store_native_u64( void* p, std::uint64_t v )
+inline void store_native_u64( void* p, std::uint64_t v ) noexcept
 {
     std::memcpy( p, &v, sizeof( v ) );
 }
 
-inline void store_little_u64( void* p, std::uint64_t v )
+inline void store_little_u64( void* p, std::uint64_t v ) noexcept
 {
 #if BOOST_UUID_BYTE_ORDER != BOOST_UUID_ORDER_LITTLE_ENDIAN
 
@@ -353,7 +353,7 @@ inline void store_little_u64( void* p, std::uint64_t v )
     std::memcpy( p, &v, sizeof( v ) );
 }
 
-inline void store_big_u64( void* p, std::uint64_t v )
+inline void store_big_u64( void* p, std::uint64_t v ) noexcept
 {
 #if BOOST_UUID_BYTE_ORDER != BOOST_UUID_ORDER_BIG_ENDIAN
 
@@ -368,12 +368,12 @@ inline void store_big_u64( void* p, std::uint64_t v )
 
 #if defined(__SIZEOF_INT128__)
 
-inline void store_native_u128( void* p, __uint128_t v )
+inline void store_native_u128( void* p, __uint128_t v ) noexcept
 {
     std::memcpy( p, &v, sizeof( v ) );
 }
 
-inline void store_little_u128( void* p, __uint128_t v )
+inline void store_little_u128( void* p, __uint128_t v ) noexcept
 {
 #if BOOST_UUID_BYTE_ORDER != BOOST_UUID_ORDER_LITTLE_ENDIAN
 
@@ -384,7 +384,7 @@ inline void store_little_u128( void* p, __uint128_t v )
     std::memcpy( p, &v, sizeof( v ) );
 }
 
-inline void store_big_u128( void* p, __uint128_t v )
+inline void store_big_u128( void* p, __uint128_t v ) noexcept
 {
 #if BOOST_UUID_BYTE_ORDER != BOOST_UUID_ORDER_BIG_ENDIAN
 
