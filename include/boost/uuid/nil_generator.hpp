@@ -13,7 +13,7 @@ namespace uuids {
 // generate a nil uuid
 struct nil_generator
 {
-    typedef uuid result_type;
+    using result_type = uuid;
     
     uuid operator()() const noexcept
     {

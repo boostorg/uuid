@@ -22,7 +22,7 @@ private:
 
 public:
 
-    typedef std::uint32_t result_type;
+    using result_type = std::uint32_t;
 
     random_provider() = default;
 

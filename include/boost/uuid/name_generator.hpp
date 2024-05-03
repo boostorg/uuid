@@ -17,10 +17,10 @@ namespace boost {
 namespace uuids {
 
 // Only provided for compatibility with 1.85 and earlier
-typedef name_generator_sha1 name_generator;
+using name_generator = name_generator_sha1;
 
 // Only provided for compatibility with 1.85 and earlier
-typedef name_generator_sha1 name_generator_latest;
+using name_generator_latest = name_generator_sha1;
 
 } // uuids
 } // boost

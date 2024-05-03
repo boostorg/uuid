@@ -28,7 +28,7 @@ private:
 
 public:
 
-    typedef uuid result_type;
+    using result_type = uuid;
 
     // default constructor creates the random number generator and
     // if the UniformRandomNumberGenerator is a PseudoRandomNumberGenerator
