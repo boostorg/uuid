@@ -67,12 +67,12 @@ public:
 
         // set variant
         // must be 0b10xxxxxx
-        *(u.begin() + 8) &= 0xBF;
+        *(u.begin() + 8) &= 0x3F;
         *(u.begin() + 8) |= 0x80;
 
         // set version
         // must be 0b0100xxxx
-        *(u.begin() + 6) &= 0x4F; //0b01001111
+        *(u.begin() + 6) &= 0x0F; //0b00001111
         *(u.begin() + 6) |= 0x40; //0b01000000
 
         return u;

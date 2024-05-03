@@ -117,7 +117,7 @@ private:
         std::memcpy( u.data, digest, 16 );
 
         // set variant: must be 0b10xxxxxx
-        *(u.begin()+8) &= 0xBF;
+        *(u.begin()+8) &= 0x3F;
         *(u.begin()+8) |= 0x80;
 
         // set version
