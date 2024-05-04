@@ -16,7 +16,7 @@ class name_generator_sha1
 {
 public:
 
-    typedef uuid result_type;
+    using result_type = uuid;
 
     explicit name_generator_sha1( uuid const& namespace_uuid ) noexcept;
 
@@ -29,7 +29,7 @@ public:
     uuid operator()( void const* buffer, std::size_t byte_count ) const noexcept;
 };
 
-}} //namespace boost::uuids
+}} // namespace boost::uuids
 ----
 
 === name_generator_sha1

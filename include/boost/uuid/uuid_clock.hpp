@@ -25,8 +25,8 @@ public:
 
     static time_point now() noexcept;
 
-    static time_point from_sys( std::chrono::system_clock::time_point const& tp ) noexcept;
-    static std::chrono::system_clock::time_point to_sys( time_point const& tp ) noexcept;
+    template<class Duration> static time_point from_sys( std::chrono::time_point<std::chrono::system_clock, Duration> const& tp ) noexcept;
+    static std::chrono::time_point<std::chrono::system_clock, duration> to_sys( time_point const& tp ) noexcept;
 
     static time_point from_timestamp( std::uint64_t timestamp ) noexcept;
     static std::uint64_t to_timestamp( time_point const& tp ) noexcept;
@@ -37,7 +37,8 @@ inline uuid_clock::time_point uuid_clock::now() noexcept
     return from_sys( std::chrono::system_clock::now() );
 }
 
-inline uuid_clock::time_point uuid_clock::from_sys( std::chrono::system_clock::time_point const& tp ) noexcept
+template<class Duration>
+inline uuid_clock::time_point uuid_clock::from_sys( std::chrono::time_point<std::chrono::system_clock, Duration> const& tp ) noexcept
 {
     using days = std::chrono::duration< std::int32_t, std::ratio<86400> >;
     constexpr auto epoch_diff = days( 141427 );
@@ -47,14 +48,12 @@ inline uuid_clock::time_point uuid_clock::from_sys( std::chrono::system_clock::t
     return uuid_clock::time_point( uuid_since );
 }
 
-inline std::chrono::system_clock::time_point uuid_clock::to_sys( time_point const& tp ) noexcept
+inline std::chrono::time_point<std::chrono::system_clock, uuid_clock::duration> uuid_clock::to_sys( time_point const& tp ) noexcept
 {
     using days = std::chrono::duration< std::int32_t, std::ratio<86400> >;
     constexpr auto epoch_diff = days( 141427 );
 
-    auto sys_since = std::chrono::duration_cast<std::chrono::system_clock::duration>( tp.time_since_epoch() - epoch_diff );
-
-    return std::chrono::system_clock::time_point( sys_since );
+    return std::chrono::time_point<std::chrono::system_clock, duration>( tp.time_since_epoch() - epoch_diff );
 }
 
 inline uuid_clock::time_point uuid_clock::from_timestamp( std::uint64_t timestamp ) noexcept

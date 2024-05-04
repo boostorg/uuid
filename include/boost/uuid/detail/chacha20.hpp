@@ -121,6 +121,18 @@ public:
         state_[ 13 ] = 0;
     }
 
+    // perturbs the generator state so that it no longer generates
+    // the same sequence; useful for e.g. moved from objects
+    void perturb() noexcept
+    {
+        index_ = 16;
+
+        for( int i = 12; i < 16; ++i )
+        {
+            ++state_[ i ];
+        }
+    }
+
     static constexpr result_type min() noexcept
     {
         return std::numeric_limits<result_type>::min();

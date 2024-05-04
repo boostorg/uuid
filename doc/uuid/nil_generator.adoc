@@ -12,13 +12,13 @@ namespace uuids {
 
 struct nil_generator
 {
-    typedef uuid result_type;
+    using result_type = uuid;
     uuid operator()() const noexcept;
 };
 
 uuid nil_uuid() noexcept;
 
-}} //namespace boost::uuids
+}} // namespace boost::uuids
 ----
 
 === nil_generator

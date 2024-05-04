@@ -78,7 +78,7 @@ std::basic_istream<Ch, Traits>& operator>>( std::basic_istream<Ch, Traits>& is, 
     {
         unsigned char data[ 16 ];
 
-        typedef std::ctype<Ch> ctype_t;
+        using ctype_t = std::ctype<Ch>;
         ctype_t const& ctype = std::use_facet<ctype_t>( is.getloc() );
 
         Ch xdigits[ 16 ];

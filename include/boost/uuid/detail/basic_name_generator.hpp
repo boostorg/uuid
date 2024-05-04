@@ -31,8 +31,8 @@ private:
 
 public:
 
-    typedef uuid result_type;
-    typedef typename HashAlgo::digest_type digest_type;
+    using result_type = uuid;
+    using digest_type = typename HashAlgo::digest_type;
 
     explicit basic_name_generator( uuid const& namespace_uuid ) noexcept
         : namespace_uuid_( namespace_uuid )
@@ -117,7 +117,7 @@ private:
         std::memcpy( u.data, digest, 16 );
 
         // set variant: must be 0b10xxxxxx
-        *(u.begin()+8) &= 0xBF;
+        *(u.begin()+8) &= 0x3F;
         *(u.begin()+8) |= 0x80;
 
         // set version

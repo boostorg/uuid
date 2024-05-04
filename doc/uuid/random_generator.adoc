@@ -24,7 +24,7 @@ private:
 
 public:
 
-    typedef uuid result_type;
+    using result_type = uuid;
 
     random_generator();
 
@@ -33,8 +33,8 @@ public:
 
 // only provided for backward compatibility
 
-typedef basic_random_generator<std::mt19937> random_generator_mt19937;
-typedef basic_random_generator<std::random_device> random_generator_pure;
+using random_generator_mt19937 = basic_random_generator<std::mt19937>;
+using random_generator_pure = basic_random_generator<std::random_device> random_generator_pure;
 
 }} // namespace boost::uuids
 ----

@@ -44,13 +44,13 @@ public:
 
     // iteration
 
-    typedef std::uint8_t value_type;
-    typedef std::uint8_t& reference;
-    typedef std::uint8_t const& const_reference;
-    typedef std::uint8_t* iterator;
-    typedef std::uint8_t const* const_iterator;
-    typedef std::size_t size_type;
-    typedef std::ptrdiff_t difference_type;
+    using value_type = std::uint8_t;
+    using reference = std::uint8_t&;
+    using const_reference = std::uint8_t const&;
+    using iterator = std::uint8_t*;
+    using const_iterator = std::uint8_t const*;
+    using size_type = std::size_t;
+    using difference_type = std::ptrdiff_t;
 
     iterator begin() noexcept { return data; }
     const_iterator begin() const noexcept { return data; }

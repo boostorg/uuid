@@ -30,7 +30,7 @@ namespace uuids {
 
 struct string_generator
 {
-    typedef uuid result_type;
+    using result_type = uuid;
 
     template<class Ch, class Traits, class Alloc>
     uuid operator()( std::basic_string<Ch, Traits, Alloc> const& s ) const
@@ -51,7 +51,7 @@ struct string_generator
     template<class CharIterator>
     uuid operator()( CharIterator begin, CharIterator end ) const
     {
-        typedef typename std::iterator_traits<CharIterator>::value_type char_type;
+        using char_type = typename std::iterator_traits<CharIterator>::value_type;
 
         int ipos = 0;
 

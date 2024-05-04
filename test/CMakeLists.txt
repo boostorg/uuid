@@ -28,11 +28,11 @@ boost_test(TYPE run SOURCES test_uuid_clock.cpp)
 
 boost_test(TYPE run SOURCES test_nil_generator.cpp)
 boost_test(TYPE run SOURCES test_string_generator.cpp)
-
-boost_test(TYPE run SOURCES test_namespaces.cpp)
 boost_test(TYPE run SOURCES test_name_generator.cpp LINK_LIBRARIES Boost::predef)
-
+boost_test(TYPE run SOURCES test_namespaces.cpp)
 boost_test(TYPE run SOURCES test_random_generator.cpp LINK_LIBRARIES Boost::random Boost::predef)
+
+boost_test(TYPE run SOURCES test_time_generator.cpp LINK_LIBRARIES $<$<CXX_COMPILER_ID:GNU>:atomic>)
 
 boost_test(TYPE run SOURCES test_time_generator_v1.cpp LINK_LIBRARIES $<$<CXX_COMPILER_ID:GNU>:atomic>)
 boost_test(TYPE run SOURCES test_time_generator_v1_2.cpp LINK_LIBRARIES $<$<CXX_COMPILER_ID:GNU>:atomic>)
@@ -44,6 +44,7 @@ boost_test(TYPE run SOURCES test_time_generator_v6_3.cpp LINK_LIBRARIES $<$<CXX_
 
 boost_test(TYPE run SOURCES test_time_generator_v7.cpp)
 boost_test(TYPE run SOURCES test_time_generator_v7_2.cpp)
+boost_test(TYPE run SOURCES test_time_generator_v7_3.cpp)
 
 boost_test(TYPE run SOURCES test_tagging.cpp)
 
