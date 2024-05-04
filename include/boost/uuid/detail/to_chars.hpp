@@ -22,6 +22,25 @@ constexpr wchar_t const* digits( wchar_t const* ) noexcept
     return L"0123456789abcdef-";
 }
 
+constexpr char16_t const* digits( char16_t const* ) noexcept
+{
+    return u"0123456789abcdef-";
+}
+
+constexpr char32_t const* digits( char32_t const* ) noexcept
+{
+    return U"0123456789abcdef-";
+}
+
+#if defined(__cpp_char8_t) && __cpp_char8_t >= 201811L
+
+constexpr char8_t const* digits( char8_t const* ) noexcept
+{
+    return u8"0123456789abcdef-";
+}
+
+#endif
+
 template<class Ch> inline Ch* to_chars( uuid const& u, Ch* out ) noexcept
 {
     constexpr Ch const* p = digits( static_cast<Ch const*>( nullptr ) );

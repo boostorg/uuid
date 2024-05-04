@@ -33,18 +33,8 @@ OutputIterator to_chars( uuid const& u, OutputIterator out )
     return std::copy_n( tmp, 36, out );
 }
 
-inline bool to_chars( uuid const& u, char* first, char* last ) noexcept
-{
-    if( last - first < 36 )
-    {
-        return false;
-    }
-
-    detail::to_chars( u, first );
-    return true;
-}
-
-inline bool to_chars( uuid const& u, wchar_t* first, wchar_t* last ) noexcept
+template<class Ch>
+inline bool to_chars( uuid const& u, Ch* first, Ch* last ) noexcept
 {
     if( last - first < 36 )
     {
