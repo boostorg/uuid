@@ -18,7 +18,7 @@ struct nil_generator
 
 uuid nil_uuid() noexcept;
 
-}} //namespace boost::uuids
+}} // namespace boost::uuids
 ----
 
 === nil_generator

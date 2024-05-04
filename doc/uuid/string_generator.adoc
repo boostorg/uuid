@@ -24,7 +24,7 @@ struct string_generator
       uuid operator()( CharIterator begin, CharIterator end ) const;
 };
 
-}} //namespace boost::uuids
+}} // namespace boost::uuids
 ----
 
 === string_generator
