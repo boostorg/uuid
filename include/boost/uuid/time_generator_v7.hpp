@@ -42,7 +42,7 @@ public:
     time_generator_v7( time_generator_v7 const& rhs );
     time_generator_v7( time_generator_v7&& rhs ) noexcept;
 
-    time_generator_v7& operator=( time_generator_v7 const& rhs );
+    time_generator_v7& operator=( time_generator_v7 const& rhs ) noexcept;
     time_generator_v7& operator=( time_generator_v7&& rhs ) noexcept;
 
     result_type operator()() noexcept;
@@ -73,7 +73,7 @@ inline time_generator_v7::time_generator_v7( time_generator_v7&& rhs ) noexcept:
 
 // assignment
 
-inline time_generator_v7& time_generator_v7::operator=( time_generator_v7 const& rhs )
+inline time_generator_v7& time_generator_v7::operator=( time_generator_v7 const& rhs ) noexcept
 {
     state_ = rhs.state_;
     return *this;

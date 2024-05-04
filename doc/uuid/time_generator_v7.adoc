@@ -27,7 +27,7 @@ public:
     time_generator_v7( time_generator_v7 const& rhs );
     time_generator_v7( time_generator_v7&& rhs ) noexcept;
 
-    time_generator_v7& operator=( time_generator_v7 const& rhs );
+    time_generator_v7& operator=( time_generator_v7 const& rhs ) noexcept;
     time_generator_v7& operator=( time_generator_v7&& rhs ) noexcept;
 
     result_type operator()() noexcept;
@@ -63,7 +63,7 @@ Effects: :: Copies the state of `rhs` into `*this`, then perturbs the state of `
 === Assignment
 
 ```
-time_generator_v7& operator=( time_generator_v7 const& rhs );
+time_generator_v7& operator=( time_generator_v7 const& rhs ) noexcept;
 ```
 
 Effects: :: Copies the state of `rhs` into `*this`, except for `this\->rng_`, which is left unmodified.
