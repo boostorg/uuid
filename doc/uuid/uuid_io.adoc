@@ -30,6 +30,9 @@ template<class OutputIterator>
 template<class Ch>
   bool to_chars( uuid const& u, Ch* first, Ch* last ) noexcept;
 
+template<class Ch, std::size_t N>
+  Ch* to_chars( uuid const& u, Ch (&buffer)[ N ] ) noexcept;
+
 // to_string
 
 std::string to_string( uuid const& u );
@@ -150,6 +153,36 @@ assert( ret );
 
 std::cout << std::string( buf, 36 ) << std::endl;
 ```
+
+```
+template<class Ch, std::size_t N>
+  Ch* to_chars( uuid const& u, Ch (&buffer)[ N ] ) noexcept;
+```
+
+Requires: :: `Ch` must be a character type (one of `char`, `wchar_t`, `char8_t`, `char16_t`, `char32_t`); `N` must be at least 37.
+
+Effects: :: Writes the string representation of `u` (exactly 37 characters, including the null terminator) into `buffer`.
+
+Returns: :: `buffer + 36`.
+
+Example: ::
++
+```
+using namespace boost::uuids;
+
+uuid u = random_generator()();
+
+char buf[ 37 ];
+
+to_chars( u, buf );
+
+std::cout << buf << std::endl;
+```
+
+NOTE: As a special exception, `N` is allowed to be 36 when `Ch` is `char`.
+  In this case, the function writes exactly 36 characters into `buffer` and does not write a null terminator.
+  This use is only supported for backward compatibility and is deprecated.
+  Use a buffer of 37 characters instead, to allow for the null terminator.
 
 === to_string
 
