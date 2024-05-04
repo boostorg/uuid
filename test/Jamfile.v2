@@ -112,6 +112,7 @@ run test_time_generator_v6_3.cpp
 
 run test_time_generator_v7.cpp ;
 run test_time_generator_v7_2.cpp ;
+run test_time_generator_v7_3.cpp ;
 
 # test serializing uuids
 

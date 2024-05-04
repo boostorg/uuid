@@ -44,6 +44,7 @@ boost_test(TYPE run SOURCES test_time_generator_v6_3.cpp LINK_LIBRARIES $<$<CXX_
 
 boost_test(TYPE run SOURCES test_time_generator_v7.cpp)
 boost_test(TYPE run SOURCES test_time_generator_v7_2.cpp)
+boost_test(TYPE run SOURCES test_time_generator_v7_3.cpp)
 
 boost_test(TYPE run SOURCES test_tagging.cpp)
 
