@@ -67,6 +67,7 @@ run test_comparison.cpp : : : <define>BOOST_UUID_NO_SIMD <define>BOOST_UUID_REPO
 # test uuid_io.hpp
 
 run test_io.cpp ;
+run test_to_chars.cpp ;
 
 # test uuid_clock
 
