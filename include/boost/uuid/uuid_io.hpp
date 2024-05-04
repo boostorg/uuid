@@ -9,6 +9,7 @@
 #include <boost/uuid/uuid.hpp>
 #include <boost/uuid/detail/to_chars.hpp>
 #include <boost/uuid/detail/static_assert.hpp>
+#include <boost/config.hpp>
 #include <iosfwd>
 #include <istream>
 #include <locale>
@@ -59,6 +60,7 @@ inline Ch* to_chars( uuid const& u, Ch (&buffer)[ N ] ) noexcept
 }
 
 // only provided for compatibility; deprecated
+BOOST_DEPRECATED( "Use char[37] instead of char[36] to allow for the null terminator" )
 inline char* to_chars( uuid const& u, char (&buffer)[ 36 ] ) noexcept
 {
     detail::to_chars( u, buffer + 0 );
