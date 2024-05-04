@@ -179,7 +179,7 @@ to_chars( u, buf );
 std::cout << buf << std::endl;
 ```
 
-NOTE: As a special exception, `N` is allowed to be 36 when `Ch` is `char`.
+NOTE: As a special exception, `N` is allowed to be 36.
   In this case, the function writes exactly 36 characters into `buffer` and does not write a null terminator.
   This use is only supported for backward compatibility and is deprecated.
   Use a buffer of 37 characters instead, to allow for the null terminator.
