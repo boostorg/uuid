@@ -27,8 +27,8 @@ template<class Ch, class Traits>
 template<class OutputIterator>
   OutputIterator to_chars( uuid const& u, OutputIterator out );
 
-bool to_chars( uuid const& u, char* first, char* last ) noexcept;
-bool to_chars( uuid const& u, wchar_t* first, wchar_t* last ) noexcept;
+template<class Ch>
+  bool to_chars( uuid const& u, Ch* first, Ch* last ) noexcept;
 
 // to_string
 
@@ -120,19 +120,19 @@ Example: ::
 ```
 using namespace boost::uuids;
 
-uuid u1 = random_generator()();
+uuid u = random_generator()();
 
 std::vector<char> v;
 
-to_chars( u1, std::back_inserter( v ) );
+to_chars( u, std::back_inserter( v ) );
 ```
 
 ```
-bool to_chars( uuid const& u, char* first, char* last ) noexcept;
+template<class Ch>
+  bool to_chars( uuid const& u, Ch* first, Ch* last ) noexcept;
 ```
-```
-bool to_chars( uuid const& u, wchar_t* first, wchar_t* last ) noexcept;
-```
+
+Requires: :: `Ch` must be a character type (one of `char`, `wchar_t`, `char8_t`, `char16_t`, `char32_t`.)
 
 Effects: :: If `last - first >= 36`, writes the string representation of `u` (exactly 36 characters, not null terminated) into the buffer starting at `first` and returns `true`. Otherwise, returns `false`.
 
