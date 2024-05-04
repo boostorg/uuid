@@ -39,6 +39,12 @@ public:
 
     time_generator_v7();
 
+    time_generator_v7( time_generator_v7 const& rhs );
+    time_generator_v7( time_generator_v7&& rhs ) noexcept;
+
+    time_generator_v7& operator=( time_generator_v7 const& rhs );
+    time_generator_v7& operator=( time_generator_v7&& rhs ) noexcept;
+
     result_type operator()() noexcept;
 
 private:
@@ -46,12 +52,41 @@ private:
     static state_type get_new_state( state_type const& oldst ) noexcept;
 };
 
-// constructor
+// constructors
 
 inline time_generator_v7::time_generator_v7()
 {
     detail::random_provider seeder;
     rng_.seed( seeder );
+}
+
+inline time_generator_v7::time_generator_v7( time_generator_v7 const& rhs ): state_( rhs.state_ )
+{
+    detail::random_provider seeder;
+    rng_.seed( seeder );
+}
+
+inline time_generator_v7::time_generator_v7( time_generator_v7&& rhs ) noexcept: state_( std::move( rhs.state_ ) ), rng_( std::move( rhs.rng_ ) )
+{
+    rhs.rng_.perturb();
+}
+
+// assignment
+
+inline time_generator_v7& time_generator_v7::operator=( time_generator_v7 const& rhs )
+{
+    state_ = rhs.state_;
+    return *this;
+}
+
+inline time_generator_v7& time_generator_v7::operator=( time_generator_v7&& rhs ) noexcept
+{
+    state_ = std::move( rhs.state_ );
+    rng_ = std::move( rhs.rng_ );
+
+    rhs.rng_.perturb();
+
+    return *this;
 }
 
 // get_new_state
