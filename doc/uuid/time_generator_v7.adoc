@@ -24,6 +24,12 @@ public:
 
     time_generator_v7();
 
+    time_generator_v7( time_generator_v7 const& rhs );
+    time_generator_v7( time_generator_v7&& rhs ) noexcept;
+
+    time_generator_v7& operator=( time_generator_v7 const& rhs );
+    time_generator_v7& operator=( time_generator_v7&& rhs ) noexcept;
+
     result_type operator()() noexcept;
 };
 
@@ -32,13 +38,47 @@ public:
 
 The class `time_generator_v7` generates time-based version 7 UUIDs, as described in https://datatracker.ietf.org/doc/draft-ietf-uuidrev-rfc4122bis/[rfc4122bis] section 5.7.
 
-=== Constructor
+=== Constructors
 
 ```
 time_generator_v7();
 ```
 
 Effects: :: Initializes the internal cryptographically strong pseudorandom number generator (CSPRNG) `rng_` using entropy from `std::random_device`.
+
+```
+time_generator_v7( time_generator_v7 const& rhs );
+```
+
+Effects: :: Copies the state of `rhs` into `*this`, then reseeds `this\->rng_` using entropy from `std::random_device`.
+
+Remarks: :: Reseeding ensures that the two generators don't produce the same random number sequence after the copy.
+
+```
+time_generator_v7( time_generator_v7&& rhs ) noexcept;
+```
+
+Effects: :: Copies the state of `rhs` into `*this`, then perturbs the state of `rhs.rng_` such that it no longer produces the same random number sequence.
+
+=== Assignment
+
+```
+time_generator_v7& operator=( time_generator_v7 const& rhs );
+```
+
+Effects: :: Copies the state of `rhs` into `*this`, except for `this\->rng_`, which is left unmodified.
+
+Returns: :: `*this`.
+
+Remarks: :: Not modifying `this\->rng_` ensures that the two generators continue to produce different random numbers.
+
+```
+time_generator_v7& operator=( time_generator_v7&& rhs ) noexcept;
+```
+
+Effects: :: Copies the state of `rhs` into `*this`, then perturbs the state of `rhs.rng_` such that it no longer produces the same random number sequence.
+
+Returns: :: `*this`.
 
 === operator()
 
