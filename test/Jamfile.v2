@@ -67,6 +67,8 @@ run test_comparison.cpp : : : <define>BOOST_UUID_NO_SIMD <define>BOOST_UUID_REPO
 # test uuid_io.hpp
 
 run test_io.cpp : : : <library>/boost/lexical_cast//boost_lexical_cast ;
+run test_to_chars.cpp ;
+run test_to_chars_2.cpp ;
 
 # test uuid_clock
 
@@ -76,9 +78,12 @@ run test_uuid_clock.cpp ;
 
 run test_nil_generator.cpp ;
 run test_string_generator.cpp ;
+run test_random_generator.cpp ;
+
 run test_name_generator.cpp ;
 run test_namespaces.cpp ;
-run test_random_generator.cpp ;
+run test_name_generator_md5.cpp ;
+run test_name_generator_sha1.cpp ;
 
 lib atomic ;
 

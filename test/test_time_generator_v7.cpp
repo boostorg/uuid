@@ -25,7 +25,11 @@ uuid generate_and_test( time_generator_v7& gen )
     // break in future releases.
 
     std::uint64_t time_in_us = u.timestamp_v6() & 0xFFF; // v6 time_low field
-    BOOST_TEST_LT( time_in_us, 1010 );
+
+    // time_in_us occasionally exceeds 999 when the clock
+    // resolution is sufficiently low (MinGW)
+
+    BOOST_TEST_LT( time_in_us, 1024 );
 
     auto sys_after = std::chrono::time_point_cast<std::chrono::milliseconds>( std::chrono::system_clock::now() );
 

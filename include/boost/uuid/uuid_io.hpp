@@ -8,11 +8,14 @@
 
 #include <boost/uuid/uuid.hpp>
 #include <boost/uuid/detail/to_chars.hpp>
+#include <boost/uuid/detail/static_assert.hpp>
+#include <boost/config.hpp>
 #include <iosfwd>
 #include <istream>
 #include <locale>
 #include <algorithm>
 #include <string>
+#include <cstddef>
 
 #if defined(_MSC_VER)
 #pragma warning(push) // Save warning settings.
@@ -33,7 +36,8 @@ OutputIterator to_chars( uuid const& u, OutputIterator out )
     return std::copy_n( tmp, 36, out );
 }
 
-inline bool to_chars( uuid const& u, char* first, char* last ) noexcept
+template<class Ch>
+inline bool to_chars( uuid const& u, Ch* first, Ch* last ) noexcept
 {
     if( last - first < 36 )
     {
@@ -44,15 +48,24 @@ inline bool to_chars( uuid const& u, char* first, char* last ) noexcept
     return true;
 }
 
-inline bool to_chars( uuid const& u, wchar_t* first, wchar_t* last ) noexcept
+template<class Ch, std::size_t N>
+inline Ch* to_chars( uuid const& u, Ch (&buffer)[ N ] ) noexcept
 {
-    if( last - first < 36 )
-    {
-        return false;
-    }
+    BOOST_UUID_STATIC_ASSERT( N >= 37 );
 
-    detail::to_chars( u, first );
-    return true;
+    detail::to_chars( u, buffer + 0 );
+    buffer[ 36 ] = 0;
+
+    return buffer + 36;
+}
+
+// only provided for compatibility; deprecated
+template<class Ch>
+BOOST_DEPRECATED( "Use Ch[37] instead of Ch[36] to allow for the null terminator" )
+inline Ch* to_chars( uuid const& u, Ch (&buffer)[ 36 ] ) noexcept
+{
+    detail::to_chars( u, buffer + 0 );
+    return buffer + 36;
 }
 
 // operator<<
@@ -60,8 +73,8 @@ inline bool to_chars( uuid const& u, wchar_t* first, wchar_t* last ) noexcept
 template<class Ch, class Traits>
 std::basic_ostream<Ch, Traits>& operator<<( std::basic_ostream<Ch, Traits>& os, uuid const& u )
 {
-    char tmp[ 37 ] = {};
-    detail::to_chars( u, tmp );
+    char tmp[ 37 ];
+    to_chars( u, tmp );
 
     os << tmp;
     return os;
