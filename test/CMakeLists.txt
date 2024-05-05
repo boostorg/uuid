@@ -35,6 +35,7 @@ boost_test(TYPE run SOURCES test_random_generator.cpp LINK_LIBRARIES Boost::rand
 boost_test(TYPE run SOURCES test_name_generator.cpp LINK_LIBRARIES Boost::predef)
 boost_test(TYPE run SOURCES test_namespaces.cpp)
 boost_test(TYPE run SOURCES test_name_generator_md5.cpp)
+boost_test(TYPE run SOURCES test_name_generator_sha1.cpp)
 
 boost_test(TYPE run SOURCES test_time_generator.cpp LINK_LIBRARIES $<$<CXX_COMPILER_ID:GNU>:atomic>)
 
