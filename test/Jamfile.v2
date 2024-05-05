@@ -78,9 +78,11 @@ run test_uuid_clock.cpp ;
 
 run test_nil_generator.cpp ;
 run test_string_generator.cpp ;
+run test_random_generator.cpp ;
+
 run test_name_generator.cpp ;
 run test_namespaces.cpp ;
-run test_random_generator.cpp ;
+run test_name_generator_md5.cpp ;
 
 lib atomic ;
 
