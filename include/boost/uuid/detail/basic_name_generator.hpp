@@ -29,31 +29,24 @@ private:
 
     uuid namespace_uuid_;
 
+private:
+
+    using digest_type = typename HashAlgo::digest_type;
+
 public:
 
     using result_type = uuid;
-    using digest_type = typename HashAlgo::digest_type;
 
     explicit basic_name_generator( uuid const& namespace_uuid ) noexcept
         : namespace_uuid_( namespace_uuid )
     {}
 
-    uuid operator()( char const* name ) const noexcept
+    template<class Ch> uuid operator()( Ch const* name ) const noexcept
     {
         HashAlgo hash;
 
         hash.process_bytes( namespace_uuid_.begin(), namespace_uuid_.size() );
-        process_characters( hash, name, std::strlen( name ) );
-
-        return hash_to_uuid( hash );
-    }
-
-    uuid operator()( wchar_t const* name ) const noexcept
-    {
-        HashAlgo hash;
-
-        hash.process_bytes( namespace_uuid_.begin(), namespace_uuid_.size() );
-        process_characters( hash, name, std::wcslen( name ) );
+        process_characters( hash, name, std::char_traits<Ch>().length( name ) );
 
         return hash_to_uuid( hash );
     }
@@ -80,31 +73,119 @@ public:
     }
 
 private:
-    // we convert all characters to uint32_t so that each
-    // character is 4 bytes regardless of sizeof(char) or
-    // sizeof(wchar_t).  We want the name string on any
-    // platform / compiler to generate the same uuid
-    // except for char
-    template<class Ch>
-    void process_characters( HashAlgo& hash, Ch const* characters, std::size_t count ) const noexcept
+
+    void process_characters( HashAlgo& hash, char const* p, std::size_t n ) const noexcept
     {
-        BOOST_UUID_STATIC_ASSERT( sizeof(std::uint32_t) >= sizeof(Ch) );
+        hash.process_bytes( p, n );
+    }
 
-        for( std::size_t i = 0; i < count; ++i)
+    // For portability, we convert all wide characters to uint32_t so that each
+    // character is 4 bytes regardless of sizeof(wchar_t).
+
+    void process_characters( HashAlgo& hash, wchar_t const* p, std::size_t n ) const noexcept
+    {
+        BOOST_UUID_STATIC_ASSERT( sizeof( std::uint32_t ) >= sizeof( wchar_t ) );
+
+        for( std::size_t i = 0; i < n; ++i)
         {
-            std::size_t c = characters[ i ];
+            std::uint32_t ch = p[ i ];
 
-            hash.process_byte( static_cast<unsigned char>( (c >>  0) & 0xFF ) );
-            hash.process_byte( static_cast<unsigned char>( (c >>  8) & 0xFF ) );
-            hash.process_byte( static_cast<unsigned char>( (c >> 16) & 0xFF ) );
-            hash.process_byte( static_cast<unsigned char>( (c >> 24) & 0xFF ) );
+            unsigned char bytes[ 4 ] =
+            {
+                static_cast<unsigned char>( ( ch >>  0 ) & 0xFF ),
+                static_cast<unsigned char>( ( ch >>  8 ) & 0xFF ),
+                static_cast<unsigned char>( ( ch >> 16 ) & 0xFF ),
+                static_cast<unsigned char>( ( ch >> 24 ) & 0xFF )
+            };
+
+            hash.process_bytes( bytes, 4 );
         }
     }
 
-    void process_characters( HashAlgo& hash, char const* characters, std::size_t count ) const noexcept
+    void process_characters( HashAlgo& hash, char32_t const* p, std::size_t n ) const noexcept
     {
-        hash.process_bytes( characters, count );
+        for( std::size_t i = 0; i < n; ++i)
+        {
+            process_utf32_codepoint( hash, p[ i ] );
+        }
     }
+
+    void process_characters( HashAlgo& hash, char16_t const* p, std::size_t n ) const noexcept
+    {
+        for( std::size_t i = 0; i < n; ++i)
+        {
+            char16_t ch = p[ i ];
+
+            if( ch >= 0xD800 && ch <= 0xDBFF && i + 1 < n && p[ i+1 ] >= 0xDC00 && p[ i+1 ] <= 0xDFFF )
+            {
+                char16_t ch2 = p[ ++i ];
+
+                std::uint32_t high = ch - 0xD800;
+                std::uint32_t low = ch2 - 0xDC00;
+
+                process_utf32_codepoint( hash, ( high << 10 ) + low + 0x10000 );
+            }
+            else
+            {
+                process_utf32_codepoint( hash, ch );
+            }
+        }
+    }
+
+    void process_utf32_codepoint( HashAlgo& hash, std::uint32_t cp ) const noexcept
+    {
+        if( ( cp >= 0xD800 && cp <= 0xDFFF ) || cp > 0x10FFFF )
+        {
+            cp = 0xFFFD; // Unicode replacement character
+        }
+
+        if( cp < 0x80 )
+        {
+            hash.process_byte( static_cast<unsigned char>( cp ) );
+        }
+        else if( cp < 0x800 )
+        {
+            unsigned char bytes[ 2 ] =
+            {
+                static_cast<unsigned char>( 0xC0 | (cp >>   6) ),
+                static_cast<unsigned char>( 0x80 | (cp & 0x3F) )
+            };
+
+            hash.process_bytes( bytes, 2 );
+        }
+        else if( cp < 0x10000 )
+        {
+            unsigned char bytes[ 3 ] =
+            {
+                static_cast<unsigned char>( 0xE0 | (cp >> 12)         ),
+                static_cast<unsigned char>( 0x80 | ((cp >> 6) & 0x3F) ),
+                static_cast<unsigned char>( 0x80 | (cp & 0x3F)        )
+            };
+
+            hash.process_bytes( bytes, 3 );
+        }
+        else
+        {
+            unsigned char bytes[ 4 ] =
+            {
+                static_cast<unsigned char>( 0xF0 | ( cp >> 18 )          ),
+                static_cast<unsigned char>( 0x80 | ((cp >> 12 ) & 0x3F ) ),
+                static_cast<unsigned char>( 0x80 | ((cp >>  6 ) & 0x3F ) ),
+                static_cast<unsigned char>( 0x80 | (cp & 0x3F)           )
+            };
+
+            hash.process_bytes( bytes, 4 );
+        }
+    }
+
+#if defined(__cpp_char8_t) && __cpp_char8_t >= 201811L
+
+    void process_characters( HashAlgo& hash, char8_t const* p, std::size_t n ) const noexcept
+    {
+        hash.process_bytes( p, n );
+    }
+
+#endif
 
     uuid hash_to_uuid( HashAlgo& hash ) const noexcept
     {

@@ -20,8 +20,7 @@ public:
 
     explicit name_generator_sha1( uuid const& namespace_uuid ) noexcept;
 
-    uuid operator()( char const* name ) const noexcept;
-    uuid operator()( wchar_t const* name ) const noexcept;
+    template<class Ch> uuid operator()( Ch const* name ) const noexcept;
 
     template<class Ch, class Traits, class Alloc>
       uuid operator()( std::basic_string<Ch, Traits, Alloc> const& name ) const noexcept;
@@ -34,7 +33,7 @@ public:
 
 === name_generator_sha1
 
-The class `name_generator_sha1` generates name-based version 5 UUIDs (using SHA1 as the hashing algorithm.)
+The class `name_generator_sha1` generates name-based version 5 UUIDs, using SHA1 as the hashing algorithm.
 
 ```
 explicit name_generator_sha1( uuid const& namespace_uuid );
@@ -43,10 +42,18 @@ explicit name_generator_sha1( uuid const& namespace_uuid );
 Effects: :: Constructs a `name_generator_sha1` that uses `namespace_uuid` as the namespace.
 
 ```
-uuid operator()( char const* name ) const;
+template<class Ch> uuid operator()( Ch const* name ) const noexcept;
 ```
 
-Returns: :: A name-based UUID version 5 produced from a digest of the namespace passed to the constructor and the characters of the string `name`, treated as octets.
+Requires: :: `Ch` must be one of `char`, `wchar_t`, `char8_t`, `char16_t`, or `char32_t`.
+
+Returns: :: A name-based UUID version 5 produced from a digest of the namespace passed to the constructor and the characters of the string `name`, converted to octets.
+
+Remarks: :: The characters of `name` are converted to a sequence of octets in the following manner:
++
+* If `Ch` is `char` or `char8_t`, the characters are processed as octets directly;
+* If `Ch` is `wchar_t`, the characters are converted to `uint32_t` and then serialized to four octets each using little-endian representation;
+* Otherwise, the character sequence is converted to UTF-8 and the result is processed as octets.
 
 Example: ::
 +
@@ -55,33 +62,26 @@ using namespace boost::uuids;
 
 name_generator_sha1 gen( ns::dns() );
 
-uuid udoc = gen( "boost.org" );
+uuid u1 = gen( "boost.org" );
 
-std::cout << "\"boost.org\" UUID in DNS namespace, SHA1 version: " << udoc << std::endl;
+std::cout << "\"boost.org\" UUID in DNS namespace, SHA1 version: " << u1 << std::endl;
 
 // Output:
 //   "boost.org" UUID in DNS namespace, SHA1 version: 0043f363-bbb4-5369-840a-322df6ec1926
-```
 
-```
-uuid operator()( wchar_t const* name ) const;
-```
+uuid u2 = gen( L"boost.org" );
 
-Returns: :: A name-based UUID version 5 produced from a digest of the namespace passed to the constructor and the string `name`, converted to octets formed from a little-endian serialization of the characters of `name` converted to `uint32_t`.
-
-Example: ::
-+
-```
-using namespace boost::uuids;
-
-name_generator_sha1 gen( ns::dns() );
-
-uuid udoc = gen( L"boost.org" );
-
-std::cout << "L\"boost.org\" UUID in DNS namespace, SHA1 version: " << udoc << std::endl;
+std::cout << "L\"boost.org\" UUID in DNS namespace, SHA1 version: " << u2 << std::endl;
 
 // Output:
 //   L"boost.org" UUID in DNS namespace, SHA1 version: c31c5016-3493-5dc2-8484-5813d495cc18
+
+uuid u3 = gen( u"boost.org" );
+
+std::cout << "u\"boost.org\" UUID in DNS namespace, SHA1 version: " << u3 << std::endl;
+
+// Output:
+//   u"boost.org" UUID in DNS namespace, SHA1 version: 0043f363-bbb4-5369-840a-322df6ec1926
 ```
 
 ```
@@ -89,7 +89,7 @@ template<class Ch, class Traits, class Alloc>
   uuid operator()( std::basic_string<Ch, Traits, Alloc> const& name ) const;
 ```
 
-Requires: :: `Ch` must be either `char` or `wchar_t`.
+Requires: :: `Ch` must be one of `char`, `wchar_t`, `char8_t`, `char16_t`, or `char32_t`.
 
 Returns: :: As if `operator()( name.c_str() )`.
 
