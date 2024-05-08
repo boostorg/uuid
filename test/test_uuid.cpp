@@ -307,8 +307,10 @@ int main()
         BOOST_TEST_NE(uuid_hasher(u2), uuid_hasher(u3));
     }
 
-    { // test is_pod
+    { // test type properties
         BOOST_TEST_EQ(std::is_pod<uuid>::value, true);
+        BOOST_TEST_EQ(std::is_trivially_copyable<uuid>::value, true);
+        BOOST_TEST_EQ(std::is_standard_layout<uuid>::value, true);
     }
 
     return boost::report_errors();
