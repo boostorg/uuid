@@ -72,7 +72,7 @@ int main()
 
         BOOST_TEST_EQ( u.variant(), uuid::variant_rfc_4122 );
         BOOST_TEST_EQ( u.version(), uuid::version_time_based_v7 );
-        // BOOST_TEST_EQ( u.timestamp_v7(), 0x017F22E279B0 );
+        BOOST_TEST_EQ( u.timestamp_v7(), 0x017F22E279B0 );
     }
 
     // B.1, UUIDv8
