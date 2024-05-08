@@ -14,7 +14,24 @@
 #include <boost/container_hash/hash.hpp>
 #include <boost/core/lightweight_test.hpp>
 #include <boost/current_function.hpp>
+#include <boost/config.hpp>
 #include <iostream>
+#include <type_traits>
+
+// is_trivially_copyable not present in GCC 4.x
+
+#if defined( BOOST_LIBSTDCXX_VERSION ) && BOOST_LIBSTDCXX_VERSION < 50000
+
+template<class T> struct is_trivially_copyable: std::integral_constant<bool,
+    __has_trivial_copy(T) && __has_trivial_assign(T) && __has_trivial_destructor(T)> {};
+
+#else
+
+using std::is_trivially_copyable;
+
+#endif
+
+//
 
 void test_uuid_equal_array(char const * file, int line, char const * function,
                            boost::uuids::uuid const& lhs, const unsigned char (&rhs)[16])
@@ -308,8 +325,9 @@ int main()
     }
 
     { // test type properties
+
         BOOST_TEST_EQ(std::is_pod<uuid>::value, true);
-        BOOST_TEST_EQ(std::is_trivially_copyable<uuid>::value, true);
+        BOOST_TEST_EQ(::is_trivially_copyable<uuid>::value, true);
         BOOST_TEST_EQ(std::is_standard_layout<uuid>::value, true);
     }
 
