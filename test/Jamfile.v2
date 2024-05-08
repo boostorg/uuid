@@ -61,6 +61,7 @@ run test_uuid_2.cpp ;
 # test type properties
 
 run test_alignment.cpp ;
+run test_attribute_packed.cpp ;
 
 # test comparison
 
