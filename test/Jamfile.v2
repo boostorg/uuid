@@ -51,12 +51,17 @@ alias test_headers : [ test_headers ] ;
 
 run test_include1.cpp test_include2.cpp ;
 
-# main test
+# main tests
 
 run test_uuid.cpp
    : : : <define>BOOST_UUID_REPORT_IMPLEMENTATION ;
 run test_uuid.cpp : : : <define>BOOST_UUID_NO_SIMD <define>BOOST_UUID_REPORT_IMPLEMENTATION : test_uuid_no_simd ;
 run test_uuid_2.cpp ;
+
+# test type properties
+
+run test_alignment.cpp ;
+run test_attribute_packed.cpp ;
 
 # test comparison
 
