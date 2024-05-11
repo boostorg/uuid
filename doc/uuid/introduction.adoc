@@ -6,7 +6,7 @@
 A UUID, or Universally unique identifier, is intended to uniquely identify information in a distributed environment without significant central coordination.
 It can be used to tag objects with very short lifetimes, or to reliably identify very persistent objects across a network.
 
-A formal definition for UUID can be found in https://www.ietf.org/rfc/rfc4122.txt[RFC 4122].
+A formal definition for UUID can be found in https://datatracker.ietf.org/doc/rfc4122/[RFC 4122] and https://datatracker.ietf.org/doc/rfc9562/[RFC 9562].
 
 UUIDs have many applications.
 Some examples follow: Databases may use UUIDs to identify rows or records in order to ensure that they are unique across different databases, or for publication/subscription services.
