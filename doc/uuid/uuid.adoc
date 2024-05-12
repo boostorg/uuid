@@ -89,6 +89,11 @@ public:
     timestamp_type timestamp_v6() const noexcept;
     uuid_clock::time_point time_point_v6() const noexcept;
 
+    timestamp_type timestamp_v7() const noexcept;
+
+    std::chrono::time_point<std::chrono::system_clock, std::chrono::milliseconds>
+      time_point_v7() const noexcept;
+
     clock_seq_type clock_seq() const noexcept;
     node_type node_identifier() const noexcept;
 
@@ -244,6 +249,20 @@ uuid_clock::time_point time_point_v6() const noexcept;
 ```
 
 Returns: :: The timestamp of a version 6 UUID, expressed as a `<chrono>` `time_point`.
+
+```
+timestamp_type timestamp_v7() const noexcept;
+```
+
+Returns: :: The UUIDv7 timestamp (number of milliseconds since the Unix epoch - midnight 1 Jan 1970 UTC).
+  The value is only meaningful for version 7 UUIDs.
+
+```
+std::chrono::time_point<std::chrono::system_clock, std::chrono::milliseconds>
+  time_point_v7() const noexcept;
+```
+
+Returns: :: The timestamp of a version 7 UUID, expressed as a `<chrono>` `time_point`.
 
 ```
 clock_seq_type clock_seq() const noexcept;

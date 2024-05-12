@@ -41,6 +41,6 @@ public:
 }} // namespace boost::uuids
 ----
 
-The class `time_generator_v6` generates time-based version 6 UUIDs, as described in https://datatracker.ietf.org/doc/draft-ietf-uuidrev-rfc4122bis/[rfc4122bis] section 5.6.
+The class `time_generator_v6` generates time-based version 6 UUIDs, as described in https://datatracker.ietf.org/doc/rfc9562/[RFC 9562] section 5.6.
 
 It operates in the exact same manner as `time_generator_v1`, with the only difference being that it produces version 6 UUIDs rather than version 1 ones.

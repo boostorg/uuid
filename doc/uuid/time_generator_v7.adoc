@@ -36,7 +36,7 @@ public:
 }} // namespace boost::uuids
 ----
 
-The class `time_generator_v7` generates time-based version 7 UUIDs, as described in https://datatracker.ietf.org/doc/draft-ietf-uuidrev-rfc4122bis/[rfc4122bis] section 5.7.
+The class `time_generator_v7` generates time-based version 7 UUIDs, as described in https://datatracker.ietf.org/doc/rfc9562/[RFC 9562] section 5.7.
 
 === Constructors
 

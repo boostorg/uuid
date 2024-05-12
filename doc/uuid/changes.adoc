@@ -25,6 +25,7 @@
 * Since `basic_name_generator` had only two valid instantiations, both of which are already provided (`name_generator_md5` and `name_generator_sha1`),
   it was made a private implementation detail and is no longer part of the public interface.
 * While `name_generator` and `name_generator_latest` are still provided for compatibility, their use is no longer encouraged.
+* The name generators now accept Unicode strings; these are converted to UTF-8 before hashing.
 * The definitions of the well-known RFC 4122 namespaces have been moved to their own header, `boost/uuid/namespaces.hpp`.
 * Added `time_generator_v1`, a generator that produces version 1 time-based UUIDs.
 * Added `time_generator_v6`, a generator that produces version 6 time-based UUIDs.

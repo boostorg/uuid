@@ -11,8 +11,8 @@ using namespace boost::uuids;
 
 int main()
 {
-    // Test vectors from IETF RFC 4122bis, Appendix A
-    // https://datatracker.ietf.org/doc/draft-ietf-uuidrev-rfc4122bis/
+    // Test vectors from IETF RFC 9562, Appendix A
+    // https://datatracker.ietf.org/doc/rfc9562/
 
     string_generator uuid_from_string;
 

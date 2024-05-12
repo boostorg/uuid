@@ -1,6 +1,7 @@
 # Boost.Uuid
 
-Boost.Uuid, part of [Boost C++ Libraries](http://boost.org), provides a C++ implementation of [RFC-4122](http://www.ietf.org/rfc/rfc4122.txt) UUIDs.
+Boost.Uuid, part of [Boost C++ Libraries](http://boost.org),
+provides a C++ implementation of Universally Unique Identifiers (UUID) as described in [RFC 4122](https://datatracker.ietf.org/doc/rfc4122/) and [RFC 9562](https://datatracker.ietf.org/doc/rfc9562/).
 
 See [the documentation](http://boost.org/libs/uuid) for more information.
 
