@@ -11,6 +11,7 @@ project
       <library>/boost/core//boost_core
       <library>/boost/container_hash//boost_container_hash
       <library>/boost/predef//boost_predef
+      <library>/boost/random//boost_random
 ;
 
 import os ;
