@@ -16,7 +16,14 @@ int main() {}
 
 using namespace boost::uuids;
 
-struct __attribute__((packed)) X
+struct __attribute__((packed)) X1
+{
+    unsigned char a;
+    uuid b;
+    unsigned char c;
+};
+
+struct __attribute__((packed)) X2
 {
     uuid a;
     unsigned char b;
@@ -26,8 +33,11 @@ struct __attribute__((packed)) X
 
 int main()
 {
-    BOOST_TEST_EQ( offsetof(X, c), 17 );
-    BOOST_TEST_EQ( sizeof(X), 22 );
+    BOOST_TEST_EQ( offsetof(X1, b), 1 );
+    BOOST_TEST_EQ( sizeof(X1), 18 );
+
+    BOOST_TEST_EQ( offsetof(X2, c), 17 );
+    BOOST_TEST_EQ( sizeof(X2), 22 );
 
     return boost::report_errors();
 }
