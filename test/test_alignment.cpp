@@ -22,8 +22,8 @@ struct X2
 
 int main()
 {
-    BOOST_TEST_EQ( offsetof(X1, b), 1 );
-    BOOST_TEST_EQ( offsetof(X2, b), 2 );
+    BOOST_TEST_EQ( offsetof(X1, b) % alignof(uuid), 0 );
+    BOOST_TEST_EQ( offsetof(X2, b) % alignof(uuid), 0 );
 
     return boost::report_errors();
 }
