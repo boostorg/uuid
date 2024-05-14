@@ -7,6 +7,10 @@
 project
     : requirements
       <warnings>pedantic
+      <library>/boost/array//boost_array
+      <library>/boost/core//boost_core
+      <library>/boost/container_hash//boost_container_hash
+      <library>/boost/predef//boost_predef
 ;
 
 import os ;
