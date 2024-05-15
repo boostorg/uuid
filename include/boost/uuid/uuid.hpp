@@ -40,7 +40,7 @@ public:
 
     // data
 
-    std::uint8_t data[ 16 ];
+    std::uint8_t data[ 16 ] = {};
 
 public:
 

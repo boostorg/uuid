@@ -326,7 +326,7 @@ int main()
 
     { // test type properties
 
-        BOOST_TEST_EQ(std::is_pod<uuid>::value, true);
+        // BOOST_TEST_EQ(std::is_pod<uuid>::value, true);
         BOOST_TEST_EQ(::is_trivially_copyable<uuid>::value, true);
         BOOST_TEST_EQ(std::is_standard_layout<uuid>::value, true);
     }
