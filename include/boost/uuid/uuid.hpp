@@ -44,6 +44,15 @@ public:
 
 public:
 
+    // constructors
+
+    uuid() = default;
+
+    uuid( std::uint8_t const(&r)[ 16 ] )
+    {
+        std::memcpy( data, r, 16 );
+    }
+
     // iteration
 
     using value_type = std::uint8_t;
