@@ -331,5 +331,16 @@ int main()
         BOOST_TEST_EQ(std::is_standard_layout<uuid>::value, true);
     }
 
+    {
+        // test default constructor
+
+        uuid u1;
+        uuid u2 = {};
+
+        BOOST_TEST( u1.is_nil() );
+        BOOST_TEST( u2.is_nil() );
+        BOOST_TEST_EQ( u1, u2 );
+    }
+
     return boost::report_errors();
 }
