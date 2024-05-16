@@ -162,6 +162,78 @@ int main()
         uuid u2 = u1;
         BOOST_TEST_EQ( u2, u1 );
 
+        unsigned char* p = (unsigned char*)&u2.data;
+
+        for( int i = 0; i < 16; ++i )
+        {
+            BOOST_TEST_EQ( p[ i ], 0x40 + i );
+        }
+    }
+
+    {
+        uuid u2 = u1;
+        BOOST_TEST_EQ( u2, u1 );
+
+        unsigned char const* p = (unsigned char const*)&u2.data;
+
+        for( int i = 0; i < 16; ++i )
+        {
+            BOOST_TEST_EQ( p[ i ], 0x40 + i );
+        }
+    }
+
+    {
+        uuid const u2 = u1;
+        BOOST_TEST_EQ( u2, u1 );
+
+        unsigned char const* p = (unsigned char const*)&u2.data;
+
+        for( int i = 0; i < 16; ++i )
+        {
+            BOOST_TEST_EQ( p[ i ], 0x40 + i );
+        }
+    }
+
+    {
+        uuid u2 = u1;
+        BOOST_TEST_EQ( u2, u1 );
+
+        unsigned char* p = (unsigned char*)u2.data;
+
+        for( int i = 0; i < 16; ++i )
+        {
+            BOOST_TEST_EQ( p[ i ], 0x40 + i );
+        }
+    }
+
+    {
+        uuid u2 = u1;
+        BOOST_TEST_EQ( u2, u1 );
+
+        unsigned char const* p = (unsigned char const*)u2.data;
+
+        for( int i = 0; i < 16; ++i )
+        {
+            BOOST_TEST_EQ( p[ i ], 0x40 + i );
+        }
+    }
+
+    {
+        uuid const u2 = u1;
+        BOOST_TEST_EQ( u2, u1 );
+
+        unsigned char const* p = (unsigned char const*)u2.data;
+
+        for( int i = 0; i < 16; ++i )
+        {
+            BOOST_TEST_EQ( p[ i ], 0x40 + i );
+        }
+    }
+
+    {
+        uuid u2 = u1;
+        BOOST_TEST_EQ( u2, u1 );
+
         void* p = &u2.data;
 
         BOOST_TEST_EQ( p, &u2 );
