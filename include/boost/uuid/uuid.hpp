@@ -36,11 +36,30 @@ namespace uuids {
 
 struct uuid
 {
+private:
+
+    using repr_type = std::uint8_t[ 16 ];
+
+    struct data_type
+    {
+    private:
+
+        std::uint8_t repr_[ 16 ] = {};
+
+    public:
+
+        operator repr_type& () noexcept { return repr_; }
+        operator repr_type const& () const noexcept { return repr_; }
+
+        std::uint8_t* operator()() noexcept { return repr_; }
+        std::uint8_t const* operator()() const noexcept { return repr_; }
+    };
+
 public:
 
     // data
 
-    std::uint8_t data[ 16 ] = {};
+    data_type data;
 
 public:
 
@@ -48,7 +67,7 @@ public:
 
     uuid() = default;
 
-    uuid( std::uint8_t const(&r)[ 16 ] )
+    uuid( repr_type const& r )
     {
         std::memcpy( data, r, 16 );
     }
