@@ -12,6 +12,7 @@
 #include <boost/uuid/detail/config.hpp>
 #include <boost/type_traits/integral_constant.hpp> // for Serialization support
 #include <boost/config.hpp>
+#include <boost/config/workaround.hpp>
 #include <array>
 #include <chrono>
 #include <typeindex> // cheapest std::hash
@@ -53,6 +54,16 @@ private:
 
         std::uint8_t* operator()() noexcept { return repr_; }
         std::uint8_t const* operator()() const noexcept { return repr_; }
+
+#if BOOST_WORKAROUND(BOOST_MSVC, < 1930)
+
+        std::uint8_t* operator+( std::ptrdiff_t i ) noexcept { return repr_ + i; }
+        std::uint8_t const* operator+( std::ptrdiff_t i ) const noexcept { return repr_ + i; }
+
+        std::uint8_t& operator[]( std::ptrdiff_t i ) noexcept { return repr_[ i ]; }
+        std::uint8_t const& operator[]( std::ptrdiff_t i ) const noexcept { return repr_[ i ]; }
+
+#endif
     };
 
 public:
