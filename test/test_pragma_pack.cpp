@@ -7,29 +7,33 @@
 #include <boost/config/pragma_message.hpp>
 #include <cstddef>
 
-#if !defined(__GNUC__)
+#if !defined(__GNUC__) && !defined(_MSC_VER)
 
-BOOST_PRAGMA_MESSAGE( "Test skipped, __GNUC__ is not defined" )
+BOOST_PRAGMA_MESSAGE( "Test skipped, __GNUC__ and _MSC_VER are not defined" )
 int main() {}
 
 #else
 
 using namespace boost::uuids;
 
-struct __attribute__((packed)) X1
+#pragma pack( push, 1 )
+
+struct X1
 {
     unsigned char a;
     uuid b;
     unsigned char c;
 };
 
-struct __attribute__((packed)) X2
+struct X2
 {
     uuid a;
     unsigned char b;
     unsigned c;
     unsigned char d;
 };
+
+#pragma pack( pop )
 
 int main()
 {

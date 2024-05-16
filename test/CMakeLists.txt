@@ -19,6 +19,7 @@ boost_test(TYPE run SOURCES test_uuid_2.cpp)
 
 boost_test(TYPE run SOURCES test_alignment.cpp)
 boost_test(TYPE run SOURCES test_attribute_packed.cpp)
+boost_test(TYPE run SOURCES test_pragma_pack.cpp)
 boost_test(TYPE run SOURCES test_data.cpp)
 
 boost_test(TYPE run SOURCES test_comparison.cpp COMPILE_DEFINITIONS BOOST_UUID_REPORT_IMPLEMENTATION=1)

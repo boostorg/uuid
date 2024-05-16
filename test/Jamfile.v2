@@ -67,6 +67,7 @@ run test_uuid_2.cpp ;
 
 run test_alignment.cpp ;
 run test_attribute_packed.cpp ;
+run test_pragma_pack.cpp ;
 run test_data.cpp ;
 
 # test comparison

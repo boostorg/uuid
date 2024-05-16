@@ -13,9 +13,11 @@
 #include <boost/type_traits/integral_constant.hpp> // for Serialization support
 #include <boost/config.hpp>
 #include <array>
+#include <chrono>
 #include <typeindex> // cheapest std::hash
 #include <cstddef>
 #include <cstdint>
+#include <cstring>
 
 #if defined(__cpp_impl_three_way_comparison) && __cpp_impl_three_way_comparison >= 201907L && defined(__has_include)
 # if __has_include(<compare>)
@@ -38,9 +40,18 @@ public:
 
     // data
 
-    std::uint8_t data[ 16 ];
+    std::uint8_t data[ 16 ] = {};
 
 public:
+
+    // constructors
+
+    uuid() = default;
+
+    uuid( std::uint8_t const(&r)[ 16 ] )
+    {
+        std::memcpy( data, r, 16 );
+    }
 
     // iteration
 
