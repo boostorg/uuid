@@ -126,7 +126,7 @@ int main()
         uuid u2 = u1;
         BOOST_TEST_EQ( u2, u1 );
 
-        unsigned char* p = reinterpret_cast<unsigned char*>( u2.data );
+        unsigned char* p = reinterpret_cast<unsigned char*>( u2.data + 0 );
 
         for( int i = 0; i < 16; ++i )
         {
@@ -138,7 +138,7 @@ int main()
         uuid u2 = u1;
         BOOST_TEST_EQ( u2, u1 );
 
-        unsigned char const* p = reinterpret_cast<unsigned char const*>( u2.data );
+        unsigned char const* p = reinterpret_cast<unsigned char const*>( u2.data + 0 );
 
         for( int i = 0; i < 16; ++i )
         {
@@ -150,7 +150,7 @@ int main()
         uuid const u2 = u1;
         BOOST_TEST_EQ( u2, u1 );
 
-        unsigned char const* p = reinterpret_cast<unsigned char const*>( u2.data );
+        unsigned char const* p = reinterpret_cast<unsigned char const*>( u2.data + 0 );
 
         for( int i = 0; i < 16; ++i )
         {

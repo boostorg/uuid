@@ -117,8 +117,8 @@ inline void uuid::swap(uuid& rhs) noexcept
 {
     __m128i mm_this = uuids::detail::load_unaligned_si128(data);
     __m128i mm_rhs = uuids::detail::load_unaligned_si128(rhs.data);
-    _mm_storeu_si128(reinterpret_cast< __m128i* >(rhs.data), mm_this);
-    _mm_storeu_si128(reinterpret_cast< __m128i* >(data), mm_rhs);
+    _mm_storeu_si128(reinterpret_cast< __m128i* >(rhs.data+0), mm_this);
+    _mm_storeu_si128(reinterpret_cast< __m128i* >(data+0), mm_rhs);
 }
 
 inline bool operator== (uuid const& lhs, uuid const& rhs) noexcept
