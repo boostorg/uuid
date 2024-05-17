@@ -12,13 +12,16 @@ namespace uuids {
 
 class uuid
 {
-public:
+private:
 
-    // data
-
-    std::uint8_t data[ 16 ];
+    std::uint8_t data_[ 16 ] = {}; // exposition only
 
 public:
+
+    // constructors
+
+    uuid() = default;
+    uuid( std::uint8_t const (&r)[ 16 ] );
 
     // iteration
 
@@ -38,6 +41,11 @@ public:
 
     const_iterator begin() const noexcept;
     const_iterator end() const noexcept;
+
+    // data
+
+    std::uint8_t* data() noexcept;
+    std::uint8_t const* data() const noexcept;
 
     // size
 
@@ -133,6 +141,28 @@ BOOST_CLASS_IMPLEMENTATION(boost::uuids::uuid, boost::serialization::primitive_t
 template<> struct std::hash<boost::uuids::uuid>;
 ----
 
+=== Constructors
+
+```
+uuid() = default;
+```
+
+Effects: :: Zero-initializes `data_`.
+
+Postconditions: :: `is_nil()`.
+
+```
+uuid( std::uint8_t const (&r)[ 16 ] );
+```
+
+Effects: :: Initializes the elements of `data_` from the corresponding elements of `r`.
+
+Example: ::
++
+```
+uuid dns = {{ 0x6b, 0xa7, 0xb8, 0x10, 0x9d, 0xad, 0x11, 0xd1, 0x80, 0xb4, 0x00, 0xc0, 0x4f, 0xd4, 0x30, 0xc8 }};
+```
+
 === Iteration
 
 Both constant and mutable iterators are provided.
@@ -142,14 +172,14 @@ iterator begin() noexcept;
 const_iterator begin() const noexcept;
 ```
 
-Returns: :: `data + 0`.
+Returns: :: `data()`.
 
 ```
 iterator end() noexcept;
 const_iterator end() const noexcept;
 ```
 
-Returns: :: `data + 16`.
+Returns: :: `data() + size()`.
 
 Example: ::
 +
@@ -169,6 +199,17 @@ for( uuid::iterator it = u.begin(); it != u.end(); ++it )
     *it = 0;
 }
 ```
+
+=== Data
+
+```
+std::uint8_t* data() noexcept;
+```
+```
+std::uint8_t const* data() const noexcept;
+```
+
+Returns: :: `data_`.
 
 === Size
 
@@ -292,7 +333,7 @@ Effects: :: Exchanges the values of `*this` and `rhs`.
 bool operator==( uuid const& lhs, uuid const& rhs ) noexcept;
 ```
 
-Returns: :: As if `std::memcmp( lhs.data, rhs.data, 16 ) == 0`.
+Returns: :: As if `std::memcmp( lhs.data(), rhs.data(), 16 ) == 0`.
 
 ```
 bool operator!=( uuid const& lhs, uuid const& rhs ) noexcept;
@@ -304,7 +345,7 @@ Returns: :: `!(lhs == rhs)`.
 bool operator<( uuid const& lhs, uuid const& rhs ) noexcept;
 ```
 
-Returns: :: As if `std::memcmp( lhs.data, rhs.data, 16 ) < 0`.
+Returns: :: As if `std::memcmp( lhs.data(), rhs.data(), 16 ) < 0`.
 
 ```
 bool operator>( uuid const& lhs, uuid const& rhs ) noexcept;
@@ -328,7 +369,7 @@ Returns: :: `!(lhs < rhs)`.
 std::strong_ordering operator<=>( uuid const& lhs, uuid const& rhs ) noexcept;
 ```
 
-Returns: :: As if `std::memcmp( lhs.data, rhs.data, 16 ) \<\=> 0`.
+Returns: :: As if `std::memcmp( lhs.data(), rhs.data(), 16 ) \<\=> 0`.
 
 === Free Swap
 
