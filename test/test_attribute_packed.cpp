@@ -16,6 +16,13 @@ int main() {}
 
 using namespace boost::uuids;
 
+// Note: recent GCCs produce the warning
+// "ignoring packed attribute because of unpacked non-POD field"
+// for X1 and X2, but this is a false positive; the packed attribute
+// is not ignored and the tests pass.
+//
+// https://gcc.gnu.org/bugzilla/show_bug.cgi?id=114986
+
 struct __attribute__((packed)) X1
 {
     unsigned char a;
