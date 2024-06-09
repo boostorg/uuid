@@ -45,7 +45,20 @@ private:
     {
     private:
 
-        std::uint8_t repr_[ 16 ] = {};
+        union
+        {
+            std::uint8_t repr_[ 16 ];
+
+#if !defined(BOOST_UUID_DISABLE_ALIGNMENT)
+
+            std::uint64_t align_u64_;
+
+# if defined(__SIZEOF_INT128__)
+            __uint128_t align_u128_;
+# endif
+
+#endif
+        };
 
     public:
 
@@ -70,7 +83,7 @@ public:
 
     // data
 
-    data_type data;
+    data_type data = {};
 
 public:
 
