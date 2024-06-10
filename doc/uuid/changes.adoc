@@ -37,3 +37,4 @@
 * The default constructor of `uuid` now produces a nil UUID instead of an uninitialized one.
 * `u.data()`, where `u` is of type `uuid`, now returns a pointer to the first `uint8_t` of the representation (same as `u.begin()`.)
   For backward compatibility, `data` is a function object with `operator()`, rather than a member function, which allows most existing uses of `data` as a public member to remain valid, if no longer encouraged.
+* `uuid` now has the same alignment as `std::uint64_t`. It was previously unaligned (had alignment of 1, same as `std::uint8_t`.) To restore the 1.85 behavior, define the macro `BOOST_UUID_DISABLE_ALIGNMENT`.

@@ -42,3 +42,16 @@ The `BOOST_UUID_USE_SSE*` and `BOOST_UUID_USE_AVX*` macros can be defined by use
 Do not enable these extensions unless you're certain that they will always be available on any machine that will run your program.
 The library performs no run time checks, so if an extension is missing, the program will likely crash.
 Note that enabling more advanced extensions implies that more basic ones are also available.
+
+== Alignment
+
+[%autowidth]
+|===
+|Macro |Description
+
+|`BOOST_UUID_DISABLE_ALIGNMENT`
+|If defined, leaves `uuid` unaligned (alignment of 1, same as `std::uint8_t`). This was the behavior before release 1.86.
+
+|===
+
+By default, `uuid` has the same alignment as `std::uint64_t`. Define `BOOST_UUID_DISABLE_ALIGNMENT` to leave it unaligned.
