@@ -61,10 +61,6 @@ private:
 
             std::uint64_t align_u64_;
 
-# if defined(__SIZEOF_INT128__)
-            __uint128_t align_u128_;
-# endif
-
 #endif
         };
 
