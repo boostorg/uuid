@@ -45,7 +45,24 @@ private:
     {
     private:
 
-        std::uint8_t repr_[ 16 ] = {};
+        union
+        {
+#if BOOST_WORKAROUND(BOOST_MSVC, < 1910)
+
+            std::uint8_t repr_[ 16 ] = {};
+
+#else
+
+            std::uint8_t repr_[ 16 ];
+
+#endif
+
+#if !defined(BOOST_UUID_DISABLE_ALIGNMENT)
+
+            std::uint64_t align_u64_;
+
+#endif
+        };
 
     public:
 
@@ -70,7 +87,15 @@ public:
 
     // data
 
+#if BOOST_WORKAROUND(BOOST_MSVC, < 1910)
+
     data_type data;
+
+#else
+
+    data_type data = {};
+
+#endif
 
 public:
 
