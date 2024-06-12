@@ -44,15 +44,15 @@ boost_test(TYPE run SOURCES test_namespaces.cpp)
 boost_test(TYPE run SOURCES test_name_generator_md5.cpp)
 boost_test(TYPE run SOURCES test_name_generator_sha1.cpp)
 
-boost_test(TYPE run SOURCES test_time_generator.cpp LINK_LIBRARIES $<$<CXX_COMPILER_ID:GNU>:atomic>)
+boost_test(TYPE run SOURCES test_time_generator.cpp)
 
-boost_test(TYPE run SOURCES test_time_generator_v1.cpp LINK_LIBRARIES $<$<CXX_COMPILER_ID:GNU>:atomic>)
-boost_test(TYPE run SOURCES test_time_generator_v1_2.cpp LINK_LIBRARIES $<$<CXX_COMPILER_ID:GNU>:atomic>)
-boost_test(TYPE run SOURCES test_time_generator_v1_3.cpp LINK_LIBRARIES $<$<CXX_COMPILER_ID:GNU>:atomic> Threads::Threads)
+boost_test(TYPE run SOURCES test_time_generator_v1.cpp)
+boost_test(TYPE run SOURCES test_time_generator_v1_2.cpp)
+boost_test(TYPE run SOURCES test_time_generator_v1_3.cpp LINK_LIBRARIES Threads::Threads)
 
-boost_test(TYPE run SOURCES test_time_generator_v6.cpp LINK_LIBRARIES $<$<CXX_COMPILER_ID:GNU>:atomic>)
-boost_test(TYPE run SOURCES test_time_generator_v6_2.cpp LINK_LIBRARIES $<$<CXX_COMPILER_ID:GNU>:atomic>)
-boost_test(TYPE run SOURCES test_time_generator_v6_3.cpp LINK_LIBRARIES $<$<CXX_COMPILER_ID:GNU>:atomic> Threads::Threads)
+boost_test(TYPE run SOURCES test_time_generator_v6.cpp)
+boost_test(TYPE run SOURCES test_time_generator_v6_2.cpp)
+boost_test(TYPE run SOURCES test_time_generator_v6_3.cpp LINK_LIBRARIES Threads::Threads)
 
 boost_test(TYPE run SOURCES test_time_generator_v7.cpp)
 boost_test(TYPE run SOURCES test_time_generator_v7_2.cpp)
