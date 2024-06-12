@@ -30,6 +30,7 @@ boost_test(TYPE run SOURCES test_comparison.cpp COMPILE_DEFINITIONS BOOST_UUID_N
 boost_test(TYPE run SOURCES test_include1.cpp test_include2.cpp)
 
 boost_test(TYPE run SOURCES test_io.cpp LINK_LIBRARIES Boost::lexical_cast Boost::predef)
+boost_test(TYPE run SOURCES test_io_2.cpp)
 boost_test(TYPE run SOURCES test_to_chars.cpp)
 boost_test(TYPE run SOURCES test_to_chars_2.cpp)
 
