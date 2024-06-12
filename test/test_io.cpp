@@ -177,9 +177,11 @@ int main()
     }
 
     BOOST_TEST(to_string(u1) == std::string("00000000-0000-0000-0000-000000000000"));
+    BOOST_TEST(to_string(u2) == std::string("00010203-0405-0607-0809-0a0b0c0d0e0f"));
     BOOST_TEST(to_string(u3) == std::string("12345678-90ab-cdef-1234-567890abcdef"));
 
     BOOST_TEST(to_wstring(u1) == std::wstring(L"00000000-0000-0000-0000-000000000000"));
+    BOOST_TEST(to_wstring(u2) == std::wstring(L"00010203-0405-0607-0809-0a0b0c0d0e0f"));
     BOOST_TEST(to_wstring(u3) == std::wstring(L"12345678-90ab-cdef-1234-567890abcdef"));
 
     return boost::report_errors();
