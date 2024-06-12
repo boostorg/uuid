@@ -22,6 +22,12 @@ target_link_libraries(boost_uuid
 
 target_compile_features(boost_uuid INTERFACE cxx_std_11)
 
+if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
+
+  target_link_libraries(boost_uuid INTERFACE atomic)
+
+endif()
+
 if(BUILD_TESTING AND EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/test/CMakeLists.txt")
 
   add_subdirectory(test)
