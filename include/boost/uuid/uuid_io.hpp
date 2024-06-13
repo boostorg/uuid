@@ -85,74 +85,63 @@ std::basic_ostream<Ch, Traits>& operator<<( std::basic_ostream<Ch, Traits>& os, 
 template<class Ch, class Traits>
 std::basic_istream<Ch, Traits>& operator>>( std::basic_istream<Ch, Traits>& is, uuid& u )
 {
-    const typename std::basic_istream<Ch, Traits>::sentry ok( is );
+    Ch tmp[ 37 ] = {};
 
-    if( ok )
+    is.width( 37 ); // required for pre-C++20
+
+    if( is >> tmp )
     {
-        unsigned char data[ 16 ];
+        u = {};
 
         using ctype_t = std::ctype<Ch>;
         ctype_t const& ctype = std::use_facet<ctype_t>( is.getloc() );
 
-        Ch xdigits[ 16 ];
+        Ch xdigits[ 17 ];
 
         {
-            char szdigits[] = "0123456789ABCDEF";
-            ctype.widen( szdigits, szdigits + 16, xdigits );
+            char szdigits[] = "0123456789ABCDEF-";
+            ctype.widen( szdigits, szdigits + 17, xdigits );
         }
 
         Ch* const xdigits_end = xdigits + 16;
 
-        Ch c;
+        ctype.toupper( tmp, tmp + 36 );
 
-        for( std::size_t i = 0; i < u.size() && is; ++i )
+        int j = 0;
+
+        for( std::size_t i = 0; i < 16; ++i )
         {
-            is >> c;
-            c = ctype.toupper( c );
-
-            Ch* f = std::find( xdigits, xdigits_end, c );
+            Ch* f = std::find( xdigits, xdigits_end, tmp[ j++ ] );
 
             if( f == xdigits_end )
             {
                 is.setstate( std::ios_base::failbit );
-                break;
+                return is;
             }
 
-            unsigned char byte = static_cast<unsigned char>( std::distance( &xdigits[0], f ) );
+            unsigned char byte = static_cast<unsigned char>( f - xdigits );
 
-            is >> c;
-            c = ctype.toupper(c);
-
-            f = std::find( xdigits, xdigits_end, c );
+            f = std::find( xdigits, xdigits_end, tmp[ j++ ] );
 
             if( f == xdigits_end )
             {
                 is.setstate( std::ios_base::failbit );
-                break;
+                return is;
             }
 
             byte <<= 4;
-            byte |= static_cast<unsigned char>( std::distance( &xdigits[0], f ) );
+            byte |= static_cast<unsigned char>( f - xdigits );
 
-            data[ i ] = byte;
+            u.data()[ i ] = byte;
 
-            if( is )
+            if( i == 3 || i == 5 || i == 7 || i == 9 )
             {
-                if( i == 3 || i == 5 || i == 7 || i == 9 )
+                if( tmp[ j++ ] != xdigits[ 16 ] )
                 {
-                    is >> c;
-
-                    if( c != is.widen( '-' ) )
-                    {
-                        is.setstate( std::ios_base::failbit );
-                    }
+                    is.setstate( std::ios_base::failbit );
+                    return is;
                 }
             }
-        }
-
-        if( is )
-        {
-            std::copy( data, data + 16, u.begin() );
         }
     }
 
