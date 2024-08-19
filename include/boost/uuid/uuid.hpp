@@ -121,8 +121,8 @@ public:
     iterator begin() noexcept { return data; }
     const_iterator begin() const noexcept { return data; }
 
-    iterator end() noexcept { return data + size(); }
-    const_iterator end() const noexcept { return data + size(); }
+    iterator end() noexcept { return data() + size(); }
+    const_iterator end() const noexcept { return data() + size(); }
 
     // size
 
