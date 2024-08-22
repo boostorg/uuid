@@ -266,7 +266,7 @@ public:
 
     node_type node_identifier() const noexcept
     {
-        node_type node = {};
+        node_type node = {{}};
 
         std::memcpy( node.data(), this->data + 10, 6 );
         return node;
