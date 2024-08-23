@@ -7,11 +7,8 @@
 project
     : requirements
       <warnings>pedantic
-      <library>/boost/array//boost_array
+      <library>/boost/uuid//boost_uuid
       <library>/boost/core//boost_core
-      <library>/boost/container_hash//boost_container_hash
-      <library>/boost/predef//boost_predef
-      <library>/boost/random//boost_random
 ;
 
 import os ;
@@ -59,8 +56,8 @@ run test_include1.cpp test_include2.cpp ;
 # main tests
 
 run test_uuid.cpp
-   : : : <define>BOOST_UUID_REPORT_IMPLEMENTATION ;
-run test_uuid.cpp : : : <define>BOOST_UUID_NO_SIMD <define>BOOST_UUID_REPORT_IMPLEMENTATION : test_uuid_no_simd ;
+   : : : <library>/boost/container_hash//boost_container_hash <define>BOOST_UUID_REPORT_IMPLEMENTATION ;
+run test_uuid.cpp : : : <library>/boost/container_hash//boost_container_hash <define>BOOST_UUID_NO_SIMD <define>BOOST_UUID_REPORT_IMPLEMENTATION : test_uuid_no_simd ;
 run test_uuid_2.cpp ;
 run test_uuid_3.cpp ;
 
@@ -80,7 +77,8 @@ run test_comparison.cpp : : : <define>BOOST_UUID_NO_SIMD <define>BOOST_UUID_REPO
 
 # test uuid_io.hpp
 
-run test_io.cpp : : : <library>/boost/lexical_cast//boost_lexical_cast ;
+run test_io.cpp
+  : : : <library>/boost/lexical_cast//boost_lexical_cast <library>/boost/predef//boost_predef ;
 run test_io_2.cpp ;
 run test_to_chars.cpp ;
 run test_to_chars_2.cpp ;
@@ -93,9 +91,11 @@ run test_uuid_clock.cpp ;
 
 run test_nil_generator.cpp ;
 run test_string_generator.cpp ;
-run test_random_generator.cpp ;
+run test_random_generator.cpp
+  : : : <library>/boost/random//boost_random <library>/boost/predef//boost_predef ;
 
-run test_name_generator.cpp ;
+run test_name_generator.cpp
+  : : : <library>/boost/predef//boost_predef ;
 run test_namespaces.cpp ;
 run test_name_generator_md5.cpp ;
 run test_name_generator_sha1.cpp ;
@@ -150,7 +150,8 @@ run test_uuid_in_map.cpp ;
 
 # test hashing support
 
-run test_hash.cpp ;
+run test_hash.cpp
+   : : : <library>/boost/container_hash//boost_container_hash ;
 run test_hash_value.cpp ;
 
 run test_std_unordered.cpp ;
@@ -182,7 +183,8 @@ run test_bench_random.cpp /boost/timer//boost_timer : : : <toolset>clang-cloudab
 # tests for the header-only random provider
 
 run test_entropy_error.cpp ;
-run test_detail_random_provider.cpp ;
+run test_detail_random_provider.cpp
+  : : : <library>/boost/array//boost_array ;
 
 # 'quick' test for CI
 
