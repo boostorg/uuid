@@ -4,11 +4,21 @@
 # accompanying file LICENSE_1_0.txt or copy at
 # https://www.boost.org/LICENSE_1_0.txt)
 
+local WERROR =
+
+    <toolset>msvc:<warnings-as-errors>on
+    <toolset>gcc:<warnings-as-errors>on
+    <toolset>clang:<warnings-as-errors>on
+;
+
 project
     : requirements
-      <warnings>pedantic
+      $(WERROR)
       <library>/boost/uuid//boost_uuid
       <library>/boost/core//boost_core
+
+     : default-build
+      <warnings>pedantic
 ;
 
 import os ;
@@ -56,7 +66,7 @@ run test_include1.cpp test_include2.cpp ;
 # main tests
 
 run test_uuid.cpp
-   : : : <library>/boost/container_hash//boost_container_hash <define>BOOST_UUID_REPORT_IMPLEMENTATION ;
+  : : : <library>/boost/container_hash//boost_container_hash <define>BOOST_UUID_REPORT_IMPLEMENTATION ;
 run test_uuid.cpp : : : <library>/boost/container_hash//boost_container_hash <define>BOOST_UUID_NO_SIMD <define>BOOST_UUID_REPORT_IMPLEMENTATION : test_uuid_no_simd ;
 run test_uuid_2.cpp ;
 run test_uuid_3.cpp ;
@@ -65,20 +75,21 @@ run test_uuid_3.cpp ;
 
 run test_alignment.cpp ;
 run test_alignment_2.cpp ;
-run test_attribute_packed.cpp ;
+run test_attribute_packed.cpp
+  : : : -$(WERROR) ;
 run test_pragma_pack.cpp ;
 run test_data.cpp ;
 
 # test comparison
 
 run test_comparison.cpp
-   : : : <define>BOOST_UUID_REPORT_IMPLEMENTATION ;
+  : : : <define>BOOST_UUID_REPORT_IMPLEMENTATION ;
 run test_comparison.cpp : : : <define>BOOST_UUID_NO_SIMD <define>BOOST_UUID_REPORT_IMPLEMENTATION : test_comparison_no_simd ;
 
 # test uuid_io.hpp
 
 run test_io.cpp
-  : : : <library>/boost/lexical_cast//boost_lexical_cast <library>/boost/predef//boost_predef ;
+  : : : <library>/boost/lexical_cast//boost_lexical_cast <library>/boost/predef//boost_predef -$(WERROR) ;
 run test_io_2.cpp ;
 run test_to_chars.cpp ;
 run test_to_chars_2.cpp ;
@@ -136,7 +147,9 @@ run test_time_generator_v7_3.cpp ;
 
 # test serializing uuids
 
-run test_serialization.cpp /boost/serialization//boost_serialization : : : <undefined-sanitizer>norecover:<link>static ;
+run test_serialization.cpp
+  : : : <library>/boost/serialization//boost_serialization <undefined-sanitizer>norecover:<link>static -$(WERROR) ;
+
 # run test_wserialization.cpp /boost/serialization//boost_serialization /boost/serialization//boost_wserialization ;
 
 # test tagging an object
@@ -167,8 +180,8 @@ run test_detail_chacha20.cpp ;
 
 # compile-fail tests
 
-compile-fail compile-fail/random_provider_no_copy_ctor.cpp ;
-compile-fail compile-fail/random_provider_no_copy_assign.cpp ;
+compile-fail compile-fail/random_provider_no_copy_ctor.cpp : -$(WERROR) ;
+compile-fail compile-fail/random_provider_no_copy_assign.cpp : -$(WERROR) ;
 
 # test MSVC 12 (VS2013) optimizer bug with SIMD operations.
 # See https://svn.boost.org/trac/boost/ticket/8509#comment:3
