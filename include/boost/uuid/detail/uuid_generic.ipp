@@ -23,7 +23,7 @@ inline bool uuid::is_nil() const noexcept
     std::uint64_t v = detail::load_native_u64( this->data + 0 );
     std::uint64_t w = detail::load_native_u64( this->data + 8 );
 
-    return v == 0 && w == 0;
+    return ( v | w ) == 0u;
 }
 
 inline void uuid::swap( uuid& rhs ) noexcept
