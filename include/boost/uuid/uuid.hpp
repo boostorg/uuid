@@ -136,9 +136,9 @@ public:
 
 #else
 
-    uuid( repr_type const& r )
+    constexpr uuid( repr_type const& r )
     {
-        std::memcpy( data, r, 16 );
+        for( int i = 0; i < 16; ++i ) data[ i ] = r[ i ];
     }
 
 #endif
