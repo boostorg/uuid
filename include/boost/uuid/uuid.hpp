@@ -57,7 +57,7 @@ private:
 
         union
         {
-#if BOOST_WORKAROUND(BOOST_MSVC, < 1910)
+#if BOOST_WORKAROUND(BOOST_MSVC, < 1950)
 
             std::uint8_t repr_[ 16 ] = {};
 
@@ -97,7 +97,7 @@ public:
 
     // data
 
-#if BOOST_WORKAROUND(BOOST_MSVC, < 1910)
+#if BOOST_WORKAROUND(BOOST_MSVC, < 1950)
 
     data_type data;
 
