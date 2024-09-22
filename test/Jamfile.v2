@@ -201,6 +201,10 @@ run test_entropy_error.cpp ;
 run test_detail_random_provider.cpp
   : : : <library>/boost/array//boost_array ;
 
+# constexpr tests
+
+compile test_uuid_cx.cpp ;
+
 # 'quick' test for CI
 
 run quick.cpp ;
