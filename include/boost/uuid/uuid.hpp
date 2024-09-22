@@ -115,14 +115,14 @@ public:
 
 #if defined(BOOST_NO_CXX14_CONSTEXPR)
 
-    uuid( repr_type const& r )
+    uuid( repr_type const& r ) noexcept
     {
         std::memcpy( data, r, 16 );
     }
 
 #elif defined(BOOST_UUID_HAS_BUILTIN_ISCONSTEVAL)
 
-    constexpr uuid( repr_type const& r )
+    constexpr uuid( repr_type const& r ) noexcept
     {
         if( __builtin_is_constant_evaluated() )
         {
@@ -136,7 +136,7 @@ public:
 
 #else
 
-    constexpr uuid( repr_type const& r )
+    constexpr uuid( repr_type const& r ) noexcept
     {
         for( int i = 0; i < 16; ++i ) data[ i ] = r[ i ];
     }
