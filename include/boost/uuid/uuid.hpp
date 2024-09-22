@@ -20,6 +20,16 @@
 #include <cstdint>
 #include <cstring>
 
+#if defined(__has_builtin)
+# if __has_builtin(__builtin_is_constant_evaluated)
+#  define BOOST_UUID_HAS_BUILTIN_ISCONSTEVAL
+# endif
+#endif
+
+#if !defined(BOOST_UUID_HAS_BUILTIN_ISCONSTEVAL) && defined(BOOST_MSVC) && BOOST_MSVC >= 1925
+# define BOOST_UUID_HAS_BUILTIN_ISCONSTEVAL
+#endif
+
 #if defined(__cpp_impl_three_way_comparison) && __cpp_impl_three_way_comparison >= 201907L && defined(__has_include)
 # if __has_include(<compare>)
 #  include <compare>
@@ -66,19 +76,19 @@ private:
 
     public:
 
-        operator repr_type& () noexcept { return repr_; }
-        operator repr_type const& () const noexcept { return repr_; }
+        BOOST_CXX14_CONSTEXPR operator repr_type& () noexcept { return repr_; }
+        constexpr operator repr_type const& () const noexcept { return repr_; }
 
-        std::uint8_t* operator()() noexcept { return repr_; }
-        std::uint8_t const* operator()() const noexcept { return repr_; }
+        BOOST_CXX14_CONSTEXPR std::uint8_t* operator()() noexcept { return repr_; }
+        constexpr std::uint8_t const* operator()() const noexcept { return repr_; }
 
 #if BOOST_WORKAROUND(BOOST_MSVC, < 1930)
 
-        std::uint8_t* operator+( std::ptrdiff_t i ) noexcept { return repr_ + i; }
-        std::uint8_t const* operator+( std::ptrdiff_t i ) const noexcept { return repr_ + i; }
+        BOOST_CXX14_CONSTEXPR std::uint8_t* operator+( std::ptrdiff_t i ) noexcept { return repr_ + i; }
+        constexpr std::uint8_t const* operator+( std::ptrdiff_t i ) const noexcept { return repr_ + i; }
 
-        std::uint8_t& operator[]( std::ptrdiff_t i ) noexcept { return repr_[ i ]; }
-        std::uint8_t const& operator[]( std::ptrdiff_t i ) const noexcept { return repr_[ i ]; }
+        BOOST_CXX14_CONSTEXPR std::uint8_t& operator[]( std::ptrdiff_t i ) noexcept { return repr_[ i ]; }
+        constexpr std::uint8_t const& operator[]( std::ptrdiff_t i ) const noexcept { return repr_[ i ]; }
 
 #endif
     };
@@ -103,10 +113,35 @@ public:
 
     uuid() = default;
 
+#if defined(BOOST_NO_CXX14_CONSTEXPR)
+
     uuid( repr_type const& r )
     {
         std::memcpy( data, r, 16 );
     }
+
+#elif defined(BOOST_UUID_HAS_BUILTIN_ISCONSTEVAL)
+
+    constexpr uuid( repr_type const& r )
+    {
+        if( __builtin_is_constant_evaluated() )
+        {
+            for( int i = 0; i < 16; ++i ) data[ i ] = r[ i ];
+        }
+        else
+        {
+            std::memcpy( data, r, 16 );
+        }
+    }
+
+#else
+
+    uuid( repr_type const& r )
+    {
+        std::memcpy( data, r, 16 );
+    }
+
+#endif
 
     // iteration
 
