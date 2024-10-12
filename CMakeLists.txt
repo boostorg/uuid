@@ -22,7 +22,7 @@ target_link_libraries(boost_uuid
 
 target_compile_features(boost_uuid INTERFACE cxx_std_11)
 
-if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
+if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU" OR (CMAKE_CXX_COMPILER_ID STREQUAL "Clang" AND NOT CMAKE_CXX_COMPILER_FRONTEND_VARIANT STREQUAL "MSVC"))
 
   target_link_libraries(boost_uuid INTERFACE atomic)
 
