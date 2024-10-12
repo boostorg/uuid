@@ -213,13 +213,13 @@ jobs:
             install: clang-17
           - toolset: clang
             cxxstd: "11,14,17,20,2b"
-            os: macos-12
-          - toolset: clang
-            cxxstd: "11,14,17,20,2b"
             os: macos-13
           - toolset: clang
             cxxstd: "11,14,17,20,2b"
             os: macos-14
+          - toolset: clang
+            cxxstd: "11,14,17,20,2b"
+            os: macos-15
 
     runs-on: ${{matrix.os}}
     container: ${{matrix.container}}
@@ -361,9 +361,10 @@ jobs:
         include:
           - os: ubuntu-20.04
           - os: ubuntu-22.04
-          - os: macos-12
+          - os: ubuntu-24.04
           - os: macos-13
           - os: macos-14
+          - os: macos-15
 
     runs-on: ${{matrix.os}}
 
@@ -409,9 +410,10 @@ jobs:
         include:
           - os: ubuntu-20.04
           - os: ubuntu-22.04
-          - os: macos-12
+          - os: ubuntu-24.04
           - os: macos-13
           - os: macos-14
+          - os: macos-15
 
     runs-on: ${{matrix.os}}
 
@@ -467,9 +469,10 @@ jobs:
         include:
           - os: ubuntu-20.04
           - os: ubuntu-22.04
-          - os: macos-12
+          - os: ubuntu-24.04
           - os: macos-13
           - os: macos-14
+          - os: macos-15
 
     runs-on: ${{matrix.os}}
 
