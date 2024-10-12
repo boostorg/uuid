@@ -362,6 +362,8 @@ jobs:
           - os: ubuntu-20.04
           - os: ubuntu-22.04
           - os: ubuntu-24.04
+          - os: ubuntu-latest
+            opts: -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++
           - os: macos-13
           - os: macos-14
           - os: macos-15
@@ -399,7 +401,7 @@ jobs:
         run: |
           cd ../boost-root/libs/$LIBRARY/test/cmake_subdir_test
           mkdir __build__ && cd __build__
-          cmake ..
+          cmake ${{matrix.opts}} ..
           cmake --build .
           ctest --output-on-failure --no-tests=error
 
@@ -411,6 +413,8 @@ jobs:
           - os: ubuntu-20.04
           - os: ubuntu-22.04
           - os: ubuntu-24.04
+          - os: ubuntu-latest
+            opts: -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++
           - os: macos-13
           - os: macos-14
           - os: macos-15
@@ -448,7 +452,7 @@ jobs:
         run: |
           cd ../boost-root
           mkdir __build__ && cd __build__
-          cmake -DBOOST_INCLUDE_LIBRARIES=$LIBRARY -DCMAKE_INSTALL_PREFIX=~/.local ..
+          cmake -DBOOST_INCLUDE_LIBRARIES=$LIBRARY -DCMAKE_INSTALL_PREFIX=~/.local ${{matrix.opts}} ..
 
       - name: Install
         run: |
@@ -458,7 +462,7 @@ jobs:
       - name: Use the installed library
         run: |
           cd ../boost-root/libs/$LIBRARY/test/cmake_install_test && mkdir __build__ && cd __build__
-          cmake -DCMAKE_INSTALL_PREFIX=~/.local ..
+          cmake -DCMAKE_INSTALL_PREFIX=~/.local ${{matrix.opts}} ..
           cmake --build .
           ctest --output-on-failure --no-tests=error
 
@@ -471,7 +475,7 @@ jobs:
           - os: ubuntu-22.04
           - os: ubuntu-24.04
           - os: ubuntu-latest
-            opts: -DCMAKE_CC_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++
+            opts: -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++
           - os: macos-13
           - os: macos-14
           - os: macos-15
