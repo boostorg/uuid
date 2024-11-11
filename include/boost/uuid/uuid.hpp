@@ -69,8 +69,8 @@ private:
         operator repr_type& () noexcept { return repr_; }
         operator repr_type const& () const noexcept { return repr_; }
 
-        std::uint8_t* operator()() noexcept { return repr_; }
-        std::uint8_t const* operator()() const noexcept { return repr_; }
+        constexpr std::uint8_t* operator()() noexcept { return repr_; }
+        constexpr std::uint8_t const* operator()() const noexcept { return repr_; }
 
 #if BOOST_WORKAROUND(BOOST_MSVC, < 1930)
 
