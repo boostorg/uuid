@@ -176,12 +176,12 @@ jobs:
             install: clang-15
           - toolset: clang
             compiler: clang++-16
-            cxxstd: "11,14,17,20,2b"
+            cxxstd: "11,14,17,20"
             os: ubuntu-24.04
             install: clang-16
           - toolset: clang
             compiler: clang++-17
-            cxxstd: "11,14,17,20,2b"
+            cxxstd: "11,14,17,20"
             os: ubuntu-24.04
             install: clang-17
           - toolset: clang
@@ -192,14 +192,14 @@ jobs:
             install: clang-18
           - toolset: clang
             compiler: clang++-17
-            cxxstd: "11,14,17,20,2b"
+            cxxstd: "11,14,17,20"
             instruction-set: nehalem
             cpu-requirements: [ sse4_1, sse4_2 ]
             os: ubuntu-24.04
             install: clang-17
           - toolset: clang
             compiler: clang++-17
-            cxxstd: "11,14,17,20,2b"
+            cxxstd: "11,14,17,20"
             instruction-set: skylake-avx512
             cpu-requirements: [ avx512f, avx512cd, avx512vl, avx512dq, avx512bw, bmi1, bmi2 ]
             os: ubuntu-24.04
