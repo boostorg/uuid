@@ -38,6 +38,13 @@ if(CMAKE_CXX_COMPILER_ID STREQUAL "Clang" AND NOT CMAKE_CXX_COMPILER_FRONTEND_VA
 
 endif()
 
+# CLANGARM64 does not have libatomic, disable it
+if(MINGW AND CMAKE_SYSTEM_PROCESSOR MATCHES "ARM64")
+
+  set(_def_linkatomic OFF)
+
+endif()
+
 option(BOOST_UUID_LINK_LIBATOMIC "Boost.UUID: link Boost::uuid to libatomic" ${_def_linkatomic})
 
 unset(_def_linkatomic)
