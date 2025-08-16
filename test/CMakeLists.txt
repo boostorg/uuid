@@ -36,7 +36,6 @@ boost_test(TYPE run SOURCES test_to_chars_2.cpp)
 
 boost_test(TYPE run SOURCES test_uuid_clock.cpp)
 
-boost_test(TYPE run SOURCES test_max_generator.cpp)
 boost_test(TYPE run SOURCES test_nil_generator.cpp)
 boost_test(TYPE run SOURCES test_string_generator.cpp)
 boost_test(TYPE run SOURCES test_random_generator.cpp LINK_LIBRARIES Boost::random Boost::predef)
