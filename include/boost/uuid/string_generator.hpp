@@ -18,6 +18,30 @@
 namespace boost {
 namespace uuids {
 
+namespace detail
+{
+
+template<class Ch>
+BOOST_CXX14_CONSTEXPR std::size_t cx_strlen( Ch const* s )
+{
+    std::size_t r = 0;
+    while( *s ) ++s, ++r;
+    return r;
+}
+
+template<class Ch>
+BOOST_CXX14_CONSTEXPR Ch const* cx_find( Ch const* s, std::size_t n, Ch ch )
+{
+    for( std::size_t i = 0; i < n; ++i )
+    {
+        if( s[i] == ch ) return s + i;
+    }
+
+    return nullptr;
+}
+
+} // namespace detail
+
 // Generates a UUID from a string
 //
 // Accepts the following forms:
@@ -39,12 +63,12 @@ struct string_generator
 
     BOOST_CXX14_CONSTEXPR uuid operator()( char const* s ) const
     {
-        return operator()( s, s + std::char_traits<char>::length( s ) );
+        return operator()( s, s + detail::cx_strlen( s ) );
     }
 
     BOOST_CXX14_CONSTEXPR uuid operator()( wchar_t const* s ) const
     {
-        return operator()( s, s + std::char_traits<wchar_t>::length( s ) );
+        return operator()( s, s + detail::cx_strlen( s ) );
     }
 
     template<class CharIterator>
@@ -159,7 +183,7 @@ private:
         constexpr unsigned char values[] =
             { 0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,10,11,12,13,14,15 };
 
-        auto pos = std::char_traits<char>::find( digits, digits_len, c );
+        auto pos = detail::cx_find( digits, digits_len, c );
 
         if( pos == 0 )
         {
@@ -177,7 +201,7 @@ private:
         constexpr unsigned char values[] =
             { 0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,10,11,12,13,14,15 };
 
-        auto pos = std::char_traits<wchar_t>::find( digits, digits_len, c );
+        auto pos = detail::cx_find( digits, digits_len, c );
 
         if( pos == 0 )
         {
