@@ -86,6 +86,12 @@ jobs:
             os: ubuntu-latest
             install: g++-14-multilib
             address-model: 32,64
+          - toolset: gcc-15
+            cxxstd: "11,14,17,20,23,2c"
+            container: ubuntu:25.04
+            os: ubuntu-latest
+            install: g++-15-multilib
+            address-model: 32,64
           - toolset: gcc-13
             cxxstd: "11,14,17,20,2b"
             instruction-set: nehalem
@@ -204,6 +210,12 @@ jobs:
             container: ubuntu:24.04
             os: ubuntu-latest
             install: clang-19
+          - toolset: clang
+            compiler: clang++-20
+            cxxstd: "11,14,17,20,23,2c"
+            container: ubuntu:25.04
+            os: ubuntu-latest
+            install: clang-20
           - toolset: clang
             compiler: clang++-17
             cxxstd: "11,14,17,20,2b"
