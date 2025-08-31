@@ -53,23 +53,24 @@ BOOST_CXX14_CONSTEXPR Ch const* cx_find( Ch const* s, std::size_t n, Ch ch )
 
 struct string_generator
 {
+private:
+
+    template <typename CharIterator>
+    typename std::iterator_traits<CharIterator>::value_type
+    BOOST_CXX14_CONSTEXPR get_next_char( CharIterator& begin, CharIterator end, int& ipos ) const
+    {
+        if( begin == end )
+        {
+            throw_invalid( ipos, "unexpected end of input" );
+        }
+
+        ++ipos;
+        return *begin++;
+    }
+
+public:
+
     using result_type = uuid;
-
-    template<class Ch, class Traits, class Alloc>
-    BOOST_CXX14_CONSTEXPR uuid operator()( std::basic_string<Ch, Traits, Alloc> const& s ) const
-    {
-        return operator()( s.begin(), s.end() );
-    }
-
-    BOOST_CXX14_CONSTEXPR uuid operator()( char const* s ) const
-    {
-        return operator()( s, s + detail::cx_strlen( s ) );
-    }
-
-    BOOST_CXX14_CONSTEXPR uuid operator()( wchar_t const* s ) const
-    {
-        return operator()( s, s + detail::cx_strlen( s ) );
-    }
 
     template<class CharIterator>
     BOOST_CXX14_CONSTEXPR uuid operator()( CharIterator begin, CharIterator end ) const
@@ -152,6 +153,22 @@ struct string_generator
         return u;
     }
 
+    template<class Ch, class Traits, class Alloc>
+    BOOST_CXX14_CONSTEXPR uuid operator()( std::basic_string<Ch, Traits, Alloc> const& s ) const
+    {
+        return operator()( s.begin(), s.end() );
+    }
+
+    BOOST_CXX14_CONSTEXPR uuid operator()( char const* s ) const
+    {
+        return operator()( s, s + detail::cx_strlen( s ) );
+    }
+
+    BOOST_CXX14_CONSTEXPR uuid operator()( wchar_t const* s ) const
+    {
+        return operator()( s, s + detail::cx_strlen( s ) );
+    }
+
 private:
 
     BOOST_NORETURN void throw_invalid( int ipos, char const* error ) const
@@ -160,19 +177,6 @@ private:
         std::snprintf( buffer, sizeof( buffer ), "%d", ipos );
 
         BOOST_THROW_EXCEPTION( std::runtime_error( std::string( "Invalid UUID string at position " ) + buffer + ": " + error ) );
-    }
-
-    template <typename CharIterator>
-    typename std::iterator_traits<CharIterator>::value_type
-    BOOST_CXX14_CONSTEXPR get_next_char( CharIterator& begin, CharIterator end, int& ipos ) const
-    {
-        if( begin == end )
-        {
-            throw_invalid( ipos, "unexpected end of input" );
-        }
-
-        ++ipos;
-        return *begin++;
     }
 
     BOOST_CXX14_CONSTEXPR unsigned char get_value( char c, int ipos ) const
