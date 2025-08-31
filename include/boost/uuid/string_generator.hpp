@@ -11,10 +11,9 @@
 #include <boost/config.hpp>
 #include <string>
 #include <iterator>
-#include <algorithm> // for find
 #include <stdexcept>
-#include <cstring> // for strlen, wcslen
 #include <cstdio>
+#include <cstddef>
 
 namespace boost {
 namespace uuids {
@@ -33,23 +32,23 @@ struct string_generator
     using result_type = uuid;
 
     template<class Ch, class Traits, class Alloc>
-    uuid operator()( std::basic_string<Ch, Traits, Alloc> const& s ) const
+    BOOST_CXX14_CONSTEXPR uuid operator()( std::basic_string<Ch, Traits, Alloc> const& s ) const
     {
-        return operator()(s.begin(), s.end());
+        return operator()( s.begin(), s.end() );
     }
 
-    uuid operator()( char const* s ) const
+    BOOST_CXX14_CONSTEXPR uuid operator()( char const* s ) const
     {
-        return operator()( s, s + std::strlen( s ) );
+        return operator()( s, s + std::char_traits<char>::length( s ) );
     }
 
-    uuid operator()( wchar_t const* s ) const
+    BOOST_CXX14_CONSTEXPR uuid operator()( wchar_t const* s ) const
     {
-        return operator()( s, s + std::wcslen( s ) );
+        return operator()( s, s + std::char_traits<wchar_t>::length( s ) );
     }
 
     template<class CharIterator>
-    uuid operator()( CharIterator begin, CharIterator end ) const
+    BOOST_CXX14_CONSTEXPR uuid operator()( CharIterator begin, CharIterator end ) const
     {
         using char_type = typename std::iterator_traits<CharIterator>::value_type;
 
@@ -141,7 +140,7 @@ private:
 
     template <typename CharIterator>
     typename std::iterator_traits<CharIterator>::value_type
-    get_next_char( CharIterator& begin, CharIterator end, int& ipos ) const
+    BOOST_CXX14_CONSTEXPR get_next_char( CharIterator& begin, CharIterator end, int& ipos ) const
     {
         if( begin == end )
         {
@@ -152,70 +151,67 @@ private:
         return *begin++;
     }
 
-    unsigned char get_value( char c, int ipos ) const
+    BOOST_CXX14_CONSTEXPR unsigned char get_value( char c, int ipos ) const
     {
-        static char const digits_begin[] = "0123456789abcdefABCDEF";
-        static size_t digits_len = (sizeof(digits_begin) / sizeof(char)) - 1;
-        static char const* const digits_end = digits_begin + digits_len;
+        constexpr char digits[] = "0123456789abcdefABCDEF";
+        constexpr std::size_t digits_len = sizeof(digits) / sizeof(char) - 1;
 
-        static unsigned char const values[] =
+        constexpr unsigned char values[] =
             { 0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,10,11,12,13,14,15 };
 
-        size_t pos = std::find( digits_begin, digits_end, c ) - digits_begin;
+        auto pos = std::char_traits<char>::find( digits, digits_len, c );
 
-        if( pos >= digits_len )
+        if( pos == 0 )
         {
             throw_invalid( ipos, "hex digit expected" );
         }
 
-        return values[ pos ];
+        return values[ pos - digits ];
     }
 
-    unsigned char get_value( wchar_t c, int ipos ) const
+    BOOST_CXX14_CONSTEXPR unsigned char get_value( wchar_t c, int ipos ) const
     {
-        static wchar_t const digits_begin[] = L"0123456789abcdefABCDEF";
-        static size_t digits_len = (sizeof(digits_begin) / sizeof(wchar_t)) - 1;
-        static wchar_t const* const digits_end = digits_begin + digits_len;
+        constexpr wchar_t digits[] = L"0123456789abcdefABCDEF";
+        constexpr std::size_t digits_len = sizeof(digits) / sizeof(wchar_t) - 1;
 
-        static unsigned char const values[] =
+        constexpr unsigned char values[] =
             { 0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,10,11,12,13,14,15 };
 
-        size_t pos = std::find( digits_begin, digits_end, c ) - digits_begin;
+        auto pos = std::char_traits<wchar_t>::find( digits, digits_len, c );
 
-        if( pos >= digits_len )
+        if( pos == 0 )
         {
             throw_invalid( ipos, "hex digit expected" );
         }
 
-        return values[ pos ];
+        return values[ pos - digits ];
     }
 
-    bool is_dash( char c ) const
+    BOOST_CXX14_CONSTEXPR bool is_dash( char c ) const
     {
         return c == '-';
     }
 
-    bool is_dash( wchar_t c ) const
+    BOOST_CXX14_CONSTEXPR bool is_dash( wchar_t c ) const
     {
         return c == L'-';
     }
 
-    // return closing brace
-    bool is_open_brace( char c ) const
+    BOOST_CXX14_CONSTEXPR bool is_open_brace( char c ) const
     {
         return c == '{';
     }
 
-    bool is_open_brace( wchar_t c ) const
+    BOOST_CXX14_CONSTEXPR bool is_open_brace( wchar_t c ) const
     {
         return c == L'{';
     }
 
-    void check_close_brace( char c, char open_brace, int ipos ) const
+    BOOST_CXX14_CONSTEXPR void check_close_brace( char c, char open_brace, int ipos ) const
     {
         if( open_brace == '{' && c == '}' )
         {
-            //great
+            // great
         }
         else
         {
@@ -223,7 +219,7 @@ private:
         }
     }
 
-    void check_close_brace( wchar_t c, wchar_t open_brace, int ipos ) const
+    BOOST_CXX14_CONSTEXPR void check_close_brace( wchar_t c, wchar_t open_brace, int ipos ) const
     {
         if( open_brace == L'{' && c == L'}' )
         {
