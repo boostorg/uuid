@@ -84,8 +84,6 @@ public:
 
         bool has_open_brace = is_open_brace( c );
 
-        char_type open_brace_char = c;
-
         if( has_open_brace )
         {
             c = get_next_char( begin, end, ipos );
@@ -141,7 +139,11 @@ public:
         if( has_open_brace )
         {
             c = get_next_char( begin, end, ipos );
-            check_close_brace( c, open_brace_char, ipos - 1 );
+
+            if( !is_close_brace( c ) )
+            {
+                throw_invalid( ipos - 1, "closing brace expected" );
+            }
         }
 
         // check end of string - any additional data is an invalid uuid
@@ -215,48 +217,34 @@ private:
         return values[ pos - digits ];
     }
 
-    BOOST_CXX14_CONSTEXPR bool is_dash( char c ) const
+    static constexpr bool is_dash( char c )
     {
         return c == '-';
     }
 
-    BOOST_CXX14_CONSTEXPR bool is_dash( wchar_t c ) const
+    static constexpr bool is_dash( wchar_t c )
     {
         return c == L'-';
     }
 
-    BOOST_CXX14_CONSTEXPR bool is_open_brace( char c ) const
+    static constexpr bool is_open_brace( char c )
     {
         return c == '{';
     }
 
-    BOOST_CXX14_CONSTEXPR bool is_open_brace( wchar_t c ) const
+    static constexpr bool is_open_brace( wchar_t c )
     {
         return c == L'{';
     }
 
-    BOOST_CXX14_CONSTEXPR void check_close_brace( char c, char open_brace, int ipos ) const
+    static constexpr bool is_close_brace( char c )
     {
-        if( open_brace == '{' && c == '}' )
-        {
-            // great
-        }
-        else
-        {
-            throw_invalid( ipos, "closing brace expected" );
-        }
+        return c == '}';
     }
 
-    BOOST_CXX14_CONSTEXPR void check_close_brace( wchar_t c, wchar_t open_brace, int ipos ) const
+    static constexpr bool is_close_brace( wchar_t c )
     {
-        if( open_brace == L'{' && c == L'}' )
-        {
-            // great
-        }
-        else
-        {
-            throw_invalid( ipos, "closing brace expected" );
-        }
+        return c == L'}';
     }
 };
 
