@@ -206,6 +206,7 @@ run test_detail_random_provider.cpp
 # constexpr tests
 
 compile test_uuid_cx.cpp ;
+run test_string_generator_cx.cpp ;
 
 # 'quick' test for CI
 
