@@ -9,11 +9,18 @@
 #include <boost/uuid/uuid.hpp>
 #include <boost/throw_exception.hpp>
 #include <boost/config.hpp>
+#include <boost/config/workaround.hpp>
 #include <string>
 #include <iterator>
 #include <stdexcept>
 #include <cstdio>
 #include <cstddef>
+
+#if BOOST_WORKAROUND(BOOST_GCC, < 60000)
+# define BOOST_UUID_CXX14_CONSTEXPR
+#else
+# define BOOST_UUID_CXX14_CONSTEXPR BOOST_CXX14_CONSTEXPR
+#endif
 
 namespace boost {
 namespace uuids {
@@ -57,7 +64,7 @@ private:
 
     template <typename CharIterator>
     typename std::iterator_traits<CharIterator>::value_type
-    BOOST_CXX14_CONSTEXPR get_next_char( CharIterator& begin, CharIterator end, int& ipos ) const
+    BOOST_UUID_CXX14_CONSTEXPR get_next_char( CharIterator& begin, CharIterator end, int& ipos ) const
     {
         if( begin == end )
         {
@@ -73,7 +80,7 @@ public:
     using result_type = uuid;
 
     template<class CharIterator>
-    BOOST_CXX14_CONSTEXPR uuid operator()( CharIterator begin, CharIterator end ) const
+    BOOST_UUID_CXX14_CONSTEXPR uuid operator()( CharIterator begin, CharIterator end ) const
     {
         using char_type = typename std::iterator_traits<CharIterator>::value_type;
 
@@ -156,17 +163,17 @@ public:
     }
 
     template<class Ch, class Traits, class Alloc>
-    BOOST_CXX14_CONSTEXPR uuid operator()( std::basic_string<Ch, Traits, Alloc> const& s ) const
+    BOOST_UUID_CXX14_CONSTEXPR uuid operator()( std::basic_string<Ch, Traits, Alloc> const& s ) const
     {
         return operator()( s.begin(), s.end() );
     }
 
-    BOOST_CXX14_CONSTEXPR uuid operator()( char const* s ) const
+    BOOST_UUID_CXX14_CONSTEXPR uuid operator()( char const* s ) const
     {
         return operator()( s, s + detail::cx_strlen( s ) );
     }
 
-    BOOST_CXX14_CONSTEXPR uuid operator()( wchar_t const* s ) const
+    BOOST_UUID_CXX14_CONSTEXPR uuid operator()( wchar_t const* s ) const
     {
         return operator()( s, s + detail::cx_strlen( s ) );
     }
@@ -181,7 +188,7 @@ private:
         BOOST_THROW_EXCEPTION( std::runtime_error( std::string( "Invalid UUID string at position " ) + buffer + ": " + error ) );
     }
 
-    BOOST_CXX14_CONSTEXPR unsigned char get_value( char c, int ipos ) const
+    BOOST_UUID_CXX14_CONSTEXPR unsigned char get_value( char c, int ipos ) const
     {
         constexpr char digits[] = "0123456789abcdefABCDEF";
         constexpr std::size_t digits_len = sizeof(digits) / sizeof(char) - 1;
@@ -199,7 +206,7 @@ private:
         return values[ pos - digits ];
     }
 
-    BOOST_CXX14_CONSTEXPR unsigned char get_value( wchar_t c, int ipos ) const
+    BOOST_UUID_CXX14_CONSTEXPR unsigned char get_value( wchar_t c, int ipos ) const
     {
         constexpr wchar_t digits[] = L"0123456789abcdefABCDEF";
         constexpr std::size_t digits_len = sizeof(digits) / sizeof(wchar_t) - 1;
@@ -249,5 +256,7 @@ private:
 };
 
 }} // namespace boost::uuids
+
+#undef BOOST_UUID_CXX14_CONSTEXPR
 
 #endif // BOOST_UUID_STRING_GENERATOR_HPP_INCLUDED
