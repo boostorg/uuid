@@ -3,6 +3,10 @@
 
 :idprefix: changes_
 
+== Changes in Boost 1.90.0
+
+* `string_generator` is now `constexpr` on {cpp}14 and higher.
+
 == Changes in Boost 1.87.0
 
 * Restored the ability to construct a `constexpr uuid` that was inadvertently lost in 1.86.
