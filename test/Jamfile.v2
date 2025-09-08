@@ -211,6 +211,7 @@ run test_constants.cpp ;
 
 compile test_uuid_cx.cpp ;
 run test_string_generator_cx.cpp ;
+run test_constants_cx.cpp ;
 
 # 'quick' test for CI
 

@@ -10,9 +10,9 @@
 namespace boost {
 namespace uuids {
 
-inline uuid nil_uuid() noexcept
+constexpr uuid nil_uuid() noexcept
 {
-    return {{}};
+    return {};
 }
 
 }} // namespace boost::uuids

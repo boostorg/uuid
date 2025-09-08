@@ -85,5 +85,6 @@ boost_test(TYPE run SOURCES test_constants.cpp)
 
 boost_test(TYPE compile SOURCES test_uuid_cx.cpp)
 boost_test(TYPE run SOURCES test_string_generator_cx.cpp)
+boost_test(TYPE run SOURCES test_constants_cx.cpp)
 
 boost_test(TYPE run SOURCES quick.cpp)
