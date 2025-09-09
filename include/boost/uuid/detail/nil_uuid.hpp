@@ -6,13 +6,14 @@
 // https://www.boost.org/LICENSE_1_0.txt
 
 #include <boost/uuid/uuid.hpp>
+#include <boost/config.hpp>
 
 namespace boost {
 namespace uuids {
 
-constexpr uuid nil_uuid() noexcept
+BOOST_CXX14_CONSTEXPR inline uuid nil_uuid() noexcept
 {
-    return {};
+    return {{}};
 }
 
 }} // namespace boost::uuids
