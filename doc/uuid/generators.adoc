@@ -1,7 +1,7 @@
-[#uuid_generators]
-== <boost/uuid/uuid_generators.hpp>
+[#generators]
+== <boost/uuid/generators.hpp>
 
-:idprefix: uuid_generators_
+:idprefix: generators_
 
 === Synopsis
 
