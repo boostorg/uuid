@@ -6,6 +6,7 @@
 == Changes in Boost 1.90.0
 
 * `string_generator` is now `constexpr` on {cpp}14 and higher.
+* Added header `boost/uuid/constants.hpp`.
 
 == Changes in Boost 1.87.0
 
