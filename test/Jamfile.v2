@@ -57,9 +57,9 @@ rule test_headers
 
 alias test_headers : [ test_headers ] ;
 
-# test inclucing all .hpp files in 2 translations units
+# test including all .hpp files in 2 translations units
 # to look for issues when using multiple translation units
-# eg. missing inline on a global functionstate is not missing
+# e.g. missing inline on a global functionstate is not missing
 
 run test_include1.cpp test_include2.cpp ;
 
