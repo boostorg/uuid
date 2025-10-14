@@ -387,6 +387,9 @@ jobs:
           - os: macos-13
           - os: macos-14
           - os: macos-15
+          - os: macos-latest
+            brew: llvm
+            opts: -DCMAKE_C_COMPILER=/opt/homebrew/opt/llvm/bin/clang -DCMAKE_CXX_COMPILER=/opt/homebrew/opt/llvm/bin/clang++
 
     runs-on: ${{matrix.os}}
 
@@ -396,6 +399,10 @@ jobs:
       - name: Install packages
         if: matrix.install
         run: sudo apt-get -y install ${{matrix.install}}
+
+      - name: Install packages via Homebrew
+        if: matrix.brew
+        run: brew install ${{matrix.brew}}
 
       - name: Setup Boost
         run: |
@@ -437,6 +444,9 @@ jobs:
           - os: macos-13
           - os: macos-14
           - os: macos-15
+          - os: macos-latest
+            brew: llvm
+            opts: -DCMAKE_C_COMPILER=/opt/homebrew/opt/llvm/bin/clang -DCMAKE_CXX_COMPILER=/opt/homebrew/opt/llvm/bin/clang++
 
     runs-on: ${{matrix.os}}
 
@@ -446,6 +456,10 @@ jobs:
       - name: Install packages
         if: matrix.install
         run: sudo apt-get -y install ${{matrix.install}}
+
+      - name: Install packages via Homebrew
+        if: matrix.brew
+        run: brew install ${{matrix.brew}}
 
       - name: Setup Boost
         run: |
@@ -497,6 +511,9 @@ jobs:
           - os: macos-13
           - os: macos-14
           - os: macos-15
+          - os: macos-latest
+            brew: llvm
+            opts: -DCMAKE_C_COMPILER=/opt/homebrew/opt/llvm/bin/clang -DCMAKE_CXX_COMPILER=/opt/homebrew/opt/llvm/bin/clang++
 
     runs-on: ${{matrix.os}}
 
@@ -506,6 +523,10 @@ jobs:
       - name: Install packages
         if: matrix.install
         run: sudo apt-get -y install ${{matrix.install}}
+
+      - name: Install packages via Homebrew
+        if: matrix.brew
+        run: brew install ${{matrix.brew}}
 
       - name: Setup Boost
         run: |
