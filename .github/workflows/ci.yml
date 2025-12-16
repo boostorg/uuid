@@ -102,6 +102,14 @@ jobs:
             address-model: 32,64
           - toolset: gcc-13
             cxxstd: "11,14,17,20,2b"
+            instruction-set: haswell
+            cpu-requirements: [ avx2, bmi1, bmi2 ]
+            os: ubuntu-latest
+            container: ubuntu:24.04
+            install: g++-13-multilib
+            address-model: 32,64
+          - toolset: gcc-13
+            cxxstd: "11,14,17,20,2b"
             instruction-set: skylake-avx512
             cpu-requirements: [ avx512f, avx512cd, avx512vl, avx512dq, avx512bw, bmi1, bmi2 ]
             os: ubuntu-latest
@@ -227,6 +235,14 @@ jobs:
             cxxstd: "11,14,17,20,2b"
             instruction-set: nehalem
             cpu-requirements: [ sse4_1, sse4_2 ]
+            container: ubuntu:24.04
+            os: ubuntu-latest
+            install: clang-17
+          - toolset: clang
+            compiler: clang++-17
+            cxxstd: "11,14,17,20,2b"
+            instruction-set: haswell
+            cpu-requirements: [ avx2, bmi1, bmi2 ]
             container: ubuntu:24.04
             os: ubuntu-latest
             install: clang-17
