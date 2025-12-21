@@ -8,6 +8,7 @@
 
 #include <boost/uuid/uuid.hpp>
 #include <boost/uuid/detail/to_chars.hpp>
+#include <boost/uuid/detail/from_chars.hpp>
 #include <boost/uuid/detail/static_assert.hpp>
 #include <boost/config.hpp>
 #include <iosfwd>

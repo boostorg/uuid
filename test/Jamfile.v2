@@ -91,8 +91,12 @@ run test_comparison.cpp : : : <define>BOOST_UUID_NO_SIMD <define>BOOST_UUID_REPO
 run test_io.cpp
   : : : <library>/boost/lexical_cast//boost_lexical_cast <library>/boost/predef//boost_predef -$(WERROR) ;
 run test_io_2.cpp ;
+
 run test_to_chars.cpp ;
 run test_to_chars_2.cpp ;
+
+run test_from_chars.cpp ;
+run test_from_chars_2.cpp ;
 
 # test uuid_clock
 
