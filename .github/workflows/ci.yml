@@ -213,9 +213,15 @@ jobs:
           - toolset: clang
             compiler: clang++-20
             cxxstd: "11,14,17,20,23,2c"
-            container: ubuntu:25.04
+            container: ubuntu:24.04
             os: ubuntu-latest
             install: clang-20
+          - toolset: clang
+            compiler: clang++-21
+            cxxstd: "11,14,17,20,23,2c"
+            container: ubuntu:25.10
+            os: ubuntu-latest
+            install: clang-21
           - toolset: clang
             compiler: clang++-17
             cxxstd: "11,14,17,20,2b"
@@ -234,13 +240,13 @@ jobs:
             install: clang-17
           - toolset: clang
             cxxstd: "11,14,17,20,2b"
-            os: macos-13
-          - toolset: clang
-            cxxstd: "11,14,17,20,2b"
             os: macos-14
           - toolset: clang
-            cxxstd: "11,14,17,20,2b"
+            cxxstd: "11,14,17,20,23,2c"
             os: macos-15
+          - toolset: clang
+            cxxstd: "11,14,17,20,23,2c"
+            os: macos-26
 
     runs-on: ${{matrix.os}}
 
@@ -384,9 +390,9 @@ jobs:
           - os: ubuntu-24.04
           - os: ubuntu-latest
             opts: -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++
-          - os: macos-13
           - os: macos-14
           - os: macos-15
+          - os: macos-26
           - os: macos-latest
             brew: llvm
             opts: -DCMAKE_C_COMPILER=/opt/homebrew/opt/llvm/bin/clang -DCMAKE_CXX_COMPILER=/opt/homebrew/opt/llvm/bin/clang++
@@ -441,9 +447,9 @@ jobs:
           - os: ubuntu-24.04
           - os: ubuntu-latest
             opts: -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++
-          - os: macos-13
           - os: macos-14
           - os: macos-15
+          - os: macos-26
           - os: macos-latest
             brew: llvm
             opts: -DCMAKE_C_COMPILER=/opt/homebrew/opt/llvm/bin/clang -DCMAKE_CXX_COMPILER=/opt/homebrew/opt/llvm/bin/clang++
@@ -508,9 +514,9 @@ jobs:
           - os: ubuntu-24.04
           - os: ubuntu-latest
             opts: -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++
-          - os: macos-13
           - os: macos-14
           - os: macos-15
+          - os: macos-26
           - os: macos-latest
             brew: llvm
             opts: -DCMAKE_C_COMPILER=/opt/homebrew/opt/llvm/bin/clang -DCMAKE_CXX_COMPILER=/opt/homebrew/opt/llvm/bin/clang++
