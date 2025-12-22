@@ -43,7 +43,7 @@ constexpr char8_t const* from_chars_digits( char8_t const* ) noexcept
 
 template<class Ch>
 BOOST_CXX14_CONSTEXPR inline
-unsigned char from_chars_digit_value( Ch ch )
+unsigned char from_chars_digit_value( Ch ch ) noexcept
 {
     constexpr Ch const* digits = detail::from_chars_digits( static_cast<Ch const*>( nullptr ) );
 
@@ -64,7 +64,7 @@ unsigned char from_chars_digit_value( Ch ch )
 
 template<class Ch>
 BOOST_CXX14_CONSTEXPR inline
-unsigned char from_chars_is_dash( Ch ch )
+unsigned char from_chars_is_dash( Ch ch ) noexcept
 {
     constexpr Ch const* digits = detail::from_chars_digits( static_cast<Ch const*>( nullptr ) );
 
@@ -79,7 +79,9 @@ enum class from_chars_error
 
     unexpected_end_of_input,
     hex_digit_expected,
-    dash_expected
+    dash_expected,
+    closing_brace_expected,
+    unexpected_extra_input
 };
 
 template<class Ch> struct from_chars_result
