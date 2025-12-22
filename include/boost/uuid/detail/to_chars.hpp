@@ -12,29 +12,29 @@ namespace boost {
 namespace uuids {
 namespace detail {
 
-constexpr char const* digits( char const* ) noexcept
+constexpr char const* to_chars_digits( char const* ) noexcept
 {
     return "0123456789abcdef-";
 }
 
-constexpr wchar_t const* digits( wchar_t const* ) noexcept
+constexpr wchar_t const* to_chars_digits( wchar_t const* ) noexcept
 {
     return L"0123456789abcdef-";
 }
 
-constexpr char16_t const* digits( char16_t const* ) noexcept
+constexpr char16_t const* to_chars_digits( char16_t const* ) noexcept
 {
     return u"0123456789abcdef-";
 }
 
-constexpr char32_t const* digits( char32_t const* ) noexcept
+constexpr char32_t const* to_chars_digits( char32_t const* ) noexcept
 {
     return U"0123456789abcdef-";
 }
 
 #if defined(__cpp_char8_t) && __cpp_char8_t >= 201811L
 
-constexpr char8_t const* digits( char8_t const* ) noexcept
+constexpr char8_t const* to_chars_digits( char8_t const* ) noexcept
 {
     return u8"0123456789abcdef-";
 }
@@ -43,18 +43,18 @@ constexpr char8_t const* digits( char8_t const* ) noexcept
 
 template<class Ch> inline Ch* to_chars( uuid const& u, Ch* out ) noexcept
 {
-    constexpr Ch const* p = digits( static_cast<Ch const*>( nullptr ) );
+    constexpr Ch const* digits = to_chars_digits( static_cast<Ch const*>( nullptr ) );
 
     for( std::size_t i = 0; i < 16; ++i )
     {
         std::uint8_t ch = u.data()[ i ];
 
-        *out++ = p[ (ch >> 4) & 0x0F ];
-        *out++ = p[ ch & 0x0F ];
+        *out++ = digits[ (ch >> 4) & 0x0F ];
+        *out++ = digits[ ch & 0x0F ];
 
         if( i == 3 || i == 5 || i == 7 || i == 9 )
         {
-            *out++ = p[ 16 ];
+            *out++ = digits[ 16 ];
         }
     }
 
