@@ -7,13 +7,24 @@
 #include <boost/core/lightweight_test.hpp>
 #include <boost/config.hpp>
 
-BOOST_CXX14_CONSTEXPR boost::uuids::string_generator gen;
+#define CXX14_CONSTEXPR BOOST_CXX14_CONSTEXPR
 
-BOOST_CXX14_CONSTEXPR auto u1 = gen( "00000000-0000-0000-0000-000000000000" );
-BOOST_CXX14_CONSTEXPR auto u2 = gen( "0123456789abcdef0123456789ABCDEF" );
-BOOST_CXX14_CONSTEXPR auto u3 = gen( "{0123456789abcdef0123456789ABCDEF}" );
-BOOST_CXX14_CONSTEXPR auto u4 = gen( "01234567-89AB-CDEF-0123-456789abcdef" );
-BOOST_CXX14_CONSTEXPR auto u5 = gen( "{01234567-89AB-CDEF-0123-456789abcdef}" );
+#if defined(BOOST_GCC) && BOOST_GCC < 60000
+
+// GCC 5 doesn't consider string_generator::operator()(first, last) constexpr
+
+# undef CXX14_CONSTEXPR
+# define CXX14_CONSTEXPR
+
+#endif
+
+CXX14_CONSTEXPR boost::uuids::string_generator gen;
+
+CXX14_CONSTEXPR auto u1 = gen( "00000000-0000-0000-0000-000000000000" );
+CXX14_CONSTEXPR auto u2 = gen( "0123456789abcdef0123456789ABCDEF" );
+CXX14_CONSTEXPR auto u3 = gen( "{0123456789abcdef0123456789ABCDEF}" );
+CXX14_CONSTEXPR auto u4 = gen( "01234567-89AB-CDEF-0123-456789abcdef" );
+CXX14_CONSTEXPR auto u5 = gen( "{01234567-89AB-CDEF-0123-456789abcdef}" );
 
 int main()
 {
