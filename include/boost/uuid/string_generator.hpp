@@ -8,11 +8,9 @@
 
 #include <boost/uuid/uuid.hpp>
 #include <boost/uuid/detail/from_chars.hpp>
-#include <boost/throw_exception.hpp>
+#include <boost/uuid/detail/throw_invalid_uuid.hpp>
 #include <boost/config.hpp>
 #include <string>
-#include <stdexcept>
-#include <cstdio>
 #include <cstddef>
 
 namespace boost {
@@ -27,28 +25,6 @@ BOOST_CXX14_CONSTEXPR std::size_t cx_strlen( Ch const* s ) noexcept
     std::size_t r = 0;
     while( *s ) ++s, ++r;
     return r;
-}
-
-BOOST_CXX14_CONSTEXPR inline char const* fc_error_to_string( from_chars_error err ) noexcept
-{
-    switch( err )
-    {
-    case from_chars_error::none: return "no error";
-    case from_chars_error::unexpected_end_of_input: return "unexpected end of input";
-    case from_chars_error::hex_digit_expected: return "hex digit expected";
-    case from_chars_error::dash_expected: return "dash expected";
-    case from_chars_error::closing_brace_expected: return "closing brace expected";
-    case from_chars_error::unexpected_extra_input: return "unexpected extra input";
-    default: return "unknown error";
-    }
-}
-
-BOOST_NORETURN inline void throw_invalid_uuid( int pos, from_chars_error err )
-{
-    char buffer[ 16 ];
-    std::snprintf( buffer, sizeof( buffer ), "%d", pos );
-
-    BOOST_THROW_EXCEPTION( std::runtime_error( std::string( "Invalid UUID string at position " ) + buffer + ": " + fc_error_to_string( err ) ) );
 }
 
 } // namespace detail
