@@ -11,7 +11,6 @@
 #include <boost/throw_exception.hpp>
 #include <boost/config.hpp>
 #include <string>
-#include <iterator>
 #include <stdexcept>
 #include <cstdio>
 #include <cstddef>
@@ -84,7 +83,7 @@ public:
 
         // check open brace
 
-        bool has_open_brace = is_open_brace( *first );
+        bool has_open_brace = detail::from_chars_is_opening_brace( *first );
 
         if( has_open_brace )
         {
@@ -137,7 +136,7 @@ public:
                     return u;
                 }
 
-                has_dashes = is_dash( *first );
+                has_dashes = detail::from_chars_is_dash( *first );
 
                 if( has_dashes )
                 {
@@ -156,7 +155,7 @@ public:
                         return u;
                     }
 
-                    if( is_dash( *first ) )
+                    if( detail::from_chars_is_dash( *first ) )
                     {
                         ++first, ++pos;
                     }
@@ -179,7 +178,7 @@ public:
                 return u;
             }
 
-            if( is_close_brace( *first ) )
+            if( detail::from_chars_is_closing_brace( *first ) )
             {
                 ++first, ++pos;
             }
@@ -234,38 +233,6 @@ public:
     BOOST_CXX14_CONSTEXPR uuid operator()( wchar_t const* s ) const
     {
         return operator()( s, s + detail::cx_strlen( s ) );
-    }
-
-private:
-
-    static constexpr bool is_dash( char c ) noexcept
-    {
-        return c == '-';
-    }
-
-    static constexpr bool is_dash( wchar_t c ) noexcept
-    {
-        return c == L'-';
-    }
-
-    static constexpr bool is_open_brace( char c ) noexcept
-    {
-        return c == '{';
-    }
-
-    static constexpr bool is_open_brace( wchar_t c ) noexcept
-    {
-        return c == L'{';
-    }
-
-    static constexpr bool is_close_brace( char c ) noexcept
-    {
-        return c == '}';
-    }
-
-    static constexpr bool is_close_brace( wchar_t c ) noexcept
-    {
-        return c == L'}';
     }
 };
 

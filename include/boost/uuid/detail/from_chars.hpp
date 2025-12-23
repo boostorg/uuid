@@ -14,29 +14,29 @@ namespace detail {
 
 constexpr char const* from_chars_digits( char const* ) noexcept
 {
-    return "0123456789ABCDEFabcdef-";
+    return "0123456789ABCDEFabcdef-{}";
 }
 
 constexpr wchar_t const* from_chars_digits( wchar_t const* ) noexcept
 {
-    return L"0123456789ABCDEFabcdef-";
+    return L"0123456789ABCDEFabcdef-{}";
 }
 
 constexpr char16_t const* from_chars_digits( char16_t const* ) noexcept
 {
-    return u"0123456789ABCDEFabcdef-";
+    return u"0123456789ABCDEFabcdef-{}";
 }
 
 constexpr char32_t const* from_chars_digits( char32_t const* ) noexcept
 {
-    return U"0123456789ABCDEFabcdef-";
+    return U"0123456789ABCDEFabcdef-{}";
 }
 
 #if defined(__cpp_char8_t) && __cpp_char8_t >= 201811L
 
 constexpr char8_t const* from_chars_digits( char8_t const* ) noexcept
 {
-    return u8"0123456789ABCDEFabcdef-";
+    return u8"0123456789ABCDEFabcdef-{}";
 }
 
 #endif
@@ -67,8 +67,23 @@ BOOST_CXX14_CONSTEXPR inline
 unsigned char from_chars_is_dash( Ch ch ) noexcept
 {
     constexpr Ch const* digits = detail::from_chars_digits( static_cast<Ch const*>( nullptr ) );
-
     return ch == digits[ 22 ];
+}
+
+template<class Ch>
+BOOST_CXX14_CONSTEXPR inline
+unsigned char from_chars_is_opening_brace( Ch ch ) noexcept
+{
+    constexpr Ch const* digits = detail::from_chars_digits( static_cast<Ch const*>( nullptr ) );
+    return ch == digits[ 23 ];
+}
+
+template<class Ch>
+BOOST_CXX14_CONSTEXPR inline
+unsigned char from_chars_is_closing_brace( Ch ch ) noexcept
+{
+    constexpr Ch const* digits = detail::from_chars_digits( static_cast<Ch const*>( nullptr ) );
+    return ch == digits[ 24 ];
 }
 
 } // namespace detail
