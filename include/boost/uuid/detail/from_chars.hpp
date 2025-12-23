@@ -64,7 +64,7 @@ unsigned char from_chars_digit_value( Ch ch ) noexcept
 
 template<class Ch>
 BOOST_CXX14_CONSTEXPR inline
-unsigned char from_chars_is_dash( Ch ch ) noexcept
+bool from_chars_is_dash( Ch ch ) noexcept
 {
     constexpr Ch const* digits = detail::from_chars_digits( static_cast<Ch const*>( nullptr ) );
     return ch == digits[ 22 ];
@@ -72,7 +72,7 @@ unsigned char from_chars_is_dash( Ch ch ) noexcept
 
 template<class Ch>
 BOOST_CXX14_CONSTEXPR inline
-unsigned char from_chars_is_opening_brace( Ch ch ) noexcept
+bool from_chars_is_opening_brace( Ch ch ) noexcept
 {
     constexpr Ch const* digits = detail::from_chars_digits( static_cast<Ch const*>( nullptr ) );
     return ch == digits[ 23 ];
@@ -80,7 +80,7 @@ unsigned char from_chars_is_opening_brace( Ch ch ) noexcept
 
 template<class Ch>
 BOOST_CXX14_CONSTEXPR inline
-unsigned char from_chars_is_closing_brace( Ch ch ) noexcept
+bool from_chars_is_closing_brace( Ch ch ) noexcept
 {
     constexpr Ch const* digits = detail::from_chars_digits( static_cast<Ch const*>( nullptr ) );
     return ch == digits[ 24 ];
