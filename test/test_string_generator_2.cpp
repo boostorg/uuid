@@ -6,7 +6,6 @@
 #include <boost/uuid/uuid.hpp>
 #include <boost/uuid/uuid_io.hpp>
 #include <boost/core/lightweight_test.hpp>
-#include <string>
 
 using namespace boost::uuids;
 
