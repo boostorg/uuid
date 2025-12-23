@@ -7,9 +7,20 @@
 #include <boost/uuid/uuid_io.hpp>
 #include <boost/core/lightweight_test.hpp>
 
+#define CXX14_CONSTEXPR BOOST_CXX14_CONSTEXPR
+
+#if defined(BOOST_GCC) && BOOST_GCC < 60000
+
+// GCC 5 doesn't consider string_generator::operator()(first, last) constexpr
+
+# undef CXX14_CONSTEXPR
+# define CXX14_CONSTEXPR
+
+#endif
+
 using namespace boost::uuids;
 
-#define TEST(str) { BOOST_CXX14_CONSTEXPR auto u = string_generator()(str); BOOST_TEST_EQ(u, expected); }
+#define TEST(str) { CXX14_CONSTEXPR auto u = string_generator()(str); BOOST_TEST_EQ(u, expected); }
 
 int main()
 {
