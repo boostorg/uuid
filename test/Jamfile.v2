@@ -105,7 +105,9 @@ run test_uuid_clock.cpp ;
 # test generators
 
 run test_nil_generator.cpp ;
+
 run test_string_generator.cpp ;
+run test_string_generator_2.cpp ;
 
 run test_random_generator.cpp
   : : : <library>/boost/random//boost_random <library>/boost/predef//boost_predef ;
