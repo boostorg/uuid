@@ -201,12 +201,8 @@ public:
         return operator()( s.begin(), s.end() );
     }
 
-    BOOST_CXX14_CONSTEXPR uuid operator()( char const* s ) const
-    {
-        return operator()( s, s + detail::cx_strlen( s ) );
-    }
-
-    BOOST_CXX14_CONSTEXPR uuid operator()( wchar_t const* s ) const
+    template<class Ch>
+    BOOST_CXX14_CONSTEXPR uuid operator()( Ch const* s ) const
     {
         return operator()( s, s + detail::cx_strlen( s ) );
     }
