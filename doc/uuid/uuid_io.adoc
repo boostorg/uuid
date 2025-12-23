@@ -38,6 +38,29 @@ template<class Ch, std::size_t N>
 std::string to_string( uuid const& u );
 std::wstring to_wstring( uuid const& u );
 
+// from_chars
+
+enum class from_chars_error
+{
+    none = 0,
+
+    unexpected_end_of_input,
+    hex_digit_expected,
+    dash_expected,
+    closing_brace_expected,
+    unexpected_extra_input
+};
+
+template<class Ch> struct from_chars_result
+{
+    Ch const* ptr;
+    from_chars_error ec;
+};
+
+template<class Ch>
+  constexpr from_chars_result<Ch>
+    from_chars( Ch const* first, Ch const* last, uuid& u ) noexcept;
+
 }} // namespace boost::uuids
 ----
 
@@ -209,3 +232,21 @@ std::string s1 = to_string( u );
 
 std::wstring s2 = to_wstring( u );
 ```
+
+=== from_chars
+
+```
+template<class Ch>
+  constexpr from_chars_result<Ch>
+    from_chars( Ch const* first, Ch const* last, uuid& u ) noexcept;
+```
+
+Requires: :: `Ch` must be a character type (one of `char`, `wchar_t`, `char8_t`, `char16_t`, `char32_t`).
+
+Effects: ::
+  Parses a `uuid` string representation from the characters in the range `[first, last)` and stores the result in `u`.
+  On error, the returned `from_chars_result` struct contains the error code in `ec` and `ptr` points to the character at which parsing failed.
+  On success, `ec` contains `from_chars_error::none` and `ptr` points to the character immediately after the last `uuid` character.
+
+NOTE: The values `from_chars_error::closing_brace_expected` and `from_chars_error::unexpected_extra_input` are never returned by `from_chars`.
+  They can be returned from the nonthrowing `string_generator::operator()` overload.

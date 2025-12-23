@@ -15,13 +15,17 @@ struct string_generator
     using result_type = uuid;
 
     template<class Ch, class Traits, class Alloc>
-      uuid operator()( std::basic_string<Ch, Traits, Alloc> const& s ) const;
+      constexpr uuid operator()( std::basic_string<Ch, Traits, Alloc> const& s ) const;
 
-    uuid operator()( char const* s ) const;
-    uuid operator()( wchar_t const* s ) const;
+    template<class Ch>
+      constexpr uuid operator()( Ch const* s ) const;
 
     template<class CharIterator>
-      uuid operator()( CharIterator begin, CharIterator end ) const;
+      constexpr uuid operator()( CharIterator first, CharIterator last ) const;
+
+    template<class CharIterator>
+      constexpr uuid operator()( CharIterator first, CharIterator last,
+        int& pos, from_chars_error& err ) const noexcept;
 };
 
 }} // namespace boost::uuids
@@ -52,10 +56,10 @@ Invalid input will generate a `std::runtime_error` exception.
 
 ```
 template<class Ch, class Traits, class Alloc>
-  uuid operator()( std::basic_string<Ch, Traits, Alloc> const& s ) const;
+  constexpr uuid operator()( std::basic_string<Ch, Traits, Alloc> const& s ) const;
 ```
 
-Requires: :: The character type `Ch` of `s` must be either `char` or `wchar_t`.
+Requires: :: The character type `Ch` of `s` must be one of `char`, `wchar_t`, `char8_t`, `char16_t`, `char32_t`.
 
 Effects: :: Parses the string `s` into a `uuid` and returns the result.
 
@@ -71,9 +75,11 @@ uuid u2 = gen( std::wstring( L"01234567-89AB-CDEF-0123-456789ABCDEF" ) );
 ```
 
 ```
-uuid operator()( char const* s ) const;
-uuid operator()( wchar_t const* s ) const;
+template<class Ch>
+  constexpr uuid operator()( Ch const* s ) const;
 ```
+
+Requires: :: `Ch` must be a character type (one of `char`, `wchar_t`, `char8_t`, `char16_t`, `char32_t`).
 
 Effects: :: Parses the string `s` into a `uuid` and returns the result.
 
@@ -90,12 +96,12 @@ uuid u2 = gen( L"01234567-89ab-cdef-0123-456789abcdef" );
 
 ```
 template<class CharIterator>
-  uuid operator()( CharIterator begin, CharIterator end ) const;
+  constexpr uuid operator()( CharIterator first, CharIterator last ) const;
 ```
 
-Requires: :: `CharIterator` must be an input iterator with a value type of either `char` or `wchar_t`.
+Requires: :: `CharIterator` must be an input iterator with a character value type (one of `char`, `wchar_t`, `char8_t`, `char16_t`, `char32_t`).
 
-Effects: :: Parses the character sequence `[begin, end)` into a `uuid` and returns the result.
+Effects: :: Parses the character sequence `[first, last)` into a `uuid` and returns the result.
 
 Example: ::
 +
@@ -110,3 +116,18 @@ uuid u1 = gen( s1.begin(), s1.end() );
 std::wstring s2( L"01234567-89AB-CDEF-0123-456789ABCDEF" );
 uuid u2 = gen( s2.begin(), s2.end() );
 ```
+
+```
+template<class CharIterator>
+  constexpr uuid operator()( CharIterator first, CharIterator last,
+    int& pos, from_chars_error& err ) const noexcept;
+```
+
+Requires: :: `CharIterator` must be an input iterator with a character value type (one of `char`, `wchar_t`, `char8_t`, `char16_t`, `char32_t`).
+
+Effects: ::
+  Parses the character sequence `[first, last)` into a `uuid` and returns the result.
+  On error, `pos` contains the position at which parsing failed, and `err` contains the error.
+  On success, `err` contains `from_chars_error::none`.
+
+NOTE:  Unlike `from_chars`, this function does not allow extra input; if after a complete UUID is parsed, unconsumed characters remain, `err` is set to `from_chars_error::unexpected_extra_input`.

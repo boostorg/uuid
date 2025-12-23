@@ -3,6 +3,12 @@
 
 :idprefix: changes_
 
+== Changes in Boost 1.91.0
+
+* Added `from_chars` to `boost/uuid/uuid_io.hpp`.
+* Added a `noexcept` `operator()` overload to `string_generator`.
+* `string_generator` now supports the Unicode character types in addition to `char` and `wchar_t`.
+
 == Changes in Boost 1.90.0
 
 * `string_generator` is now `constexpr` on {cpp}14 and higher.
