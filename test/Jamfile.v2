@@ -216,6 +216,7 @@ run test_constants.cpp ;
 # constexpr tests
 
 compile test_uuid_cx.cpp ;
+run test_uuid_cx2.cpp ;
 
 run test_string_generator_cx.cpp ;
 run test_string_generator_cx2.cpp ;

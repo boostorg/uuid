@@ -5,6 +5,8 @@
 // Distributed under the Boost Software License, Version 1.0.
 // https://www.boost.org/LICENSE_1_0.txt
 
+#include <boost/uuid/detail/is_constant_evaluated.hpp>
+#include <boost/config.hpp>
 #include <cstring>
 #include <cstdint>
 
@@ -46,17 +48,17 @@ namespace detail {
 
 #if defined(__GNUC__) || defined(__clang__)
 
-inline std::uint16_t byteswap( std::uint16_t x ) noexcept
+BOOST_CXX14_CONSTEXPR inline std::uint16_t byteswap( std::uint16_t x ) noexcept
 {
     return __builtin_bswap16( x );
 }
 
-inline std::uint32_t byteswap( std::uint32_t x ) noexcept
+BOOST_CXX14_CONSTEXPR inline std::uint32_t byteswap( std::uint32_t x ) noexcept
 {
     return __builtin_bswap32( x );
 }
 
-inline std::uint64_t byteswap( std::uint64_t x ) noexcept
+BOOST_CXX14_CONSTEXPR inline std::uint64_t byteswap( std::uint64_t x ) noexcept
 {
     return __builtin_bswap64( x );
 }
@@ -80,18 +82,18 @@ inline std::uint64_t byteswap( std::uint64_t x ) noexcept
 
 #else
 
-inline std::uint16_t byteswap( std::uint16_t x ) noexcept
+BOOST_CXX14_CONSTEXPR inline std::uint16_t byteswap( std::uint16_t x ) noexcept
 {
     return static_cast<std::uint16_t>( x << 8 | x >> 8 );
 }
 
-inline std::uint32_t byteswap( std::uint32_t x ) noexcept
+BOOST_CXX14_CONSTEXPR inline std::uint32_t byteswap( std::uint32_t x ) noexcept
 {
     std::uint32_t step16 = x << 16 | x >> 16;
     return ((step16 << 8) & 0xff00ff00) | ((step16 >> 8) & 0x00ff00ff);
 }
 
-inline std::uint64_t byteswap( std::uint64_t x ) noexcept
+BOOST_CXX14_CONSTEXPR inline std::uint64_t byteswap( std::uint64_t x ) noexcept
 {
     std::uint64_t step32 = x << 32 | x >> 32;
     std::uint64_t step16 = (step32 & 0x0000FFFF0000FFFFULL) << 16 | (step32 & 0xFFFF0000FFFF0000ULL) >> 16;
@@ -134,9 +136,14 @@ inline std::uint16_t load_little_u16( void const* p ) noexcept
 #endif
 }
 
-inline std::uint16_t load_big_u16( void const* p ) noexcept
+BOOST_CXX14_CONSTEXPR inline std::uint16_t load_big_u16( unsigned char const* p ) noexcept
 {
-    std::uint16_t tmp;
+    if( is_constant_evaluated() )
+    {
+        return static_cast<std::uint16_t>( ( p[ 0 ] << 8 ) | p[ 1 ] );
+    }
+
+    std::uint16_t tmp = {};
     std::memcpy( &tmp, p, sizeof( tmp ) );
 
 #if BOOST_UUID_BYTE_ORDER == BOOST_UUID_ORDER_BIG_ENDIAN
@@ -175,9 +182,19 @@ inline std::uint32_t load_little_u32( void const* p ) noexcept
 #endif
 }
 
-inline std::uint32_t load_big_u32( void const* p ) noexcept
+BOOST_CXX14_CONSTEXPR inline std::uint32_t load_big_u32( unsigned char const* p ) noexcept
 {
-    std::uint32_t tmp;
+    if( is_constant_evaluated() )
+    {
+        return
+
+            static_cast<std::uint32_t>( p[ 0 ] ) << 24 |
+            static_cast<std::uint32_t>( p[ 1 ] ) << 16 |
+            static_cast<std::uint32_t>( p[ 2 ] ) <<  8 |
+            static_cast<std::uint32_t>( p[ 3 ] );
+    }
+
+    std::uint32_t tmp = {};
     std::memcpy( &tmp, p, sizeof( tmp ) );
 
 #if BOOST_UUID_BYTE_ORDER == BOOST_UUID_ORDER_BIG_ENDIAN
@@ -216,9 +233,23 @@ inline std::uint64_t load_little_u64( void const* p ) noexcept
 #endif
 }
 
-inline std::uint64_t load_big_u64( void const* p ) noexcept
+BOOST_CXX14_CONSTEXPR inline std::uint64_t load_big_u64( unsigned char const* p ) noexcept
 {
-    std::uint64_t tmp;
+    if( is_constant_evaluated() )
+    {
+        return
+
+            static_cast<std::uint64_t>( p[ 0 ] ) << 56 |
+            static_cast<std::uint64_t>( p[ 1 ] ) << 48 |
+            static_cast<std::uint64_t>( p[ 2 ] ) << 40 |
+            static_cast<std::uint64_t>( p[ 3 ] ) << 32 |
+            static_cast<std::uint64_t>( p[ 4 ] ) << 24 |
+            static_cast<std::uint64_t>( p[ 5 ] ) << 16 |
+            static_cast<std::uint64_t>( p[ 6 ] ) <<  8 |
+            static_cast<std::uint64_t>( p[ 7 ] );
+    }
+
+    std::uint64_t tmp = {};
     std::memcpy( &tmp, p, sizeof( tmp ) );
 
 #if BOOST_UUID_BYTE_ORDER == BOOST_UUID_ORDER_BIG_ENDIAN
