@@ -14,6 +14,9 @@
 #define BOOST_UUID_DETAIL_UUID_X86_IPP_INCLUDED_
 
 #include <boost/uuid/detail/endian.hpp>
+#include <boost/uuid/detail/cstring.hpp>
+#include <boost/uuid/detail/is_constant_evaluated.hpp>
+#include <boost/config.hpp>
 #include <cstdint>
 
 #if defined(BOOST_UUID_REPORT_IMPLEMENTATION)
@@ -102,53 +105,55 @@ BOOST_FORCEINLINE void compare(uuid const& lhs, uuid const& rhs, std::uint32_t& 
 
 } // namespace detail
 
-inline bool uuid::is_nil() const noexcept
+BOOST_CXX14_CONSTEXPR inline bool operator== (uuid const& lhs, uuid const& rhs) noexcept
 {
-    __m128i mm = uuids::detail::load_unaligned_si128(data);
-#if defined(BOOST_UUID_USE_SSE41)
-    return _mm_test_all_zeros(mm, mm) != 0;
-#else
-    mm = _mm_cmpeq_epi32(mm, _mm_setzero_si128());
-    return _mm_movemask_epi8(mm) == 0xFFFF;
-#endif
-}
-
-inline void uuid::swap(uuid& rhs) noexcept
-{
-    __m128i mm_this = uuids::detail::load_unaligned_si128(data);
-    __m128i mm_rhs = uuids::detail::load_unaligned_si128(rhs.data);
-    _mm_storeu_si128(reinterpret_cast< __m128i* >(rhs.data+0), mm_this);
-    _mm_storeu_si128(reinterpret_cast< __m128i* >(data+0), mm_rhs);
-}
-
-inline bool operator== (uuid const& lhs, uuid const& rhs) noexcept
-{
-    __m128i mm_left = uuids::detail::load_unaligned_si128(lhs.data);
-    __m128i mm_right = uuids::detail::load_unaligned_si128(rhs.data);
+    if( detail::is_constant_evaluated() )
+    {
+        return detail::memcmp( lhs.data(), rhs.data(), 16 ) == 0;
+    }
+    else
+    {
+        __m128i mm_left = uuids::detail::load_unaligned_si128(lhs.data);
+        __m128i mm_right = uuids::detail::load_unaligned_si128(rhs.data);
 
 #if defined(BOOST_UUID_USE_SSE41)
-    __m128i mm = _mm_xor_si128(mm_left, mm_right);
-    return _mm_test_all_zeros(mm, mm) != 0;
+        __m128i mm = _mm_xor_si128(mm_left, mm_right);
+        return _mm_test_all_zeros(mm, mm) != 0;
 #else
-    __m128i mm_cmp = _mm_cmpeq_epi32(mm_left, mm_right);
-    return _mm_movemask_epi8(mm_cmp) == 0xFFFF;
+        __m128i mm_cmp = _mm_cmpeq_epi32(mm_left, mm_right);
+        return _mm_movemask_epi8(mm_cmp) == 0xFFFF;
 #endif
+    }
 }
 
-inline bool operator< (uuid const& lhs, uuid const& rhs) noexcept
+BOOST_CXX14_CONSTEXPR inline bool operator< (uuid const& lhs, uuid const& rhs) noexcept
 {
-    std::uint32_t cmp, rcmp;
-    uuids::detail::compare(lhs, rhs, cmp, rcmp);
-    return cmp < rcmp;
+    if( detail::is_constant_evaluated() )
+    {
+        return detail::memcmp( lhs.data(), rhs.data(), 16 ) < 0;
+    }
+    else
+    {
+        std::uint32_t cmp = 0, rcmp = 0;
+        uuids::detail::compare(lhs, rhs, cmp, rcmp);
+        return cmp < rcmp;
+    }
 }
 
 #if defined(BOOST_UUID_HAS_THREE_WAY_COMPARISON)
 
-inline std::strong_ordering operator<=> (uuid const& lhs, uuid const& rhs) noexcept
+BOOST_CXX14_CONSTEXPR inline std::strong_ordering operator<=> (uuid const& lhs, uuid const& rhs) noexcept
 {
-    std::uint32_t cmp, rcmp;
-    uuids::detail::compare(lhs, rhs, cmp, rcmp);
-    return cmp <=> rcmp;
+    if( detail::is_constant_evaluated() )
+    {
+        return detail::memcmp( lhs.data(), rhs.data(), 16 ) <=> 0;
+    }
+    else
+    {
+        std::uint32_t cmp = 0, rcmp = 0;
+        uuids::detail::compare(lhs, rhs, cmp, rcmp);
+        return cmp <=> rcmp;
+    }
 }
 
 #endif

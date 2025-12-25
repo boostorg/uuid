@@ -136,7 +136,7 @@ public:
 
     // is_nil
 
-    bool is_nil() const noexcept;
+    BOOST_CXX14_CONSTEXPR bool is_nil() const noexcept;
 
     // variant
 
@@ -272,42 +272,55 @@ public:
 
     // swap
 
-    void swap( uuid& rhs ) noexcept;
+    BOOST_CXX14_CONSTEXPR void swap( uuid& rhs ) noexcept
+    {
+        uuid tmp( *this );
+        *this = rhs;
+        rhs = tmp;
+    }
 };
 
 // operators
 
-inline bool operator==( uuid const& lhs, uuid const& rhs ) noexcept;
-inline bool operator< ( uuid const& lhs, uuid const& rhs ) noexcept;
+BOOST_CXX14_CONSTEXPR inline bool operator==( uuid const& lhs, uuid const& rhs ) noexcept;
+BOOST_CXX14_CONSTEXPR inline bool operator< ( uuid const& lhs, uuid const& rhs ) noexcept;
 
-inline bool operator!=( uuid const& lhs, uuid const& rhs ) noexcept
+BOOST_CXX14_CONSTEXPR inline bool operator!=( uuid const& lhs, uuid const& rhs ) noexcept
 {
     return !(lhs == rhs);
 }
 
-inline bool operator>( uuid const& lhs, uuid const& rhs ) noexcept
+BOOST_CXX14_CONSTEXPR inline bool operator>( uuid const& lhs, uuid const& rhs ) noexcept
 {
     return rhs < lhs;
 }
-inline bool operator<=( uuid const& lhs, uuid const& rhs ) noexcept
+
+BOOST_CXX14_CONSTEXPR inline bool operator<=( uuid const& lhs, uuid const& rhs ) noexcept
 {
     return !(rhs < lhs);
 }
 
-inline bool operator>=( uuid const& lhs, uuid const& rhs ) noexcept
+BOOST_CXX14_CONSTEXPR inline bool operator>=( uuid const& lhs, uuid const& rhs ) noexcept
 {
     return !(lhs < rhs);
 }
 
 #if defined(BOOST_UUID_HAS_THREE_WAY_COMPARISON)
 
-inline std::strong_ordering operator<=>( uuid const& lhs, uuid const& rhs ) noexcept;
+BOOST_CXX14_CONSTEXPR inline std::strong_ordering operator<=>( uuid const& lhs, uuid const& rhs ) noexcept;
 
 #endif
 
+// is_nil
+
+BOOST_CXX14_CONSTEXPR inline bool uuid::is_nil() const noexcept
+{
+    return *this == uuid{};
+}
+
 // swap
 
-inline void swap( uuid& lhs, uuid& rhs ) noexcept
+BOOST_CXX14_CONSTEXPR inline void swap( uuid& lhs, uuid& rhs ) noexcept
 {
     lhs.swap( rhs );
 }

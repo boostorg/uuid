@@ -26,6 +26,24 @@ BOOST_CXX14_CONSTEXPR inline void memcpy( unsigned char* dest, unsigned char con
     }
 }
 
+BOOST_CXX14_CONSTEXPR inline int memcmp( unsigned char const* s1, unsigned char const* s2, std::size_t n )
+{
+    if( is_constant_evaluated() )
+    {
+        for( std::size_t i = 0; i < n; ++i )
+        {
+            if( s1[ i ] < s2[ i ] ) return -1;
+            if( s1[ i ] > s2[ i ] ) return +1;
+        }
+
+        return 0;
+    }
+    else
+    {
+        return std::memcmp( s1, s2, n );
+    }
+}
+
 }}} // namespace boost::uuids::detail
 
 

@@ -57,9 +57,9 @@ rule test_headers
 
 alias test_headers : [ test_headers ] ;
 
-# test including all .hpp files in 2 translations units
+# test including all .hpp files in 2 translation units
 # to look for issues when using multiple translation units
-# e.g. missing inline on a global functionstate is not missing
+# e.g. missing inline on a global function
 
 run test_include1.cpp test_include2.cpp ;
 
@@ -217,6 +217,9 @@ run test_constants.cpp ;
 
 compile test_uuid_cx.cpp ;
 run test_uuid_cx2.cpp ;
+run test_uuid_cx3.cpp
+  : : : <define>BOOST_UUID_REPORT_IMPLEMENTATION ;
+run test_uuid_cx3.cpp : : : <define>BOOST_UUID_NO_SIMD <define>BOOST_UUID_REPORT_IMPLEMENTATION : test_uuid_cx3_no_simd ;
 
 run test_string_generator_cx.cpp ;
 run test_string_generator_cx2.cpp ;
