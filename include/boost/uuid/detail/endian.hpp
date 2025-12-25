@@ -104,7 +104,7 @@ BOOST_CXX14_CONSTEXPR inline std::uint64_t byteswap( std::uint64_t x ) noexcept
 
 #if defined(__SIZEOF_INT128__)
 
-inline __uint128_t byteswap( __uint128_t x ) noexcept
+BOOST_CXX14_CONSTEXPR inline __uint128_t byteswap( __uint128_t x ) noexcept
 {
     return ( static_cast<__uint128_t>( detail::byteswap( static_cast<std::uint64_t>( x ) ) ) << 64 ) | detail::byteswap( static_cast<std::uint64_t>( x >> 64 ) );
 }
@@ -220,9 +220,12 @@ BOOST_CXX14_CONSTEXPR inline std::uint32_t load_big_u32( unsigned char const* p 
 
 // load_*_u64
 
+#if defined(BOOST_GCC) && BOOST_GCC >= 50000 && BOOST_GCC < 60000
+BOOST_CXX14_CONSTEXPR
+#endif
 inline std::uint64_t load_native_u64( void const* p ) noexcept
 {
-    std::uint64_t tmp;
+    std::uint64_t tmp = {};
     std::memcpy( &tmp, p, sizeof( tmp ) );
     return tmp;
 }
@@ -277,9 +280,12 @@ BOOST_CXX14_CONSTEXPR inline std::uint64_t load_big_u64( unsigned char const* p 
 
 #if defined(__SIZEOF_INT128__)
 
+#if defined(BOOST_GCC) && BOOST_GCC >= 50000 && BOOST_GCC < 60000
+BOOST_CXX14_CONSTEXPR
+#endif
 inline __uint128_t load_native_u128( void const* p ) noexcept
 {
-    __uint128_t tmp;
+    __uint128_t tmp = {};
     std::memcpy( &tmp, p, sizeof( tmp ) );
     return tmp;
 }
@@ -300,9 +306,12 @@ inline __uint128_t load_little_u128( void const* p ) noexcept
 #endif
 }
 
+#if defined(BOOST_GCC) && BOOST_GCC >= 50000 && BOOST_GCC < 60000
+BOOST_CXX14_CONSTEXPR
+#endif
 inline __uint128_t load_big_u128( void const* p ) noexcept
 {
-    __uint128_t tmp;
+    __uint128_t tmp = {};
     std::memcpy( &tmp, p, sizeof( tmp ) );
 
 #if BOOST_UUID_BYTE_ORDER == BOOST_UUID_ORDER_BIG_ENDIAN

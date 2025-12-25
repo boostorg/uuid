@@ -371,7 +371,7 @@ template<> struct hash<boost::uuids::uuid>
 
 } // namespace std
 
-#if defined(BOOST_UUID_USE_SSE2)
+#if defined(BOOST_UUID_USE_SSE2) && !( defined(BOOST_GCC) && BOOST_GCC >= 50000 && BOOST_GCC < 60000 )
 # include <boost/uuid/detail/uuid_x86.ipp>
 #elif defined(__SIZEOF_INT128__)
 # include <boost/uuid/detail/uuid_uint128.ipp>
