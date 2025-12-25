@@ -221,6 +221,8 @@ run test_uuid_cx3.cpp
   : : : <define>BOOST_UUID_REPORT_IMPLEMENTATION ;
 run test_uuid_cx3.cpp : : : <define>BOOST_UUID_NO_SIMD <define>BOOST_UUID_REPORT_IMPLEMENTATION : test_uuid_cx3_no_simd ;
 
+run test_hash_value_cx.cpp ;
+
 run test_string_generator_cx.cpp ;
 run test_string_generator_cx2.cpp ;
 

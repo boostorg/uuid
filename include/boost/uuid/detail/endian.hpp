@@ -166,9 +166,19 @@ inline std::uint32_t load_native_u32( void const* p ) noexcept
     return tmp;
 }
 
-inline std::uint32_t load_little_u32( void const* p ) noexcept
+BOOST_CXX14_CONSTEXPR inline std::uint32_t load_little_u32( unsigned char const* p ) noexcept
 {
-    std::uint32_t tmp;
+    if( is_constant_evaluated() )
+    {
+        return
+
+            static_cast<std::uint32_t>( p[ 0 ] )       |
+            static_cast<std::uint32_t>( p[ 1 ] ) <<  8 |
+            static_cast<std::uint32_t>( p[ 2 ] ) << 16 |
+            static_cast<std::uint32_t>( p[ 3 ] ) << 24;
+    }
+
+    std::uint32_t tmp = {};
     std::memcpy( &tmp, p, sizeof( tmp ) );
 
 #if BOOST_UUID_BYTE_ORDER == BOOST_UUID_ORDER_LITTLE_ENDIAN

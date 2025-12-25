@@ -327,7 +327,7 @@ BOOST_CXX14_CONSTEXPR inline void swap( uuid& lhs, uuid& rhs ) noexcept
 
 // hash_value
 
-inline std::size_t hash_value( uuid const& u ) noexcept
+BOOST_CXX14_CONSTEXPR inline std::size_t hash_value( uuid const& u ) noexcept
 {
     std::uint64_t r = 0;
 
@@ -363,7 +363,7 @@ namespace std
 
 template<> struct hash<boost::uuids::uuid>
 {
-    std::size_t operator()( boost::uuids::uuid const& value ) const noexcept
+    BOOST_CXX14_CONSTEXPR std::size_t operator()( boost::uuids::uuid const& value ) const noexcept
     {
         return boost::uuids::hash_value( value );
     }
