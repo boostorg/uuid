@@ -2,6 +2,11 @@
 // Distributed under the Boost Software License, Version 1.0.
 // https://www.boost.org/LICENSE_1_0.txt
 
+#if defined(_MSC_VER) && _MSC_VER < 1920
+# pragma warning( disable: 4307 ) // '*': integral constant overflow
+# pragma warning( disable: 4309 ) // 'static_cast': truncation of constant value
+#endif
+
 #include <boost/uuid/uuid.hpp>
 #include <boost/uuid/uuid_io.hpp>
 #include <boost/core/lightweight_test.hpp>
