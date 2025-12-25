@@ -231,6 +231,8 @@ run test_constants_cx.cpp ;
 run test_from_chars_cx.cpp ;
 run test_from_chars_cx2.cpp ;
 
+run test_to_chars_cx.cpp ;
+
 # 'quick' test for CI
 
 run quick.cpp ;

@@ -29,16 +29,21 @@ namespace uuids {
 // to_chars
 
 template<class OutputIterator>
-OutputIterator to_chars( uuid const& u, OutputIterator out )
+BOOST_CXX14_CONSTEXPR OutputIterator to_chars( uuid const& u, OutputIterator out )
 {
-    char tmp[ 36 ];
+    char tmp[ 36 ] = {};
     detail::to_chars( u, tmp );
 
-    return std::copy_n( tmp, 36, out );
+    for( std::size_t i = 0; i < 36; ++i )
+    {
+        *out++ = tmp[ i ];
+    }
+
+    return out;
 }
 
 template<class Ch>
-inline bool to_chars( uuid const& u, Ch* first, Ch* last ) noexcept
+BOOST_CXX14_CONSTEXPR inline bool to_chars( uuid const& u, Ch* first, Ch* last ) noexcept
 {
     if( last - first < 36 )
     {
@@ -50,7 +55,7 @@ inline bool to_chars( uuid const& u, Ch* first, Ch* last ) noexcept
 }
 
 template<class Ch, std::size_t N>
-inline Ch* to_chars( uuid const& u, Ch (&buffer)[ N ] ) noexcept
+BOOST_CXX14_CONSTEXPR inline Ch* to_chars( uuid const& u, Ch (&buffer)[ N ] ) noexcept
 {
     BOOST_UUID_STATIC_ASSERT( N >= 37 );
 
@@ -63,7 +68,7 @@ inline Ch* to_chars( uuid const& u, Ch (&buffer)[ N ] ) noexcept
 // only provided for compatibility; deprecated
 template<class Ch>
 BOOST_DEPRECATED( "Use Ch[37] instead of Ch[36] to allow for the null terminator" )
-inline Ch* to_chars( uuid const& u, Ch (&buffer)[ 36 ] ) noexcept
+BOOST_CXX14_CONSTEXPR inline Ch* to_chars( uuid const& u, Ch (&buffer)[ 36 ] ) noexcept
 {
     detail::to_chars( u, buffer + 0 );
     return buffer + 36;

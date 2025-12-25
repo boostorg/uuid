@@ -7,6 +7,7 @@
 // https://www.boost.org/LICENSE_1_0.txt
 
 #include <boost/uuid/uuid.hpp>
+#include <boost/config.hpp>
 
 namespace boost {
 namespace uuids {
@@ -41,7 +42,7 @@ constexpr char8_t const* to_chars_digits( char8_t const* ) noexcept
 
 #endif
 
-template<class Ch> inline Ch* to_chars( uuid const& u, Ch* out ) noexcept
+template<class Ch> BOOST_CXX14_CONSTEXPR inline Ch* to_chars( uuid const& u, Ch* out ) noexcept
 {
     constexpr Ch const* digits = to_chars_digits( static_cast<Ch const*>( nullptr ) );
 
