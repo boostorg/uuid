@@ -25,13 +25,13 @@ template<class Ch, class Traits>
 // to_chars
 
 template<class OutputIterator>
-  OutputIterator to_chars( uuid const& u, OutputIterator out );
+  constexpr OutputIterator to_chars( uuid const& u, OutputIterator out );
 
 template<class Ch>
-  bool to_chars( uuid const& u, Ch* first, Ch* last ) noexcept;
+  constexpr bool to_chars( uuid const& u, Ch* first, Ch* last ) noexcept;
 
 template<class Ch, std::size_t N>
-  Ch* to_chars( uuid const& u, Ch (&buffer)[ N ] ) noexcept;
+  constexpr Ch* to_chars( uuid const& u, Ch (&buffer)[ N ] ) noexcept;
 
 // to_string
 
@@ -136,10 +136,12 @@ assert( u1 == u3 );
 
 ```
 template<class OutputIterator>
-  OutputIterator to_chars( uuid const& u, OutputIterator out );
+  constexpr OutputIterator to_chars( uuid const& u, OutputIterator out );
 ```
 
 Effects: :: Outputs the string representation of `u` (exactly 36 characters of type `char`) to the output iterator `out`.
+
+NOTE: This function is only `constexpr` under {cpp}14 or later, and under GCC 9 or later, Clang 9 or later, or MSVC 14.25 or later.
 
 Example: ::
 +
@@ -155,12 +157,14 @@ to_chars( u, std::back_inserter( v ) );
 
 ```
 template<class Ch>
-  bool to_chars( uuid const& u, Ch* first, Ch* last ) noexcept;
+  constexpr bool to_chars( uuid const& u, Ch* first, Ch* last ) noexcept;
 ```
 
 Requires: :: `Ch` must be a character type (one of `char`, `wchar_t`, `char8_t`, `char16_t`, `char32_t`).
 
 Effects: :: If `last - first >= 36`, writes the string representation of `u` (exactly 36 characters, not null terminated) into the buffer starting at `first` and returns `true`. Otherwise, returns `false`.
+
+NOTE: This function is only `constexpr` under {cpp}14 or later, and under GCC 9 or later, Clang 9 or later, or MSVC 14.25 or later.
 
 Example: ::
 +
@@ -179,7 +183,7 @@ std::cout << std::string( buf, 36 ) << std::endl;
 
 ```
 template<class Ch, std::size_t N>
-  Ch* to_chars( uuid const& u, Ch (&buffer)[ N ] ) noexcept;
+  constexpr Ch* to_chars( uuid const& u, Ch (&buffer)[ N ] ) noexcept;
 ```
 
 Requires: :: `Ch` must be a character type (one of `char`, `wchar_t`, `char8_t`, `char16_t`, `char32_t`); `N` must be at least 37.
@@ -187,6 +191,8 @@ Requires: :: `Ch` must be a character type (one of `char`, `wchar_t`, `char8_t`,
 Effects: :: Writes the string representation of `u` (exactly 37 characters, including the null terminator) into `buffer`.
 
 Returns: :: `buffer + 36`.
+
+NOTE: This function is only `constexpr` under {cpp}14 or later, and under GCC 9 or later, Clang 9 or later, or MSVC 14.25 or later.
 
 Example: ::
 +
