@@ -12,31 +12,33 @@ namespace boost {
 namespace uuids {
 namespace detail {
 
+// 0-9, A-F, a-f are consecutive in both ASCII and EBCDIC
+
 constexpr char const* from_chars_digits( char const* ) noexcept
 {
-    return "0123456789ABCDEFabcdef-{}";
+    return "09AFaf-{}";
 }
 
 constexpr wchar_t const* from_chars_digits( wchar_t const* ) noexcept
 {
-    return L"0123456789ABCDEFabcdef-{}";
+    return L"09AFaf-{}";
 }
 
 constexpr char16_t const* from_chars_digits( char16_t const* ) noexcept
 {
-    return u"0123456789ABCDEFabcdef-{}";
+    return u"09AFaf-{}";
 }
 
 constexpr char32_t const* from_chars_digits( char32_t const* ) noexcept
 {
-    return U"0123456789ABCDEFabcdef-{}";
+    return U"09AFaf-{}";
 }
 
 #if defined(__cpp_char8_t) && __cpp_char8_t >= 201811L
 
 constexpr char8_t const* from_chars_digits( char8_t const* ) noexcept
 {
-    return u8"0123456789ABCDEFabcdef-{}";
+    return u8"09AFaf-{}";
 }
 
 #endif
@@ -47,16 +49,19 @@ unsigned char from_chars_digit_value( Ch ch ) noexcept
 {
     constexpr Ch const* digits = detail::from_chars_digits( static_cast<Ch const*>( nullptr ) );
 
-    std::size_t i = 0;
-
-    for( ; i < 16; ++i )
+    if( ch >= digits[ 0 ] && ch <= digits[ 1 ] )
     {
-        if( digits[ i ] == ch ) return static_cast< unsigned char >( i );
+        return static_cast<unsigned char>( ch - digits[ 0 ] );
     }
 
-    for( ; i < 22; ++i )
+    if( ch >= digits[ 2 ] && ch <= digits[ 3 ] )
     {
-        if( digits[ i ] == ch ) return static_cast< unsigned char >( i - 6 );
+        return static_cast<unsigned char>( ch - digits[ 2 ] + 10 );
+    }
+
+    if( ch >= digits[ 4 ] && ch <= digits[ 5 ] )
+    {
+        return static_cast<unsigned char>( ch - digits[ 4 ] + 10 );
     }
 
     return 255;
@@ -67,7 +72,7 @@ BOOST_CXX14_CONSTEXPR inline
 bool from_chars_is_dash( Ch ch ) noexcept
 {
     constexpr Ch const* digits = detail::from_chars_digits( static_cast<Ch const*>( nullptr ) );
-    return ch == digits[ 22 ];
+    return ch == digits[ 6 ];
 }
 
 template<class Ch>
@@ -75,7 +80,7 @@ BOOST_CXX14_CONSTEXPR inline
 bool from_chars_is_opening_brace( Ch ch ) noexcept
 {
     constexpr Ch const* digits = detail::from_chars_digits( static_cast<Ch const*>( nullptr ) );
-    return ch == digits[ 23 ];
+    return ch == digits[ 7 ];
 }
 
 template<class Ch>
@@ -83,7 +88,7 @@ BOOST_CXX14_CONSTEXPR inline
 bool from_chars_is_closing_brace( Ch ch ) noexcept
 {
     constexpr Ch const* digits = detail::from_chars_digits( static_cast<Ch const*>( nullptr ) );
-    return ch == digits[ 24 ];
+    return ch == digits[ 8 ];
 }
 
 } // namespace detail
