@@ -103,6 +103,8 @@ template<class Ch> struct from_chars_result
 {
     Ch const* ptr;
     from_chars_error ec;
+
+    constexpr explicit operator bool() const noexcept { return ec == from_chars_error::none; }
 };
 
 template<class Ch>

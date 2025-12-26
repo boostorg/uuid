@@ -55,6 +55,8 @@ template<class Ch> struct from_chars_result
 {
     Ch const* ptr;
     from_chars_error ec;
+
+    constexpr explicit operator bool() const noexcept;
 };
 
 template<class Ch>
@@ -232,6 +234,17 @@ std::string s1 = to_string( u );
 
 std::wstring s2 = to_wstring( u );
 ```
+
+=== from_chars_result
+
+The `from_chars_result` structure contains the result of a `from_chars` call, where the `ptr` member points to the first character that was
+not consumed during parsing and `ec` is `from_chars_error::none`, if parsing succeeded, otherwise the error code returned by the parser.
+
+```
+constexpr explicit operator bool() const noexcept;
+```
+
+Returns: :: `this->ec == from_chars_error::none`.
 
 === from_chars
 
