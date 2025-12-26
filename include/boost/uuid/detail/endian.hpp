@@ -138,7 +138,7 @@ inline std::uint16_t load_little_u16( void const* p ) noexcept
 
 BOOST_CXX14_CONSTEXPR inline std::uint16_t load_big_u16( unsigned char const* p ) noexcept
 {
-    if( is_constant_evaluated() )
+    if( is_constant_evaluated_cx() )
     {
         return static_cast<std::uint16_t>( ( p[ 0 ] << 8 ) | p[ 1 ] );
     }
@@ -168,7 +168,7 @@ inline std::uint32_t load_native_u32( void const* p ) noexcept
 
 BOOST_CXX14_CONSTEXPR inline std::uint32_t load_little_u32( unsigned char const* p ) noexcept
 {
-    if( is_constant_evaluated() )
+    if( is_constant_evaluated_cx() )
     {
         return
 
@@ -194,7 +194,7 @@ BOOST_CXX14_CONSTEXPR inline std::uint32_t load_little_u32( unsigned char const*
 
 BOOST_CXX14_CONSTEXPR inline std::uint32_t load_big_u32( unsigned char const* p ) noexcept
 {
-    if( is_constant_evaluated() )
+    if( is_constant_evaluated_cx() )
     {
         return
 
@@ -220,9 +220,6 @@ BOOST_CXX14_CONSTEXPR inline std::uint32_t load_big_u32( unsigned char const* p 
 
 // load_*_u64
 
-#if defined(BOOST_GCC) && BOOST_GCC >= 50000 && BOOST_GCC < 60000
-BOOST_CXX14_CONSTEXPR
-#endif
 inline std::uint64_t load_native_u64( void const* p ) noexcept
 {
     std::uint64_t tmp = {};
@@ -248,7 +245,7 @@ inline std::uint64_t load_little_u64( void const* p ) noexcept
 
 BOOST_CXX14_CONSTEXPR inline std::uint64_t load_big_u64( unsigned char const* p ) noexcept
 {
-    if( is_constant_evaluated() )
+    if( is_constant_evaluated_cx() )
     {
         return
 
@@ -280,9 +277,6 @@ BOOST_CXX14_CONSTEXPR inline std::uint64_t load_big_u64( unsigned char const* p 
 
 #if defined(__SIZEOF_INT128__)
 
-#if defined(BOOST_GCC) && BOOST_GCC >= 50000 && BOOST_GCC < 60000
-BOOST_CXX14_CONSTEXPR
-#endif
 inline __uint128_t load_native_u128( void const* p ) noexcept
 {
     __uint128_t tmp = {};
@@ -306,9 +300,6 @@ inline __uint128_t load_little_u128( void const* p ) noexcept
 #endif
 }
 
-#if defined(BOOST_GCC) && BOOST_GCC >= 50000 && BOOST_GCC < 60000
-BOOST_CXX14_CONSTEXPR
-#endif
 inline __uint128_t load_big_u128( void const* p ) noexcept
 {
     __uint128_t tmp = {};

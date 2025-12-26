@@ -105,11 +105,11 @@ BOOST_FORCEINLINE void compare(uuid const& lhs, uuid const& rhs, std::uint32_t& 
 
 } // namespace detail
 
-BOOST_CXX14_CONSTEXPR inline bool operator== (uuid const& lhs, uuid const& rhs) noexcept
+BOOST_UUID_CXX14_CONSTEXPR_RT inline bool operator== (uuid const& lhs, uuid const& rhs) noexcept
 {
-    if( detail::is_constant_evaluated() )
+    if( detail::is_constant_evaluated_rt() )
     {
-        return detail::memcmp( lhs.data(), rhs.data(), 16 ) == 0;
+        return detail::memcmp_rt( lhs.data(), rhs.data(), 16 ) == 0;
     }
     else
     {
@@ -126,11 +126,11 @@ BOOST_CXX14_CONSTEXPR inline bool operator== (uuid const& lhs, uuid const& rhs) 
     }
 }
 
-BOOST_CXX14_CONSTEXPR inline bool operator< (uuid const& lhs, uuid const& rhs) noexcept
+BOOST_UUID_CXX14_CONSTEXPR_RT inline bool operator< (uuid const& lhs, uuid const& rhs) noexcept
 {
-    if( detail::is_constant_evaluated() )
+    if( detail::is_constant_evaluated_rt() )
     {
-        return detail::memcmp( lhs.data(), rhs.data(), 16 ) < 0;
+        return detail::memcmp_rt( lhs.data(), rhs.data(), 16 ) < 0;
     }
     else
     {
@@ -142,11 +142,11 @@ BOOST_CXX14_CONSTEXPR inline bool operator< (uuid const& lhs, uuid const& rhs) n
 
 #if defined(BOOST_UUID_HAS_THREE_WAY_COMPARISON)
 
-BOOST_CXX14_CONSTEXPR inline std::strong_ordering operator<=> (uuid const& lhs, uuid const& rhs) noexcept
+BOOST_UUID_CXX14_CONSTEXPR_RT inline std::strong_ordering operator<=> (uuid const& lhs, uuid const& rhs) noexcept
 {
-    if( detail::is_constant_evaluated() )
+    if( detail::is_constant_evaluated_rt() )
     {
-        return detail::memcmp( lhs.data(), rhs.data(), 16 ) <=> 0;
+        return detail::memcmp_rt( lhs.data(), rhs.data(), 16 ) <=> 0;
     }
     else
     {

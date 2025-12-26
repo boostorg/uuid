@@ -6,19 +6,28 @@
 #include <boost/uuid/uuid_io.hpp>
 #include <boost/core/lightweight_test.hpp>
 #include <boost/config.hpp>
+#include <boost/config/pragma_message.hpp>
+
+#if defined(BOOST_UUID_NO_CXX14_CONSTEXPR_RT)
+BOOST_PRAGMA_MESSAGE( "Test is not constexpr because BOOST_UUID_NO_CXX14_CONSTEXPR_RT is defined" )
+#endif
 
 #define STATIC_ASSERT(...) static_assert(__VA_ARGS__, #__VA_ARGS__)
 
-#if defined(BOOST_NO_CXX14_CONSTEXPR)
+#if defined(BOOST_UUID_NO_CXX14_CONSTEXPR_RT)
+
 # define TEST_EQ(x, y) BOOST_TEST_EQ(x, y)
 # define TEST_NE(x, y) BOOST_TEST_NE(x, y)
 # define TEST_LT(x, y) BOOST_TEST_LT(x, y)
 # define TEST(x) BOOST_TEST(x)
+
 #else
-# define TEST_EQ(x, y) STATIC_ASSERT((x)==(y)); BOOST_TEST_EQ(x, y)
-# define TEST_NE(x, y) STATIC_ASSERT((x)!=(y)); BOOST_TEST_NE(x, y)
-# define TEST_LT(x, y) STATIC_ASSERT((x)<(y)); BOOST_TEST_LT(x, y)
-# define TEST(x) STATIC_ASSERT(x); BOOST_TEST(x)
+
+# define TEST_EQ(x, y) STATIC_ASSERT((x)==(y))
+# define TEST_NE(x, y) STATIC_ASSERT((x)!=(y))
+# define TEST_LT(x, y) STATIC_ASSERT((x)<(y))
+# define TEST(x) STATIC_ASSERT(x)
+
 #endif
 
 using namespace boost::uuids;

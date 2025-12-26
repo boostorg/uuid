@@ -105,7 +105,7 @@ public:
 
     BOOST_CXX14_CONSTEXPR uuid( repr_type const& r ) noexcept
     {
-        detail::memcpy( data, r, 16 );
+        detail::memcpy_cx( data, r, 16 );
     }
 
     // iteration
@@ -136,7 +136,7 @@ public:
 
     // is_nil
 
-    BOOST_CXX14_CONSTEXPR bool is_nil() const noexcept;
+    BOOST_UUID_CXX14_CONSTEXPR_RT bool is_nil() const noexcept;
 
     // variant
 
@@ -282,38 +282,38 @@ public:
 
 // operators
 
-BOOST_CXX14_CONSTEXPR inline bool operator==( uuid const& lhs, uuid const& rhs ) noexcept;
-BOOST_CXX14_CONSTEXPR inline bool operator< ( uuid const& lhs, uuid const& rhs ) noexcept;
+BOOST_UUID_CXX14_CONSTEXPR_RT inline bool operator==( uuid const& lhs, uuid const& rhs ) noexcept;
+BOOST_UUID_CXX14_CONSTEXPR_RT inline bool operator< ( uuid const& lhs, uuid const& rhs ) noexcept;
 
-BOOST_CXX14_CONSTEXPR inline bool operator!=( uuid const& lhs, uuid const& rhs ) noexcept
+BOOST_UUID_CXX14_CONSTEXPR_RT inline bool operator!=( uuid const& lhs, uuid const& rhs ) noexcept
 {
     return !(lhs == rhs);
 }
 
-BOOST_CXX14_CONSTEXPR inline bool operator>( uuid const& lhs, uuid const& rhs ) noexcept
+BOOST_UUID_CXX14_CONSTEXPR_RT inline bool operator>( uuid const& lhs, uuid const& rhs ) noexcept
 {
     return rhs < lhs;
 }
 
-BOOST_CXX14_CONSTEXPR inline bool operator<=( uuid const& lhs, uuid const& rhs ) noexcept
+BOOST_UUID_CXX14_CONSTEXPR_RT inline bool operator<=( uuid const& lhs, uuid const& rhs ) noexcept
 {
     return !(rhs < lhs);
 }
 
-BOOST_CXX14_CONSTEXPR inline bool operator>=( uuid const& lhs, uuid const& rhs ) noexcept
+BOOST_UUID_CXX14_CONSTEXPR_RT inline bool operator>=( uuid const& lhs, uuid const& rhs ) noexcept
 {
     return !(lhs < rhs);
 }
 
 #if defined(BOOST_UUID_HAS_THREE_WAY_COMPARISON)
 
-BOOST_CXX14_CONSTEXPR inline std::strong_ordering operator<=>( uuid const& lhs, uuid const& rhs ) noexcept;
+BOOST_UUID_CXX14_CONSTEXPR_RT inline std::strong_ordering operator<=>( uuid const& lhs, uuid const& rhs ) noexcept;
 
 #endif
 
 // is_nil
 
-BOOST_CXX14_CONSTEXPR inline bool uuid::is_nil() const noexcept
+BOOST_UUID_CXX14_CONSTEXPR_RT inline bool uuid::is_nil() const noexcept
 {
     return *this == uuid{};
 }
@@ -371,7 +371,7 @@ template<> struct hash<boost::uuids::uuid>
 
 } // namespace std
 
-#if defined(BOOST_UUID_USE_SSE2) && !( defined(BOOST_GCC) && BOOST_GCC >= 50000 && BOOST_GCC < 60000 )
+#if defined(BOOST_UUID_USE_SSE2)
 # include <boost/uuid/detail/uuid_x86.ipp>
 #elif defined(__SIZEOF_INT128__)
 # include <boost/uuid/detail/uuid_uint128.ipp>

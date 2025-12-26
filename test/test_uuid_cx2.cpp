@@ -7,6 +7,13 @@
 #include <boost/uuid/string_generator.hpp>
 #include <boost/core/lightweight_test.hpp>
 #include <boost/config.hpp>
+#include <boost/config/pragma_message.hpp>
+
+#if defined(BOOST_NO_CXX14_CONSTEXPR)
+BOOST_PRAGMA_MESSAGE( "Test is not constexpr because BOOST_NO_CXX14_CONSTEXPR is defined" )
+#elif defined(BOOST_GCC) && BOOST_GCC < 60000
+BOOST_PRAGMA_MESSAGE( "Test is not constexpr because BOOST_GCC < 60000" )
+#endif
 
 #if defined(BOOST_GCC) && BOOST_GCC < 60000
 
@@ -24,7 +31,7 @@
 #if defined(BOOST_NO_CXX14_CONSTEXPR)
 # define TEST_EQ(x, y) BOOST_TEST_EQ(x, y)
 #else
-# define TEST_EQ(x, y) STATIC_ASSERT((x)==(y)); BOOST_TEST_EQ(x, y)
+# define TEST_EQ(x, y) STATIC_ASSERT((x)==(y))
 #endif
 
 using namespace boost::uuids;
