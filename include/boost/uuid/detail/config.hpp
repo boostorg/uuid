@@ -32,12 +32,20 @@
 #define BOOST_UUID_USE_SSE3
 #endif
 
+#if defined(__SSSE3__) && !defined(BOOST_UUID_USE_SSSE3)
+#define BOOST_UUID_USE_SSSE3
+#endif
+
 #if defined(__SSE4_1__) && !defined(BOOST_UUID_USE_SSE41)
 #define BOOST_UUID_USE_SSE41
 #endif
 
 #if defined(__AVX__) && !defined(BOOST_UUID_USE_AVX)
 #define BOOST_UUID_USE_AVX
+#endif
+
+#if defined(__AVX2__) && !defined(BOOST_UUID_USE_AVX2)
+#define BOOST_UUID_USE_AVX2
 #endif
 
 #if ((defined(__AVX512F__) && defined(__AVX512VL__) && defined(__AVX512BW__)) || defined(__AVX10_1__)) && !defined(BOOST_UUID_USE_AVX10_1)
@@ -54,6 +62,10 @@
 #define BOOST_UUID_USE_AVX
 #endif
 
+#if defined(__AVX2__) && !defined(BOOST_UUID_USE_AVX2)
+#define BOOST_UUID_USE_AVX2
+#endif
+
 #if ((defined(__AVX512F__) && defined(__AVX512VL__) && defined(__AVX512BW__)) || defined(__AVX10_1__)) && !defined(BOOST_UUID_USE_AVX10_1)
 #define BOOST_UUID_USE_AVX10_1
 #endif
@@ -61,7 +73,11 @@
 #endif
 
 // More advanced ISA extensions imply less advanced are also available
-#if !defined(BOOST_UUID_USE_AVX) && defined(BOOST_UUID_USE_AVX10_1)
+#if !defined(BOOST_UUID_USE_AVX2) && defined(BOOST_UUID_USE_AVX10_1)
+#define BOOST_UUID_USE_AVX2
+#endif
+
+#if !defined(BOOST_UUID_USE_AVX) && defined(BOOST_UUID_USE_AVX2)
 #define BOOST_UUID_USE_AVX
 #endif
 
@@ -69,7 +85,11 @@
 #define BOOST_UUID_USE_SSE41
 #endif
 
-#if !defined(BOOST_UUID_USE_SSE3) && defined(BOOST_UUID_USE_SSE41)
+#if !defined(BOOST_UUID_USE_SSSE3) && defined(BOOST_UUID_USE_SSE41)
+#define BOOST_UUID_USE_SSSE3
+#endif
+
+#if !defined(BOOST_UUID_USE_SSE3) && defined(BOOST_UUID_USE_SSSE3)
 #define BOOST_UUID_USE_SSE3
 #endif
 
@@ -79,8 +99,10 @@
 
 #if !defined(BOOST_UUID_NO_SIMD) && \
     !defined(BOOST_UUID_USE_AVX10_1) && \
+    !defined(BOOST_UUID_USE_AVX2) && \
     !defined(BOOST_UUID_USE_AVX) && \
     !defined(BOOST_UUID_USE_SSE41) && \
+    !defined(BOOST_UUID_USE_SSSE3) && \
     !defined(BOOST_UUID_USE_SSE3) && \
     !defined(BOOST_UUID_USE_SSE2)
 #define BOOST_UUID_NO_SIMD

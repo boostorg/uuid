@@ -25,15 +25,22 @@ However, there are a few options that can be enabled by defining macros prior to
 |`BOOST_UUID_USE_SSE3`
 |If defined, enables optimizations for https://en.wikipedia.org/wiki/SSE3[SSE3] extensions available in x86 processors.
 
+|`BOOST_UUID_USE_SSSE3`
+|If defined, enables optimizations for https://en.wikipedia.org/wiki/SSSE3[SSSE3] extensions available in x86 processors.
+
 |`BOOST_UUID_USE_SSE41`
 |If defined, enables optimizations for https://en.wikipedia.org/wiki/SSE4#SSE4.1[SSE4.1] extensions available in x86 processors.
 
 |`BOOST_UUID_USE_AVX`
 |If defined, enables optimizations for https://en.wikipedia.org/wiki/Advanced_Vector_Extensions[AVX] extensions available in modern x86 processors.
 
+|`BOOST_UUID_USE_AVX2`
+|If defined, enables optimizations for https://en.wikipedia.org/wiki/Advanced_Vector_Extensions#Advanced_Vector_Extensions_2[AVX2] extensions available in modern x86 processors.
+
 |`BOOST_UUID_USE_AVX10_1`
 |If defined, enables optimizations for https://en.wikipedia.org/wiki/AVX-512[AVX-512] and https://en.wikipedia.org/wiki/Advanced_Vector_Extensions#AVX10[AVX10.1] extensions available in modern x86 processors.
- The library does not require 512-bit vectors and is compatible with CPUs implementing AVX-512F, CD, VL, BW and DQ instruction subsets (i.e. equivalent to Intel Skylake-X).
+ When defined by user, this macro indicates support for the full set of instructions defined in AVX10.1. Currently, the library does not require 512-bit vectors and is compatible with CPUs implementing AVX-512F,
+ CD, VL, BW and DQ instruction subsets (i.e. equivalent to Intel Skylake-X), so it may auto-detect and use AVX-512 even if only those subsets are supported.
 
 |===
 

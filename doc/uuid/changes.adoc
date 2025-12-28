@@ -9,6 +9,7 @@
 * Added a `noexcept` `operator()` overload to `string_generator`.
 * `string_generator` now supports the Unicode character types in addition to `char` and `wchar_t`.
 * Most `uuid` accessors, operations, and `to_chars` are now `constexpr` when possible (on {cpp}14 and higher and on recent compilers).
+* Added SIMD implementation of `to_chars`, which can offer up to 5.5x performance improvement in UUID formatting.
 
 == Changes in Boost 1.90.0
 

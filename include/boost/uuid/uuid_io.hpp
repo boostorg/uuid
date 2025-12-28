@@ -31,7 +31,7 @@ namespace uuids {
 template<class OutputIterator>
 BOOST_CXX14_CONSTEXPR OutputIterator to_chars( uuid const& u, OutputIterator out )
 {
-    char tmp[ 36 ] = {};
+    alignas( 16 ) char tmp[ 36 ] = {};
     detail::to_chars( u, tmp );
 
     for( std::size_t i = 0; i < 36; ++i )
@@ -79,7 +79,7 @@ BOOST_CXX14_CONSTEXPR inline Ch* to_chars( uuid const& u, Ch (&buffer)[ 36 ] ) n
 template<class Ch, class Traits>
 std::basic_ostream<Ch, Traits>& operator<<( std::basic_ostream<Ch, Traits>& os, uuid const& u )
 {
-    char tmp[ 37 ];
+    alignas( 16 ) char tmp[ 37 ];
     to_chars( u, tmp );
 
     os << tmp;
