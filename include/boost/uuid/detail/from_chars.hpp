@@ -6,6 +6,7 @@
 // https://www.boost.org/LICENSE_1_0.txt
 
 #include <boost/uuid/uuid.hpp>
+#include <boost/uuid/detail/from_chars_result.hpp>
 #include <boost/config.hpp>
 
 namespace boost {
@@ -92,25 +93,6 @@ bool from_chars_is_closing_brace( Ch ch ) noexcept
 }
 
 } // namespace detail
-
-enum class from_chars_error
-{
-    none = 0,
-
-    unexpected_end_of_input,
-    hex_digit_expected,
-    dash_expected,
-    closing_brace_expected,
-    unexpected_extra_input
-};
-
-template<class Ch> struct from_chars_result
-{
-    Ch const* ptr;
-    from_chars_error ec;
-
-    constexpr explicit operator bool() const noexcept { return ec == from_chars_error::none; }
-};
 
 template<class Ch>
 BOOST_CXX14_CONSTEXPR inline
