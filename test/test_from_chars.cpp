@@ -22,6 +22,8 @@ template<class Ch> void test( uuid const& expected, Ch const* str )
 
     BOOST_TEST( r.ec == from_chars_error::none );
     BOOST_TEST_EQ( static_cast<int>( r.ec ), 0 );
+    BOOST_TEST( static_cast<bool>( r ) );
+    BOOST_TEST( !!r );
 
     BOOST_TEST_EQ( u, expected );
 }

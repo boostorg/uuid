@@ -22,6 +22,7 @@ template<class Ch> void test( Ch const* str, int pos, from_chars_error err )
 
     BOOST_TEST( r.ec == err );
     BOOST_TEST_EQ( static_cast<int>( r.ec ), static_cast<int>( err ) );
+    BOOST_TEST_EQ( static_cast<bool>( r ), ( err == from_chars_error::none ) );
 }
 
 int main()
