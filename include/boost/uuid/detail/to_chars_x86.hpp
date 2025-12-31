@@ -150,7 +150,7 @@ BOOST_FORCEINLINE void to_chars_simd_core
 {
     using constants = uuids::detail::to_chars_simd_constants< void >;
 
-    __m128i mm_input = uuids::detail::load_unaligned_si128(data);
+    __m128i mm_input = _mm_loadu_si128(reinterpret_cast< const __m128i* >(data));
 
     // Split half-bytes
     __m128i const& mm_0F = constants::mm_0F;
