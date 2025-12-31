@@ -33,10 +33,16 @@ boost_test(TYPE run SOURCES test_io.cpp LINK_LIBRARIES Boost::lexical_cast Boost
 boost_test(TYPE run SOURCES test_io.cpp LINK_LIBRARIES Boost::lexical_cast Boost::predef COMPILE_DEFINITIONS BOOST_UUID_NO_SIMD=1 BOOST_UUID_REPORT_IMPLEMENTATION=1 NAME test_io_no_simd)
 boost_test(TYPE run SOURCES test_io_2.cpp COMPILE_DEFINITIONS BOOST_UUID_REPORT_IMPLEMENTATION=1)
 boost_test(TYPE run SOURCES test_io_2.cpp COMPILE_DEFINITIONS BOOST_UUID_NO_SIMD=1 BOOST_UUID_REPORT_IMPLEMENTATION=1 NAME test_io_2_no_simd)
+
 boost_test(TYPE run SOURCES test_to_chars.cpp COMPILE_DEFINITIONS BOOST_UUID_REPORT_IMPLEMENTATION=1)
 boost_test(TYPE run SOURCES test_to_chars.cpp COMPILE_DEFINITIONS BOOST_UUID_NO_SIMD=1 BOOST_UUID_REPORT_IMPLEMENTATION=1 NAME test_to_chars_no_simd)
 boost_test(TYPE run SOURCES test_to_chars_2.cpp COMPILE_DEFINITIONS BOOST_UUID_REPORT_IMPLEMENTATION=1)
 boost_test(TYPE run SOURCES test_to_chars_2.cpp COMPILE_DEFINITIONS BOOST_UUID_NO_SIMD=1 BOOST_UUID_REPORT_IMPLEMENTATION=1 NAME test_to_chars_2_no_simd)
+
+boost_test(TYPE run SOURCES test_from_chars.cpp COMPILE_DEFINITIONS BOOST_UUID_REPORT_IMPLEMENTATION=1)
+boost_test(TYPE run SOURCES test_from_chars.cpp COMPILE_DEFINITIONS BOOST_UUID_NO_SIMD=1 BOOST_UUID_REPORT_IMPLEMENTATION=1 NAME test_from_chars_no_simd)
+boost_test(TYPE run SOURCES test_from_chars_2.cpp COMPILE_DEFINITIONS BOOST_UUID_REPORT_IMPLEMENTATION=1)
+boost_test(TYPE run SOURCES test_from_chars_2.cpp COMPILE_DEFINITIONS BOOST_UUID_NO_SIMD=1 BOOST_UUID_REPORT_IMPLEMENTATION=1 NAME test_from_chars_2_no_simd)
 
 boost_test(TYPE run SOURCES test_uuid_clock.cpp)
 
@@ -90,5 +96,10 @@ boost_test(TYPE run SOURCES test_constants.cpp)
 boost_test(TYPE compile SOURCES test_uuid_cx.cpp)
 boost_test(TYPE run SOURCES test_string_generator_cx.cpp)
 boost_test(TYPE run SOURCES test_constants_cx.cpp)
+
+boost_test(TYPE run SOURCES test_to_chars_cx.cpp LINK_LIBRARIES Boost::array)
+
+boost_test(TYPE run SOURCES test_from_chars_cx.cpp)
+boost_test(TYPE run SOURCES test_from_chars_cx2.cpp)
 
 boost_test(TYPE run SOURCES quick.cpp)
