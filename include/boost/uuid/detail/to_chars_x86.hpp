@@ -16,8 +16,8 @@
 #if defined(BOOST_UUID_REPORT_IMPLEMENTATION)
 #include <boost/config/pragma_message.hpp>
 
-#if defined(BOOST_UUID_USE_AVX10_1)
-BOOST_PRAGMA_MESSAGE( "Using to_chars_x86.hpp, AVX10.1" )
+#if defined(BOOST_UUID_USE_AVX512_V1)
+BOOST_PRAGMA_MESSAGE( "Using to_chars_x86.hpp, AVX512v1" )
 
 #elif defined(BOOST_UUID_USE_AVX2)
 BOOST_PRAGMA_MESSAGE( "Using to_chars_x86.hpp, AVX2" )
@@ -231,7 +231,7 @@ BOOST_FORCEINLINE Char* to_chars_simd(uuid const& u, Char* out) noexcept
     else
     {
         const __m128i mm_0 = _mm_setzero_si128();
-#if 0 && defined(BOOST_UUID_USE_AVX10_1)
+#if 0 && defined(BOOST_UUID_USE_AVX512_V1)
         // Slower than the AVX2 version below on Intel Golden Cove. Perhaps, it will become beneficial on newer microarchitectures.
         _mm512_storeu_epi32(out, _mm512_cvtepu8_epi32(mm_chars1));
         _mm512_storeu_epi32(out + 16, _mm512_cvtepu8_epi32(mm_chars2));
