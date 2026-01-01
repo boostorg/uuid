@@ -7,8 +7,35 @@
 
 #include <boost/uuid/detail/is_constant_evaluated.hpp>
 #include <boost/config.hpp>
-#include <cstring>
 #include <cstddef>
+
+#if defined(__has_builtin)
+#if __has_builtin(__builtin_memcpy)
+#define BOOST_UUID_DETAIL_HAS_BUILTIN_MEMCPY
+#endif
+#if __has_builtin(__builtin_memcmp)
+#define BOOST_UUID_DETAIL_HAS_BUILTIN_MEMCMP
+#endif
+#elif defined(BOOST_GCC)
+#define BOOST_UUID_DETAIL_HAS_BUILTIN_MEMCPY
+#define BOOST_UUID_DETAIL_HAS_BUILTIN_MEMCMP
+#endif
+
+#if defined(BOOST_UUID_DETAIL_HAS_BUILTIN_MEMCPY)
+#define BOOST_UUID_DETAIL_MEMCPY __builtin_memcpy
+#else
+#define BOOST_UUID_DETAIL_MEMCPY std::memcpy
+#endif
+
+#if defined(BOOST_UUID_DETAIL_HAS_BUILTIN_MEMCMP)
+#define BOOST_UUID_DETAIL_MEMCMP __builtin_memcmp
+#else
+#define BOOST_UUID_DETAIL_MEMCMP std::memcmp
+#endif
+
+#if !defined(BOOST_UUID_DETAIL_HAS_BUILTIN_MEMCPY) || !defined(BOOST_UUID_DETAIL_HAS_BUILTIN_MEMCMP)
+#include <cstring>
+#endif
 
 namespace boost {
 namespace uuids {
@@ -16,7 +43,17 @@ namespace detail {
 
 // memcpy
 
-BOOST_CXX14_CONSTEXPR inline void memcpy_cx( unsigned char* dest, unsigned char const* src, std::size_t n )
+// Note: The function below is a template to prevent an early check whether the function body can ever be evaluated in the context of a constant expression.
+//       It can't, and that causes compilation errors with clang. The function must still be marked as constexpr to be able to call them in other
+//       functions that are constexpr, even if such calls are never evaluated in a constant expression. Otherwise, gcc 5 through 8 gets upset.
+
+template< typename = void >
+BOOST_CXX14_CONSTEXPR BOOST_FORCEINLINE void memcpy( void* dest, void const* src, std::size_t n ) noexcept
+{
+    BOOST_UUID_DETAIL_MEMCPY( dest, src, n );
+}
+
+BOOST_CXX14_CONSTEXPR inline void memcpy_cx( unsigned char* dest, unsigned char const* src, std::size_t n ) noexcept
 {
     if( is_constant_evaluated_cx() )
     {
@@ -24,11 +61,11 @@ BOOST_CXX14_CONSTEXPR inline void memcpy_cx( unsigned char* dest, unsigned char 
     }
     else
     {
-        std::memcpy( dest, src, n );
+        BOOST_UUID_DETAIL_MEMCPY( dest, src, n );
     }
 }
 
-BOOST_UUID_CXX14_CONSTEXPR_RT inline void memcpy_rt( unsigned char* dest, unsigned char const* src, std::size_t n )
+BOOST_UUID_CXX14_CONSTEXPR_RT inline void memcpy_rt( unsigned char* dest, unsigned char const* src, std::size_t n ) noexcept
 {
     if( is_constant_evaluated_rt() )
     {
@@ -36,13 +73,13 @@ BOOST_UUID_CXX14_CONSTEXPR_RT inline void memcpy_rt( unsigned char* dest, unsign
     }
     else
     {
-        std::memcpy( dest, src, n );
+        BOOST_UUID_DETAIL_MEMCPY( dest, src, n );
     }
 }
 
 // memcmp
 
-BOOST_CXX14_CONSTEXPR inline int memcmp_cx( unsigned char const* s1, unsigned char const* s2, std::size_t n )
+BOOST_CXX14_CONSTEXPR inline int memcmp_cx( unsigned char const* s1, unsigned char const* s2, std::size_t n ) noexcept
 {
     if( is_constant_evaluated_cx() )
     {
@@ -56,11 +93,11 @@ BOOST_CXX14_CONSTEXPR inline int memcmp_cx( unsigned char const* s1, unsigned ch
     }
     else
     {
-        return std::memcmp( s1, s2, n );
+        return BOOST_UUID_DETAIL_MEMCMP( s1, s2, n );
     }
 }
 
-BOOST_UUID_CXX14_CONSTEXPR_RT inline int memcmp_rt( unsigned char const* s1, unsigned char const* s2, std::size_t n )
+BOOST_UUID_CXX14_CONSTEXPR_RT inline int memcmp_rt( unsigned char const* s1, unsigned char const* s2, std::size_t n ) noexcept
 {
     if( is_constant_evaluated_rt() )
     {
@@ -74,10 +111,13 @@ BOOST_UUID_CXX14_CONSTEXPR_RT inline int memcmp_rt( unsigned char const* s1, uns
     }
     else
     {
-        return std::memcmp( s1, s2, n );
+        return BOOST_UUID_DETAIL_MEMCMP( s1, s2, n );
     }
 }
 
 }}} // namespace boost::uuids::detail
+
+#undef BOOST_UUID_DETAIL_MEMCMP
+#undef BOOST_UUID_DETAIL_MEMCPY
 
 #endif // #ifndef BOOST_UUID_DETAIL_CSTRING_INCLUDED
