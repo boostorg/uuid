@@ -6,8 +6,8 @@
 // https://www.boost.org/LICENSE_1_0.txt
 
 #include <boost/uuid/detail/is_constant_evaluated.hpp>
+#include <boost/uuid/detail/cstring.hpp>
 #include <boost/config.hpp>
-#include <cstring>
 #include <cstdint>
 
 #if defined(_MSC_VER) && !defined(__clang__)
@@ -116,14 +116,14 @@ BOOST_CXX14_CONSTEXPR inline __uint128_t byteswap( __uint128_t x ) noexcept
 inline std::uint16_t load_native_u16( void const* p ) noexcept
 {
     std::uint16_t tmp;
-    std::memcpy( &tmp, p, sizeof( tmp ) );
+    detail::memcpy( &tmp, p, sizeof( tmp ) );
     return tmp;
 }
 
 inline std::uint16_t load_little_u16( void const* p ) noexcept
 {
     std::uint16_t tmp;
-    std::memcpy( &tmp, p, sizeof( tmp ) );
+    detail::memcpy( &tmp, p, sizeof( tmp ) );
 
 #if BOOST_UUID_BYTE_ORDER == BOOST_UUID_ORDER_LITTLE_ENDIAN
 
@@ -144,7 +144,7 @@ BOOST_CXX14_CONSTEXPR inline std::uint16_t load_big_u16( unsigned char const* p 
     }
 
     std::uint16_t tmp = {};
-    std::memcpy( &tmp, p, sizeof( tmp ) );
+    detail::memcpy( &tmp, p, sizeof( tmp ) );
 
 #if BOOST_UUID_BYTE_ORDER == BOOST_UUID_ORDER_BIG_ENDIAN
 
@@ -162,7 +162,7 @@ BOOST_CXX14_CONSTEXPR inline std::uint16_t load_big_u16( unsigned char const* p 
 inline std::uint32_t load_native_u32( void const* p ) noexcept
 {
     std::uint32_t tmp;
-    std::memcpy( &tmp, p, sizeof( tmp ) );
+    detail::memcpy( &tmp, p, sizeof( tmp ) );
     return tmp;
 }
 
@@ -179,7 +179,7 @@ BOOST_CXX14_CONSTEXPR inline std::uint32_t load_little_u32( unsigned char const*
     }
 
     std::uint32_t tmp = {};
-    std::memcpy( &tmp, p, sizeof( tmp ) );
+    detail::memcpy( &tmp, p, sizeof( tmp ) );
 
 #if BOOST_UUID_BYTE_ORDER == BOOST_UUID_ORDER_LITTLE_ENDIAN
 
@@ -205,7 +205,7 @@ BOOST_CXX14_CONSTEXPR inline std::uint32_t load_big_u32( unsigned char const* p 
     }
 
     std::uint32_t tmp = {};
-    std::memcpy( &tmp, p, sizeof( tmp ) );
+    detail::memcpy( &tmp, p, sizeof( tmp ) );
 
 #if BOOST_UUID_BYTE_ORDER == BOOST_UUID_ORDER_BIG_ENDIAN
 
@@ -223,14 +223,14 @@ BOOST_CXX14_CONSTEXPR inline std::uint32_t load_big_u32( unsigned char const* p 
 inline std::uint64_t load_native_u64( void const* p ) noexcept
 {
     std::uint64_t tmp = {};
-    std::memcpy( &tmp, p, sizeof( tmp ) );
+    detail::memcpy( &tmp, p, sizeof( tmp ) );
     return tmp;
 }
 
 inline std::uint64_t load_little_u64( void const* p ) noexcept
 {
     std::uint64_t tmp;
-    std::memcpy( &tmp, p, sizeof( tmp ) );
+    detail::memcpy( &tmp, p, sizeof( tmp ) );
 
 #if BOOST_UUID_BYTE_ORDER == BOOST_UUID_ORDER_LITTLE_ENDIAN
 
@@ -260,7 +260,7 @@ BOOST_CXX14_CONSTEXPR inline std::uint64_t load_big_u64( unsigned char const* p 
     }
 
     std::uint64_t tmp = {};
-    std::memcpy( &tmp, p, sizeof( tmp ) );
+    detail::memcpy( &tmp, p, sizeof( tmp ) );
 
 #if BOOST_UUID_BYTE_ORDER == BOOST_UUID_ORDER_BIG_ENDIAN
 
@@ -280,14 +280,14 @@ BOOST_CXX14_CONSTEXPR inline std::uint64_t load_big_u64( unsigned char const* p 
 inline __uint128_t load_native_u128( void const* p ) noexcept
 {
     __uint128_t tmp = {};
-    std::memcpy( &tmp, p, sizeof( tmp ) );
+    detail::memcpy( &tmp, p, sizeof( tmp ) );
     return tmp;
 }
 
 inline __uint128_t load_little_u128( void const* p ) noexcept
 {
     __uint128_t tmp;
-    std::memcpy( &tmp, p, sizeof( tmp ) );
+    detail::memcpy( &tmp, p, sizeof( tmp ) );
 
 #if BOOST_UUID_BYTE_ORDER == BOOST_UUID_ORDER_LITTLE_ENDIAN
 
@@ -303,7 +303,7 @@ inline __uint128_t load_little_u128( void const* p ) noexcept
 inline __uint128_t load_big_u128( void const* p ) noexcept
 {
     __uint128_t tmp = {};
-    std::memcpy( &tmp, p, sizeof( tmp ) );
+    detail::memcpy( &tmp, p, sizeof( tmp ) );
 
 #if BOOST_UUID_BYTE_ORDER == BOOST_UUID_ORDER_BIG_ENDIAN
 
@@ -322,7 +322,7 @@ inline __uint128_t load_big_u128( void const* p ) noexcept
 
 inline void store_native_u16( void* p, std::uint16_t v ) noexcept
 {
-    std::memcpy( p, &v, sizeof( v ) );
+    detail::memcpy( p, &v, sizeof( v ) );
 }
 
 inline void store_little_u16( void* p, std::uint16_t v ) noexcept
@@ -333,7 +333,7 @@ inline void store_little_u16( void* p, std::uint16_t v ) noexcept
 
 #endif
 
-    std::memcpy( p, &v, sizeof( v ) );
+    detail::memcpy( p, &v, sizeof( v ) );
 }
 
 inline void store_big_u16( void* p, std::uint16_t v ) noexcept
@@ -344,14 +344,14 @@ inline void store_big_u16( void* p, std::uint16_t v ) noexcept
 
 #endif
 
-    std::memcpy( p, &v, sizeof( v ) );
+    detail::memcpy( p, &v, sizeof( v ) );
 }
 
 // store_*_u32
 
 inline void store_native_u32( void* p, std::uint32_t v ) noexcept
 {
-    std::memcpy( p, &v, sizeof( v ) );
+    detail::memcpy( p, &v, sizeof( v ) );
 }
 
 inline void store_little_u32( void* p, std::uint32_t v ) noexcept
@@ -362,7 +362,7 @@ inline void store_little_u32( void* p, std::uint32_t v ) noexcept
 
 #endif
 
-    std::memcpy( p, &v, sizeof( v ) );
+    detail::memcpy( p, &v, sizeof( v ) );
 }
 
 inline void store_big_u32( void* p, std::uint32_t v ) noexcept
@@ -373,14 +373,14 @@ inline void store_big_u32( void* p, std::uint32_t v ) noexcept
 
 #endif
 
-    std::memcpy( p, &v, sizeof( v ) );
+    detail::memcpy( p, &v, sizeof( v ) );
 }
 
 // store_*_u64
 
 inline void store_native_u64( void* p, std::uint64_t v ) noexcept
 {
-    std::memcpy( p, &v, sizeof( v ) );
+    detail::memcpy( p, &v, sizeof( v ) );
 }
 
 inline void store_little_u64( void* p, std::uint64_t v ) noexcept
@@ -391,7 +391,7 @@ inline void store_little_u64( void* p, std::uint64_t v ) noexcept
 
 #endif
 
-    std::memcpy( p, &v, sizeof( v ) );
+    detail::memcpy( p, &v, sizeof( v ) );
 }
 
 inline void store_big_u64( void* p, std::uint64_t v ) noexcept
@@ -402,7 +402,7 @@ inline void store_big_u64( void* p, std::uint64_t v ) noexcept
 
 #endif
 
-    std::memcpy( p, &v, sizeof( v ) );
+    detail::memcpy( p, &v, sizeof( v ) );
 }
 
 // store_*_u128
@@ -411,7 +411,7 @@ inline void store_big_u64( void* p, std::uint64_t v ) noexcept
 
 inline void store_native_u128( void* p, __uint128_t v ) noexcept
 {
-    std::memcpy( p, &v, sizeof( v ) );
+    detail::memcpy( p, &v, sizeof( v ) );
 }
 
 inline void store_little_u128( void* p, __uint128_t v ) noexcept
@@ -422,7 +422,7 @@ inline void store_little_u128( void* p, __uint128_t v ) noexcept
 
 #endif
 
-    std::memcpy( p, &v, sizeof( v ) );
+    detail::memcpy( p, &v, sizeof( v ) );
 }
 
 inline void store_big_u128( void* p, __uint128_t v ) noexcept
@@ -433,7 +433,7 @@ inline void store_big_u128( void* p, __uint128_t v ) noexcept
 
 #endif
 
-    std::memcpy( p, &v, sizeof( v ) );
+    detail::memcpy( p, &v, sizeof( v ) );
 }
 
 #endif
