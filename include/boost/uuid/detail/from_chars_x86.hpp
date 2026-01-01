@@ -12,6 +12,7 @@
 #include <cstdint>
 #include <cstring>
 #include <boost/uuid/uuid.hpp>
+#include <boost/uuid/detail/endian.hpp>
 #include <boost/uuid/detail/from_chars_result.hpp>
 #include <boost/uuid/detail/simd_vector.hpp>
 
@@ -490,7 +491,7 @@ struct from_chars_simd_load_traits< Char, 1u >
 
     static BOOST_FORCEINLINE __m128i load_packed_4(const Char* p) noexcept
     {
-        return _mm_cvtsi32_si128(*reinterpret_cast< BOOST_MAY_ALIAS int const* >(p));
+        return _mm_cvtsi32_si128(detail::load_native_u32(p));
     }
 
     static BOOST_FORCEINLINE __m128i load_packed_n(const Char* p, unsigned int n) noexcept
@@ -509,14 +510,14 @@ struct from_chars_simd_load_traits< Char, 1u >
         if ((n & 2u) != 0u)
         {
             p -= 2;
-            chars = (chars << 16u) | *reinterpret_cast< BOOST_MAY_ALIAS std::uint16_t const* >(p);
+            chars = (chars << 16u) | static_cast< std::uint32_t >(detail::load_native_u16(p));
         }
 
         __m128i mm_chars = _mm_cvtsi32_si128(chars);
         if ((n & 4u) != 0u)
         {
             p -= 4;
-            mm_chars = _mm_unpacklo_epi32(_mm_cvtsi32_si128(*reinterpret_cast< BOOST_MAY_ALIAS int const* >(p)), mm_chars);
+            mm_chars = _mm_unpacklo_epi32(_mm_cvtsi32_si128(detail::load_native_u32(p)), mm_chars);
         }
 
         if ((n & 8u) != 0u)
@@ -562,13 +563,13 @@ struct from_chars_simd_load_traits< Char, 2u >
         if ((n & 1u) != 0u)
         {
             p -= 1;
-            mm_chars1 = _mm_cvtsi32_si128(*reinterpret_cast< BOOST_MAY_ALIAS std::uint16_t const* >(p));
+            mm_chars1 = _mm_cvtsi32_si128(detail::load_native_u16(p));
         }
 
         if ((n & 2u) != 0u)
         {
             p -= 2;
-            mm_chars1 = _mm_unpacklo_epi32(_mm_cvtsi32_si128(*reinterpret_cast< BOOST_MAY_ALIAS int const* >(p)), mm_chars1);
+            mm_chars1 = _mm_unpacklo_epi32(_mm_cvtsi32_si128(detail::load_native_u32(p)), mm_chars1);
         }
 
         if ((n & 4u) != 0u)
@@ -642,7 +643,7 @@ struct from_chars_simd_load_traits< Char, 4u >
         if ((n & 1u) != 0u)
         {
             p -= 1;
-            mm_chars1 = _mm_cvtsi32_si128(*reinterpret_cast< BOOST_MAY_ALIAS int const* >(p));
+            mm_chars1 = _mm_cvtsi32_si128(detail::load_native_u32(p));
         }
 
         if ((n & 2u) != 0u)
