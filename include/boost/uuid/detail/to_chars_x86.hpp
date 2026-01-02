@@ -231,7 +231,7 @@ BOOST_FORCEINLINE Char* to_chars_simd(uuid const& u, Char* out) noexcept
     else
     {
         const __m128i mm_0 = _mm_setzero_si128();
-#if 0 && defined(BOOST_UUID_USE_AVX512_V1)
+#if defined(BOOST_UUID_USE_AVX512_V1) && defined(BOOST_UUID_TO_FROM_CHARS_X86_USE_ZMM)
         // Slower than the AVX2 version below on Intel Golden Cove. Perhaps, it will become beneficial on newer microarchitectures.
         _mm512_storeu_epi32(out, _mm512_cvtepu8_epi32(mm_chars1));
         _mm512_storeu_epi32(out + 16, _mm512_cvtepu8_epi32(mm_chars2));
