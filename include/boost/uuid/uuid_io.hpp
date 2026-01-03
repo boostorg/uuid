@@ -79,7 +79,7 @@ BOOST_CXX14_CONSTEXPR inline Ch* to_chars( uuid const& u, Ch (&buffer)[ 36 ] ) n
 template<class Ch, class Traits>
 std::basic_ostream<Ch, Traits>& operator<<( std::basic_ostream<Ch, Traits>& os, uuid const& u )
 {
-    alignas( 16 ) char tmp[ 37 ];
+    alignas( 16 ) Ch tmp[ 37 ];
     to_chars( u, tmp );
 
     os << tmp;
