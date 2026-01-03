@@ -91,63 +91,16 @@ std::basic_ostream<Ch, Traits>& operator<<( std::basic_ostream<Ch, Traits>& os, 
 template<class Ch, class Traits>
 std::basic_istream<Ch, Traits>& operator>>( std::basic_istream<Ch, Traits>& is, uuid& u )
 {
-    Ch tmp[ 37 ] = {};
+    alignas( 16 ) Ch tmp[ 37 ] = {};
 
     is.width( 37 ); // required for pre-C++20
 
     if( is >> tmp )
     {
-        u = {};
-
-        using ctype_t = std::ctype<Ch>;
-        ctype_t const& ctype = std::use_facet<ctype_t>( is.getloc() );
-
-        Ch xdigits[ 17 ];
-
+        from_chars_error err = from_chars( tmp, tmp + 36, u ).ec;
+        if( BOOST_UNLIKELY( err != from_chars_error::none ) )
         {
-            char szdigits[] = "0123456789ABCDEF-";
-            ctype.widen( szdigits, szdigits + 17, xdigits );
-        }
-
-        Ch* const xdigits_end = xdigits + 16;
-
-        ctype.toupper( tmp, tmp + 36 );
-
-        int j = 0;
-
-        for( std::size_t i = 0; i < 16; ++i )
-        {
-            Ch* f = std::find( xdigits, xdigits_end, tmp[ j++ ] );
-
-            if( f == xdigits_end )
-            {
-                is.setstate( std::ios_base::failbit );
-                return is;
-            }
-
-            unsigned char byte = static_cast<unsigned char>( f - xdigits );
-
-            f = std::find( xdigits, xdigits_end, tmp[ j++ ] );
-
-            if( f == xdigits_end )
-            {
-                is.setstate( std::ios_base::failbit );
-                return is;
-            }
-
-            byte <<= 4;
-            byte |= static_cast<unsigned char>( f - xdigits );
-
-            u.data()[ i ] = byte;
-
-            if( i == 3 || i == 5 || i == 7 || i == 9 )
-            {
-                if( tmp[ j++ ] != xdigits[ 16 ] )
-                {
-                    is.setstate( std::ios_base::failbit );
-                    return is;
-                }
-            }
+            is.setstate( std::ios_base::failbit );
         }
     }
 
