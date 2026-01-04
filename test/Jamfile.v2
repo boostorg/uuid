@@ -11,9 +11,17 @@ local WERROR =
     <toolset>clang:<warnings-as-errors>on
 ;
 
+local gcc-flags = -Wconversion -Wsign-conversion -Wshadow -Wundef ;
+local clang-flags = $(gcc-flags) ;
+
 project
     : requirements
+
       $(WERROR)
+
+      <toolset>gcc:<cxxflags>$(gcc-flags)
+      <toolset>clang:<cxxflags>$(clang-flags)
+
       <library>/boost/uuid//boost_uuid
       <library>/boost/core//boost_core
 
