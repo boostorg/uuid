@@ -97,8 +97,7 @@ std::basic_istream<Ch, Traits>& operator>>( std::basic_istream<Ch, Traits>& is, 
 
     if( is >> tmp )
     {
-        from_chars_error err = from_chars( tmp, tmp + 36, u ).ec;
-        if( BOOST_UNLIKELY( err != from_chars_error::none ) )
+        if( !from_chars( tmp, tmp + 36, u ) )
         {
             is.setstate( std::ios_base::failbit );
         }
