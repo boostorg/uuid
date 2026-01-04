@@ -8,14 +8,15 @@
 #include <boost/core/lightweight_test.hpp>
 #include <string>
 #include <algorithm>
+#include <cstddef>
 
 using namespace boost::uuids;
 
 template<class Ch> void test( uuid const& u, Ch const* expected )
 {
-    int const N = 56;
+    std::size_t const N = 56;
 
-    for( int n = 0; n < 36; ++n )
+    for( std::size_t n = 0; n < 36; ++n )
     {
         Ch buffer[ N ];
 
@@ -28,7 +29,7 @@ template<class Ch> void test( uuid const& u, Ch const* expected )
         BOOST_TEST( std::basic_string<Ch>( buffer + n, buffer + N ) == std::basic_string<Ch>( N - n, '@' ) );
     }
 
-    for( int n = 36; n < 48; ++n )
+    for( std::size_t n = 36; n < 48; ++n )
     {
         Ch buffer[ N ];
 
