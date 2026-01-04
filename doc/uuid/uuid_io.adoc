@@ -74,7 +74,7 @@ template<class Ch, class Traits>
     operator<<( std::basic_ostream<Ch, Traits>& os, uuid const& u );
 ```
 
-Requires: :: `Ch` must be either `char` or `wchar_t`.
+Requires: :: `Ch` must be a character type (one of `char`, `wchar_t`, `char8_t`, `char16_t`, `char32_t`).
 
 Effects: :: Inserts the string representation of `u` into the output stream `os`.
 +
@@ -106,7 +106,7 @@ template<class Ch, class Traits>
     operator>>( std::basic_istream<Ch, Traits>& is, uuid& u );
 ```
 
-Requires: :: `Ch` must be either `char` or `wchar_t`.
+Requires: :: `Ch` must be a character type (one of `char`, `wchar_t`, `char8_t`, `char16_t`, `char32_t`).
 
 Effects: :: Parses a `uuid` string representation from `is` and stores the result into `u`.
 
