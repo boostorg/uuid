@@ -87,9 +87,9 @@ private:
     {
         BOOST_UUID_STATIC_ASSERT( sizeof( std::uint32_t ) >= sizeof( wchar_t ) );
 
-        for( std::size_t i = 0; i < n; ++i)
+        for( std::size_t i = 0; i < n; ++i )
         {
-            std::uint32_t ch = p[ i ];
+            std::uint32_t ch = static_cast<std::uint32_t>( p[ i ] );
 
             unsigned char bytes[ 4 ] =
             {
