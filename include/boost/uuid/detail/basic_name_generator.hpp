@@ -15,8 +15,9 @@
 #include <boost/uuid/detail/static_assert.hpp>
 #include <boost/config.hpp>
 #include <string>
+#include <cstddef>
 #include <cstdint>
-#include <cstring> // for strlen, wcslen
+#include <cstring> // for memcpy
 
 namespace boost {
 namespace uuids {
