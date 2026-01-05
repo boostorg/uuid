@@ -5,10 +5,10 @@
 // Distributed under the Boost Software License, Version 1.0.
 // https://www.boost.org/LICENSE_1_0.txt
 
-#include <cstddef>
-#include <boost/uuid/uuid.hpp>
 #include <boost/uuid/detail/from_chars_result.hpp>
+#include <boost/uuid/uuid.hpp>
 #include <boost/config.hpp>
+#include <cstddef>
 
 #if defined(BOOST_UUID_REPORT_IMPLEMENTATION)
 

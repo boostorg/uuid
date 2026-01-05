@@ -5,11 +5,11 @@
 // Distributed under the Boost Software License, Version 1.0.
 // https://www.boost.org/LICENSE_1_0.txt
 
+#include <boost/uuid/detail/from_chars_generic.hpp>
+#include <boost/uuid/detail/from_chars_result.hpp>
 #include <boost/uuid/uuid.hpp>
 #include <boost/uuid/detail/config.hpp>
 #include <boost/uuid/detail/is_constant_evaluated.hpp>
-#include <boost/uuid/detail/from_chars_result.hpp>
-#include <boost/uuid/detail/from_chars_generic.hpp>
 #if defined(BOOST_UUID_USE_SSE41)
 #include <boost/uuid/detail/from_chars_x86.hpp>
 #endif

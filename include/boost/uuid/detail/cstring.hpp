@@ -8,6 +8,7 @@
 #include <boost/uuid/detail/is_constant_evaluated.hpp>
 #include <boost/config.hpp>
 #include <cstddef>
+#include <cstring>
 
 #if defined(__has_builtin)
 #if __has_builtin(__builtin_memcpy)
@@ -31,10 +32,6 @@
 #define BOOST_UUID_DETAIL_MEMCMP __builtin_memcmp
 #else
 #define BOOST_UUID_DETAIL_MEMCMP std::memcmp
-#endif
-
-#if !defined(BOOST_UUID_DETAIL_HAS_BUILTIN_MEMCPY) || !defined(BOOST_UUID_DETAIL_HAS_BUILTIN_MEMCMP)
-#include <cstring>
 #endif
 
 namespace boost {
