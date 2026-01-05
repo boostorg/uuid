@@ -17,7 +17,7 @@ struct test_result
 };
 
 template<class Ch, std::size_t N>
-BOOST_CXX14_CONSTEXPR test_result test( Ch const (&str)[ N ] )
+BOOST_UUID_CXX14_CONSTEXPR_RT test_result test( Ch const (&str)[ N ] )
 {
     Ch const* first = str;
     Ch const* last = first + N - 1;
@@ -28,7 +28,7 @@ BOOST_CXX14_CONSTEXPR test_result test( Ch const (&str)[ N ] )
     return { r.ptr - first, r.ec };
 }
 
-#define TEST(Str, Pos, Ec) { BOOST_CXX14_CONSTEXPR auto r = test(Str); BOOST_TEST_EQ(Pos, r.pos); BOOST_TEST_EQ(static_cast<int>(Ec), static_cast<int>(r.ec)); }
+#define TEST(Str, Pos, Ec) { BOOST_UUID_CXX14_CONSTEXPR_RT auto r = test(Str); BOOST_TEST_EQ(Pos, r.pos); BOOST_TEST_EQ(static_cast<int>(Ec), static_cast<int>(r.ec)); }
 
 int main()
 {

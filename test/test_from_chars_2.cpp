@@ -33,6 +33,30 @@ int main()
     test(  U"", 0, from_chars_error::unexpected_end_of_input );
     test( u8"", 0, from_chars_error::unexpected_end_of_input );
 
+    test(   "0", 1, from_chars_error::unexpected_end_of_input );
+    test(  L"0", 1, from_chars_error::unexpected_end_of_input );
+    test(  u"0", 1, from_chars_error::unexpected_end_of_input );
+    test(  U"0", 1, from_chars_error::unexpected_end_of_input );
+    test( u8"0", 1, from_chars_error::unexpected_end_of_input );
+
+    test(   "01", 2, from_chars_error::unexpected_end_of_input );
+    test(  L"01", 2, from_chars_error::unexpected_end_of_input );
+    test(  u"01", 2, from_chars_error::unexpected_end_of_input );
+    test(  U"01", 2, from_chars_error::unexpected_end_of_input );
+    test( u8"01", 2, from_chars_error::unexpected_end_of_input );
+
+    test(   "01234567-89aB-cDeF-0123-456789AbCd", 34, from_chars_error::unexpected_end_of_input );
+    test(  L"01234567-89aB-cDeF-0123-456789AbCd", 34, from_chars_error::unexpected_end_of_input );
+    test(  u"01234567-89aB-cDeF-0123-456789AbCd", 34, from_chars_error::unexpected_end_of_input );
+    test(  U"01234567-89aB-cDeF-0123-456789AbCd", 34, from_chars_error::unexpected_end_of_input );
+    test( u8"01234567-89aB-cDeF-0123-456789AbCd", 34, from_chars_error::unexpected_end_of_input );
+
+    test(   "01234567-89aB-cDeF-0123-456789AbCdE", 35, from_chars_error::unexpected_end_of_input );
+    test(  L"01234567-89aB-cDeF-0123-456789AbCdE", 35, from_chars_error::unexpected_end_of_input );
+    test(  u"01234567-89aB-cDeF-0123-456789AbCdE", 35, from_chars_error::unexpected_end_of_input );
+    test(  U"01234567-89aB-cDeF-0123-456789AbCdE", 35, from_chars_error::unexpected_end_of_input );
+    test( u8"01234567-89aB-cDeF-0123-456789AbCdE", 35, from_chars_error::unexpected_end_of_input );
+
     test(   "@", 0, from_chars_error::hex_digit_expected );
     test(  L"@", 0, from_chars_error::hex_digit_expected );
     test(  u"@", 0, from_chars_error::hex_digit_expected );

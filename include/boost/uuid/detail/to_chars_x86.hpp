@@ -11,12 +11,14 @@
 
 #include <cstdint>
 #include <boost/uuid/uuid.hpp>
+#include <boost/uuid/detail/endian.hpp>
+#include <boost/uuid/detail/simd_vector.hpp>
 
 #if defined(BOOST_UUID_REPORT_IMPLEMENTATION)
 #include <boost/config/pragma_message.hpp>
 
-#if defined(BOOST_UUID_USE_AVX10_1)
-BOOST_PRAGMA_MESSAGE( "Using to_chars_x86.hpp, AVX10.1" )
+#if defined(BOOST_UUID_USE_AVX512_V1)
+BOOST_PRAGMA_MESSAGE( "Using to_chars_x86.hpp, AVX512v1" )
 
 #elif defined(BOOST_UUID_USE_AVX2)
 BOOST_PRAGMA_MESSAGE( "Using to_chars_x86.hpp, AVX2" )
@@ -49,16 +51,16 @@ template<
 >
 struct to_chars_simd_char_constants
 {
-    alignas(16) static const std::uint8_t mm_char_table[16];
-    alignas(16) static const std::uint8_t mm_char_dash[16];
+    static const simd_vector128< std::uint8_t > mm_char_table;
+    static const simd_vector128< std::uint8_t > mm_char_dash;
 };
 
 template< typename Char, bool IsCharASCIICompatible, bool IsWCharASCIICompatible >
-alignas(16) const std::uint8_t to_chars_simd_char_constants< Char, IsCharASCIICompatible, IsWCharASCIICompatible >::mm_char_table[16] =
-    { 0x30, 0x31, 0x32, 0x33, 0x34, 0x35, 0x36, 0x37, 0x38, 0x39, 0x61, 0x62, 0x63, 0x64, 0x65, 0x66 }; // 0123456789abcdef in ASCII
+const simd_vector128< std::uint8_t > to_chars_simd_char_constants< Char, IsCharASCIICompatible, IsWCharASCIICompatible >::mm_char_table =
+    {{ 0x30, 0x31, 0x32, 0x33, 0x34, 0x35, 0x36, 0x37, 0x38, 0x39, 0x61, 0x62, 0x63, 0x64, 0x65, 0x66 }}; // 0123456789abcdef in ASCII
 template< typename Char, bool IsCharASCIICompatible, bool IsWCharASCIICompatible >
-alignas(16) const std::uint8_t to_chars_simd_char_constants< Char, IsCharASCIICompatible, IsWCharASCIICompatible >::mm_char_dash[16] =
-    { 0x2D, 0x2D, 0x2D, 0x2D, 0x2D, 0x2D, 0x2D, 0x2D, 0x2D, 0x2D, 0x2D, 0x2D, 0x2D, 0x2D, 0x2D, 0x2D }; // ---------------- in ASCII
+const simd_vector128< std::uint8_t > to_chars_simd_char_constants< Char, IsCharASCIICompatible, IsWCharASCIICompatible >::mm_char_dash =
+    {{ 0x2D, 0x2D, 0x2D, 0x2D, 0x2D, 0x2D, 0x2D, 0x2D, 0x2D, 0x2D, 0x2D, 0x2D, 0x2D, 0x2D, 0x2D, 0x2D }}; // ---------------- in ASCII
 
 template< bool IsWCharASCIICompatible >
 struct to_chars_simd_char_constants< char, false, IsWCharASCIICompatible >
@@ -67,26 +69,26 @@ struct to_chars_simd_char_constants< char, false, IsWCharASCIICompatible >
     static_assert(static_cast< std::uint8_t >('-') < static_cast< std::uint8_t >('0') && static_cast< std::uint8_t >('-') < static_cast< std::uint8_t >('a'),
         "Boost.UUID: Unsupported char encoding, '-' character code is expected to be less than any hexadecimal characters");
 
-    alignas(16) static const std::uint8_t mm_char_table[16];
-    alignas(16) static const std::uint8_t mm_char_dash[16];
+    static const simd_vector128< std::uint8_t > mm_char_table;
+    static const simd_vector128< std::uint8_t > mm_char_dash;
 };
 
 template< bool IsWCharASCIICompatible >
-alignas(16) const std::uint8_t to_chars_simd_char_constants< char, false, IsWCharASCIICompatible >::mm_char_table[16] =
-{
+const simd_vector128< std::uint8_t > to_chars_simd_char_constants< char, false, IsWCharASCIICompatible >::mm_char_table =
+{{
     static_cast< std::uint8_t >('0'), static_cast< std::uint8_t >('1'), static_cast< std::uint8_t >('2'), static_cast< std::uint8_t >('3'),
     static_cast< std::uint8_t >('4'), static_cast< std::uint8_t >('5'), static_cast< std::uint8_t >('6'), static_cast< std::uint8_t >('7'),
     static_cast< std::uint8_t >('8'), static_cast< std::uint8_t >('9'), static_cast< std::uint8_t >('a'), static_cast< std::uint8_t >('b'),
     static_cast< std::uint8_t >('c'), static_cast< std::uint8_t >('d'), static_cast< std::uint8_t >('e'), static_cast< std::uint8_t >('f')
-};
+}};
 template< bool IsWCharASCIICompatible >
-alignas(16) const std::uint8_t to_chars_simd_char_constants< char, false, IsWCharASCIICompatible >::mm_char_dash[16] =
-{
+const simd_vector128< std::uint8_t > to_chars_simd_char_constants< char, false, IsWCharASCIICompatible >::mm_char_dash =
+{{
     static_cast< std::uint8_t >('-'), static_cast< std::uint8_t >('-'), static_cast< std::uint8_t >('-'), static_cast< std::uint8_t >('-'),
     static_cast< std::uint8_t >('-'), static_cast< std::uint8_t >('-'), static_cast< std::uint8_t >('-'), static_cast< std::uint8_t >('-'),
     static_cast< std::uint8_t >('-'), static_cast< std::uint8_t >('-'), static_cast< std::uint8_t >('-'), static_cast< std::uint8_t >('-'),
     static_cast< std::uint8_t >('-'), static_cast< std::uint8_t >('-'), static_cast< std::uint8_t >('-'), static_cast< std::uint8_t >('-')
-};
+}};
 
 template< bool IsCharASCIICompatible >
 struct to_chars_simd_char_constants< wchar_t, IsCharASCIICompatible, false >
@@ -100,44 +102,44 @@ struct to_chars_simd_char_constants< wchar_t, IsCharASCIICompatible, false >
     static_assert(static_cast< std::uint8_t >(L'-') < static_cast< std::uint8_t >(L'0') && static_cast< std::uint8_t >(L'-') < static_cast< std::uint8_t >(L'a'),
         "Boost.UUID: Unsupported wchar_t encoding, L'-' character code is expected to be less than any hexadecimal characters");
 
-    alignas(16) static const std::uint8_t mm_char_table[16];
-    alignas(16) static const std::uint8_t mm_char_dash[16];
+    static const simd_vector128< std::uint8_t > mm_char_table;
+    static const simd_vector128< std::uint8_t > mm_char_dash;
 };
 
 template< bool IsCharASCIICompatible >
-alignas(16) const std::uint8_t to_chars_simd_char_constants< wchar_t, IsCharASCIICompatible, false >::mm_char_table[16] =
-{
+const simd_vector128< std::uint8_t > to_chars_simd_char_constants< wchar_t, IsCharASCIICompatible, false >::mm_char_table =
+{{
     static_cast< std::uint8_t >(L'0'), static_cast< std::uint8_t >(L'1'), static_cast< std::uint8_t >(L'2'), static_cast< std::uint8_t >(L'3'),
     static_cast< std::uint8_t >(L'4'), static_cast< std::uint8_t >(L'5'), static_cast< std::uint8_t >(L'6'), static_cast< std::uint8_t >(L'7'),
     static_cast< std::uint8_t >(L'8'), static_cast< std::uint8_t >(L'9'), static_cast< std::uint8_t >(L'a'), static_cast< std::uint8_t >(L'b'),
     static_cast< std::uint8_t >(L'c'), static_cast< std::uint8_t >(L'd'), static_cast< std::uint8_t >(L'e'), static_cast< std::uint8_t >(L'f')
-};
+}};
 template< bool IsCharASCIICompatible >
-alignas(16) const std::uint8_t to_chars_simd_char_constants< wchar_t, IsCharASCIICompatible, false >::mm_char_dash[16] =
-{
+const simd_vector128< std::uint8_t > to_chars_simd_char_constants< wchar_t, IsCharASCIICompatible, false >::mm_char_dash =
+{{
     static_cast< std::uint8_t >(L'-'), static_cast< std::uint8_t >(L'-'), static_cast< std::uint8_t >(L'-'), static_cast< std::uint8_t >(L'-'),
     static_cast< std::uint8_t >(L'-'), static_cast< std::uint8_t >(L'-'), static_cast< std::uint8_t >(L'-'), static_cast< std::uint8_t >(L'-'),
     static_cast< std::uint8_t >(L'-'), static_cast< std::uint8_t >(L'-'), static_cast< std::uint8_t >(L'-'), static_cast< std::uint8_t >(L'-'),
     static_cast< std::uint8_t >(L'-'), static_cast< std::uint8_t >(L'-'), static_cast< std::uint8_t >(L'-'), static_cast< std::uint8_t >(L'-')
-};
+}};
 
 template< typename >
 struct to_chars_simd_constants
 {
-    alignas(16) static const std::uint8_t mm_15[16];
-    alignas(16) static const std::uint8_t mm_shuffle_pattern1[16];
-    alignas(16) static const std::uint8_t mm_shuffle_pattern2[16];
+    static const simd_vector128< std::uint8_t > mm_0F;
+    static const simd_vector128< std::uint8_t > mm_shuffle_pattern1;
+    static const simd_vector128< std::uint8_t > mm_shuffle_pattern2;
 };
 
 template< typename T >
-alignas(16) const std::uint8_t to_chars_simd_constants< T >::mm_15[16] =
-    { 0x0F, 0x0F, 0x0F, 0x0F, 0x0F, 0x0F, 0x0F, 0x0F, 0x0F, 0x0F, 0x0F, 0x0F, 0x0F, 0x0F, 0x0F, 0x0F };
+const simd_vector128< std::uint8_t > to_chars_simd_constants< T >::mm_0F =
+    {{ 0x0F, 0x0F, 0x0F, 0x0F, 0x0F, 0x0F, 0x0F, 0x0F, 0x0F, 0x0F, 0x0F, 0x0F, 0x0F, 0x0F, 0x0F, 0x0F }};
 template< typename T >
-alignas(16) const std::uint8_t to_chars_simd_constants< T >::mm_shuffle_pattern1[16] =
-    { 0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x80, 0x08, 0x09, 0x0A, 0x0B, 0x80, 0x0C, 0x0D };
+const simd_vector128< std::uint8_t > to_chars_simd_constants< T >::mm_shuffle_pattern1 =
+    {{ 0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x80, 0x08, 0x09, 0x0A, 0x0B, 0x80, 0x0C, 0x0D }};
 template< typename T >
-alignas(16) const std::uint8_t to_chars_simd_constants< T >::mm_shuffle_pattern2[16] =
-    { 0x00, 0x01, 0x80, 0x02, 0x03, 0x04, 0x05, 0x80, 0x06, 0x07, 0x08, 0x09, 0x0A, 0x0B, 0x0C, 0x0D };
+const simd_vector128< std::uint8_t > to_chars_simd_constants< T >::mm_shuffle_pattern2 =
+    {{ 0x00, 0x01, 0x80, 0x02, 0x03, 0x04, 0x05, 0x80, 0x06, 0x07, 0x08, 0x09, 0x0A, 0x0B, 0x0C, 0x0D }};
 
 //! Converts UUID to a string of 36 characters, where first 32 craracters are returned in mm_chars1 and mm_chars2 and the last 4 in the highest 32 bits of mm_chars3
 BOOST_FORCEINLINE void to_chars_simd_core
@@ -147,15 +149,14 @@ BOOST_FORCEINLINE void to_chars_simd_core
     __m128i& mm_chars1, __m128i& mm_chars2, __m128i& mm_chars3
 ) noexcept
 {
-    __m128i const& mm_15 = *reinterpret_cast< const __m128i* >(uuids::detail::to_chars_simd_constants< void >::mm_15);
-    __m128i const& mm_shuffle_pattern1 = *reinterpret_cast< const __m128i* >(uuids::detail::to_chars_simd_constants< void >::mm_shuffle_pattern1);
-    __m128i const& mm_shuffle_pattern2 = *reinterpret_cast< const __m128i* >(uuids::detail::to_chars_simd_constants< void >::mm_shuffle_pattern2);
+    using constants = uuids::detail::to_chars_simd_constants< void >;
 
-    __m128i mm_input = uuids::detail::load_unaligned_si128(data);
+    __m128i mm_input = _mm_loadu_si128(reinterpret_cast< const __m128i* >(data));
 
     // Split half-bytes
-    __m128i mm_input_hi = _mm_and_si128(_mm_srli_epi32(mm_input, 4), mm_15);
-    __m128i mm_input_lo = _mm_and_si128(mm_input, mm_15);
+    __m128i const& mm_0F = constants::mm_0F;
+    __m128i mm_input_hi = _mm_and_si128(_mm_srli_epi32(mm_input, 4), mm_0F);
+    __m128i mm_input_lo = _mm_and_si128(mm_input, mm_0F);
 
     // Stringize each of the halves
     mm_input_hi = _mm_shuffle_epi8(mm_char_table, mm_input_hi);
@@ -171,23 +172,31 @@ BOOST_FORCEINLINE void to_chars_simd_core
     // |01234567-89ab-cd|ef-0123-456789ab|
     //
     // Note that the last "cdef" characters are already available at the end of mm_2
-    mm_chars1 = _mm_shuffle_epi8(mm_1, mm_shuffle_pattern1);
-    mm_chars2 = _mm_shuffle_epi8(_mm_alignr_epi8(mm_2, mm_1, 14), mm_shuffle_pattern2);
+    mm_chars1 = _mm_shuffle_epi8(mm_1, constants::mm_shuffle_pattern1);
+    mm_chars2 = _mm_shuffle_epi8(_mm_alignr_epi8(mm_2, mm_1, 14), constants::mm_shuffle_pattern2);
 
     mm_chars1 = _mm_max_epu8(mm_chars1, mm_char_dash);
     mm_chars2 = _mm_max_epu8(mm_chars2, mm_char_dash);
     mm_chars3 = mm_2;
 }
 
+#if defined(BOOST_MSVC)
+#pragma warning(push)
+// conditional expression is constant
+#pragma warning(disable: 4127)
+#endif
+
 template< typename Char >
 BOOST_FORCEINLINE Char* to_chars_simd(uuid const& u, Char* out) noexcept
 {
+    using char_constants = uuids::detail::to_chars_simd_char_constants< Char >;
+
     __m128i mm_chars1, mm_chars2, mm_chars3;
     uuids::detail::to_chars_simd_core
     (
-        u.data,
-        *reinterpret_cast< const __m128i* >(uuids::detail::to_chars_simd_char_constants< Char >::mm_char_table),
-        *reinterpret_cast< const __m128i* >(uuids::detail::to_chars_simd_char_constants< Char >::mm_char_dash),
+        u.data(),
+        char_constants::mm_char_table,
+        char_constants::mm_char_dash,
         mm_chars1, mm_chars2, mm_chars3
     );
 
@@ -197,9 +206,9 @@ BOOST_FORCEINLINE Char* to_chars_simd(uuid const& u, Char* out) noexcept
         _mm_storeu_si128(reinterpret_cast< __m128i* >(out), mm_chars1);
         _mm_storeu_si128(reinterpret_cast< __m128i* >(out + 16), mm_chars2);
 #if defined(BOOST_UUID_USE_SSE41)
-        *reinterpret_cast< BOOST_MAY_ALIAS std::uint32_t* >(out + 32) = _mm_extract_epi32(mm_chars3, 3);
+        detail::store_native_u32(out + 32, _mm_extract_epi32(mm_chars3, 3));
 #else
-        *reinterpret_cast< BOOST_MAY_ALIAS std::uint32_t* >(out + 32) = _mm_cvtsi128_si32(_mm_srli_si128(mm_chars3, 12));
+        detail::store_native_u32(out + 32, _mm_cvtsi128_si32(_mm_srli_si128(mm_chars3, 12)));
 #endif
     }
     else BOOST_IF_CONSTEXPR (sizeof(Char) == 2u)
@@ -215,7 +224,7 @@ BOOST_FORCEINLINE Char* to_chars_simd(uuid const& u, Char* out) noexcept
         _mm_storeu_si128(reinterpret_cast< __m128i* >(out + 24), _mm_unpackhi_epi8(mm_chars2, mm_0));
 #endif
 #if defined(BOOST_UUID_USE_SSE41) && (defined(__x86_64__) || defined(_M_X64))
-        *reinterpret_cast< BOOST_MAY_ALIAS std::uint64_t* >(out + 32) = _mm_extract_epi64(_mm_unpackhi_epi8(mm_chars3, mm_0), 1);
+        detail::store_native_u64(out + 32, _mm_extract_epi64(_mm_unpackhi_epi8(mm_chars3, mm_0), 1));
 #else
         _mm_storeh_pd(reinterpret_cast< BOOST_MAY_ALIAS double* >(out + 32), _mm_castsi128_pd(_mm_unpackhi_epi8(mm_chars3, mm_0)));
 #endif
@@ -223,7 +232,7 @@ BOOST_FORCEINLINE Char* to_chars_simd(uuid const& u, Char* out) noexcept
     else
     {
         const __m128i mm_0 = _mm_setzero_si128();
-#if 0 && defined(BOOST_UUID_USE_AVX10_1)
+#if defined(BOOST_UUID_USE_AVX512_V1) && defined(BOOST_UUID_TO_FROM_CHARS_X86_USE_ZMM)
         // Slower than the AVX2 version below on Intel Golden Cove. Perhaps, it will become beneficial on newer microarchitectures.
         _mm512_storeu_epi32(out, _mm512_cvtepu8_epi32(mm_chars1));
         _mm512_storeu_epi32(out + 16, _mm512_cvtepu8_epi32(mm_chars2));
@@ -251,6 +260,10 @@ BOOST_FORCEINLINE Char* to_chars_simd(uuid const& u, Char* out) noexcept
 
     return out + 36;
 }
+
+#if defined(BOOST_MSVC)
+#pragma warning(pop)
+#endif
 
 } // namespace detail
 } // namespace uuids

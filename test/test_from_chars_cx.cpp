@@ -11,7 +11,7 @@
 using namespace boost::uuids;
 
 template<class Ch, std::size_t N>
-BOOST_CXX14_CONSTEXPR uuid uuid_from_string( Ch const (&str)[ N ] )
+BOOST_UUID_CXX14_CONSTEXPR_RT uuid uuid_from_string( Ch const (&str)[ N ] )
 {
     Ch const* first = str;
     Ch const* last = first + N - 1;
@@ -22,7 +22,7 @@ BOOST_CXX14_CONSTEXPR uuid uuid_from_string( Ch const (&str)[ N ] )
     return u;
 }
 
-#define TEST(str) { BOOST_CXX14_CONSTEXPR auto u = uuid_from_string(str); BOOST_TEST_EQ(u, expected); }
+#define TEST(str) { BOOST_UUID_CXX14_CONSTEXPR_RT auto u = uuid_from_string(str); BOOST_TEST_EQ(u, expected); }
 
 int main()
 {

@@ -22,8 +22,8 @@
 #if defined(BOOST_UUID_REPORT_IMPLEMENTATION)
 #include <boost/config/pragma_message.hpp>
 
-#if defined(BOOST_UUID_USE_AVX10_1)
-BOOST_PRAGMA_MESSAGE( "Using uuid_x86.ipp, AVX10.1" )
+#if defined(BOOST_UUID_USE_AVX512_V1)
+BOOST_PRAGMA_MESSAGE( "Using uuid_x86.ipp, AVX512v1" )
 
 #elif defined(BOOST_UUID_USE_SSE41)
 BOOST_PRAGMA_MESSAGE( "Using uuid_x86.ipp, SSE4.1" )
@@ -38,7 +38,7 @@ BOOST_PRAGMA_MESSAGE( "Using uuid_x86.ipp, SSE2" )
 #endif // #if defined(BOOST_UUID_REPORT_IMPLEMENTATION)
 
 // MSVC does not always have immintrin.h (at least, not up to MSVC 10), so include the appropriate header for each instruction set
-#if defined(BOOST_UUID_USE_AVX10_1)
+#if defined(BOOST_UUID_USE_AVX512_V1)
 #include <immintrin.h>
 #elif defined(BOOST_UUID_USE_SSE41)
 #include <smmintrin.h>
@@ -52,15 +52,10 @@ namespace boost {
 namespace uuids {
 namespace detail {
 
-BOOST_FORCEINLINE __m128i load_unaligned_si128(const std::uint8_t* p) noexcept
-{
-    return _mm_loadu_si128(reinterpret_cast< const __m128i* >(p));
-}
-
 BOOST_FORCEINLINE void compare(uuid const& lhs, uuid const& rhs, std::uint32_t& cmp, std::uint32_t& rcmp) noexcept
 {
-    __m128i mm_left = uuids::detail::load_unaligned_si128(lhs.data);
-    __m128i mm_right = uuids::detail::load_unaligned_si128(rhs.data);
+    __m128i mm_left = _mm_loadu_si128(reinterpret_cast< const __m128i* >(lhs.data()));
+    __m128i mm_right = _mm_loadu_si128(reinterpret_cast< const __m128i* >(rhs.data()));
 
     // To emulate lexicographical_compare behavior we have to perform two comparisons - the forward and reverse one.
     // Then we know which bytes are equivalent and which ones are different, and for those different the comparison results
@@ -77,7 +72,7 @@ BOOST_FORCEINLINE void compare(uuid const& lhs, uuid const& rhs, std::uint32_t& 
     //    with another XOR to the comparison results.
     // 3. Until AVX-512, there is only pcmpgtb instruction that compares for "greater" relation, so we swap the arguments to get what we need.
 
-#if defined(BOOST_UUID_USE_AVX10_1)
+#if defined(BOOST_UUID_USE_AVX512_V1)
 
     __mmask16 k_cmp = _mm_cmplt_epu8_mask(mm_left, mm_right);
     __mmask16 k_rcmp = _mm_cmplt_epu8_mask(mm_right, mm_left);
@@ -85,7 +80,7 @@ BOOST_FORCEINLINE void compare(uuid const& lhs, uuid const& rhs, std::uint32_t& 
     cmp = static_cast< std::uint32_t >(_cvtmask16_u32(k_cmp));
     rcmp = static_cast< std::uint32_t >(_cvtmask16_u32(k_rcmp));
 
-#else // defined(BOOST_UUID_USE_AVX10_1)
+#else // defined(BOOST_UUID_USE_AVX512_V1)
 
     const __m128i mm_signs_mask = _mm_xor_si128(mm_left, mm_right);
 
@@ -97,7 +92,7 @@ BOOST_FORCEINLINE void compare(uuid const& lhs, uuid const& rhs, std::uint32_t& 
     cmp = static_cast< std::uint32_t >(_mm_movemask_epi8(mm_cmp));
     rcmp = static_cast< std::uint32_t >(_mm_movemask_epi8(mm_rcmp));
 
-#endif // defined(BOOST_UUID_USE_AVX10_1)
+#endif // defined(BOOST_UUID_USE_AVX512_V1)
 
     cmp = (cmp - 1u) ^ cmp;
     rcmp = (rcmp - 1u) ^ rcmp;
@@ -113,8 +108,8 @@ BOOST_UUID_CXX14_CONSTEXPR_RT inline bool operator== (uuid const& lhs, uuid cons
     }
     else
     {
-        __m128i mm_left = uuids::detail::load_unaligned_si128(lhs.data);
-        __m128i mm_right = uuids::detail::load_unaligned_si128(rhs.data);
+        __m128i mm_left = _mm_loadu_si128(reinterpret_cast< const __m128i* >(lhs.data()));
+        __m128i mm_right = _mm_loadu_si128(reinterpret_cast< const __m128i* >(rhs.data()));
 
 #if defined(BOOST_UUID_USE_SSE41)
         __m128i mm = _mm_xor_si128(mm_left, mm_right);
