@@ -179,6 +179,12 @@ BOOST_FORCEINLINE void to_chars_simd_core
     mm_chars3 = mm_2;
 }
 
+#if defined(BOOST_MSVC)
+#pragma warning(push)
+// conditional expression is constant
+#pragma warning(disable: 4127)
+#endif
+
 template< typename Char >
 BOOST_FORCEINLINE Char* to_chars_simd(uuid const& u, Char* out) noexcept
 {
@@ -251,6 +257,10 @@ BOOST_FORCEINLINE Char* to_chars_simd(uuid const& u, Char* out) noexcept
 
     return out + 36;
 }
+
+#if defined(BOOST_MSVC)
+#pragma warning(pop)
+#endif
 
 } // namespace detail
 } // namespace uuids
