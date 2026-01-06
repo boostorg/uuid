@@ -10,13 +10,6 @@
 #include <boost/config.hpp>
 #include <cstddef>
 
-#if defined(BOOST_UUID_REPORT_IMPLEMENTATION)
-
-#include <boost/config/pragma_message.hpp>
-BOOST_PRAGMA_MESSAGE( "Using from_chars_generic.hpp" )
-
-#endif
-
 namespace boost {
 namespace uuids {
 namespace detail {

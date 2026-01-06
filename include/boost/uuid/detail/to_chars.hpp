@@ -10,8 +10,14 @@
 #include <boost/uuid/detail/config.hpp>
 #include <boost/uuid/detail/is_constant_evaluated.hpp>
 #include <boost/uuid/detail/to_chars_generic.hpp>
+
 #if defined(BOOST_UUID_USE_SSSE3)
-#include <boost/uuid/detail/to_chars_x86.hpp>
+# include <boost/uuid/detail/to_chars_x86.hpp>
+
+#elif defined(BOOST_UUID_REPORT_IMPLEMENTATION)
+# include <boost/config/pragma_message.hpp>
+  BOOST_PRAGMA_MESSAGE( "Using to_chars_generic.hpp" )
+
 #endif
 
 namespace boost {
