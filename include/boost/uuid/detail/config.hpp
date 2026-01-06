@@ -19,7 +19,18 @@
 #pragma once
 #endif
 
-#if !defined(BOOST_UUID_NO_SIMD)
+#if defined(BOOST_UUID_NO_SIMD)
+
+#undef BOOST_UUID_USE_SSE2
+#undef BOOST_UUID_USE_SSE3
+#undef BOOST_UUID_USE_SSSE3
+#undef BOOST_UUID_USE_SSE41
+#undef BOOST_UUID_USE_AVX
+#undef BOOST_UUID_USE_AVX2
+#undef BOOST_UUID_USE_AVX512_V1
+#undef BOOST_UUID_USE_AVX10_1
+
+#else
 
 #if defined(__GNUC__) && defined(__SSE2__)
 
@@ -121,6 +132,6 @@
 #define BOOST_UUID_NO_SIMD
 #endif
 
-#endif // !defined(BOOST_UUID_NO_SIMD)
+#endif // defined(BOOST_UUID_NO_SIMD)
 
 #endif // BOOST_UUID_DETAIL_CONFIG_HPP_INCLUDED_
