@@ -206,9 +206,9 @@ BOOST_FORCEINLINE Char* to_chars_simd(uuid const& u, Char* out) noexcept
         _mm_storeu_si128(reinterpret_cast< __m128i* >(out), mm_chars1);
         _mm_storeu_si128(reinterpret_cast< __m128i* >(out + 16), mm_chars2);
 #if defined(BOOST_UUID_USE_SSE41)
-        detail::store_native_u32(out + 32, static_cast<std::uint32_t>(_mm_extract_epi32(mm_chars3, 3)));
+        detail::store_native_u32(out + 32, static_cast< std::uint32_t >(_mm_extract_epi32(mm_chars3, 3)));
 #else
-        detail::store_native_u32(out + 32, _mm_cvtsi128_si32(_mm_srli_si128(mm_chars3, 12)));
+        detail::store_native_u32(out + 32, static_cast< std::uint32_t >(_mm_cvtsi128_si32(_mm_srli_si128(mm_chars3, 12))));
 #endif
     }
     else BOOST_IF_CONSTEXPR (sizeof(Char) == 2u)
@@ -224,7 +224,7 @@ BOOST_FORCEINLINE Char* to_chars_simd(uuid const& u, Char* out) noexcept
         _mm_storeu_si128(reinterpret_cast< __m128i* >(out + 24), _mm_unpackhi_epi8(mm_chars2, mm_0));
 #endif
 #if defined(BOOST_UUID_USE_SSE41) && (defined(__x86_64__) || defined(_M_X64))
-        detail::store_native_u64(out + 32, static_cast<std::uint64_t>(_mm_extract_epi64(_mm_unpackhi_epi8(mm_chars3, mm_0), 1)));
+        detail::store_native_u64(out + 32, static_cast< std::uint64_t >(_mm_extract_epi64(_mm_unpackhi_epi8(mm_chars3, mm_0), 1)));
 #else
         _mm_storeh_pd(reinterpret_cast< BOOST_MAY_ALIAS double* >(out + 32), _mm_castsi128_pd(_mm_unpackhi_epi8(mm_chars3, mm_0)));
 #endif
