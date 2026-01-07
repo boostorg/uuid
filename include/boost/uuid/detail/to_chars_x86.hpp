@@ -208,7 +208,7 @@ BOOST_FORCEINLINE Char* to_chars_simd(uuid const& u, Char* out) noexcept
 #if defined(BOOST_UUID_USE_SSE41)
         detail::store_native_u32(out + 32, static_cast<std::uint32_t>(_mm_extract_epi32(mm_chars3, 3)));
 #else
-        detail::store_native_u32(out + 32, _mm_cvtsi128_si32(_mm_srli_si128(mm_chars3, 12)));
+        detail::store_native_u32(out + 32, static_cast<std::uint32_t>(_mm_cvtsi128_si32(_mm_srli_si128(mm_chars3, 12))));
 #endif
     }
     else BOOST_IF_CONSTEXPR (sizeof(Char) == 2u)
