@@ -52,7 +52,7 @@ namespace detail {
 BOOST_FORCEINLINE std::uint32_t countr_zero_nz(std::uint32_t n) noexcept
 {
 #if defined(__GNUC__) || defined(__clang__)
-    return static_cast<std::uint32_t>(__builtin_ctz(n));
+    return static_cast< std::uint32_t >(__builtin_ctz(n));
 #elif defined(_MSC_VER) && !defined(__clang__)
     unsigned long index;
     _BitScanForward(&index, n);
@@ -491,7 +491,7 @@ struct from_chars_simd_load_traits< Char, 1u >
 
     static BOOST_FORCEINLINE __m128i load_packed_4(const Char* p) noexcept
     {
-        return _mm_cvtsi32_si128(static_cast<int>(detail::load_native_u32(p)));
+        return _mm_cvtsi32_si128(static_cast< int >(detail::load_native_u32(p)));
     }
 
     static BOOST_FORCEINLINE __m128i load_packed_n(const Char* p, unsigned int n) noexcept
@@ -513,11 +513,11 @@ struct from_chars_simd_load_traits< Char, 1u >
             chars = (chars << 16u) | static_cast< std::uint32_t >(detail::load_native_u16(p));
         }
 
-        __m128i mm_chars = _mm_cvtsi32_si128(static_cast<int>(chars));
+        __m128i mm_chars = _mm_cvtsi32_si128(static_cast< int >(chars));
         if ((n & 4u) != 0u)
         {
             p -= 4;
-            mm_chars = _mm_unpacklo_epi32(_mm_cvtsi32_si128(static_cast<int>(detail::load_native_u32(p))), mm_chars);
+            mm_chars = _mm_unpacklo_epi32(_mm_cvtsi32_si128(static_cast< int >(detail::load_native_u32(p))), mm_chars);
         }
 
         if ((n & 8u) != 0u)
@@ -569,7 +569,7 @@ struct from_chars_simd_load_traits< Char, 2u >
         if ((n & 2u) != 0u)
         {
             p -= 2;
-            mm_chars1 = _mm_unpacklo_epi32(_mm_cvtsi32_si128(static_cast<int>(detail::load_native_u32(p))), mm_chars1);
+            mm_chars1 = _mm_unpacklo_epi32(_mm_cvtsi32_si128(static_cast< int >(detail::load_native_u32(p))), mm_chars1);
         }
 
         if ((n & 4u) != 0u)
@@ -643,7 +643,7 @@ struct from_chars_simd_load_traits< Char, 4u >
         if ((n & 1u) != 0u)
         {
             p -= 1;
-            mm_chars1 = _mm_cvtsi32_si128(static_cast<int>(detail::load_native_u32(p)));
+            mm_chars1 = _mm_cvtsi32_si128(static_cast< int >(detail::load_native_u32(p)));
         }
 
         if ((n & 2u) != 0u)
@@ -713,7 +713,7 @@ BOOST_FORCEINLINE void from_chars_simd_core
         {
             // Some of the dashes are missing
             mm_dashes = _mm_and_si128(mm_dashes, constants::mm_dashes_mask);
-            std::uint32_t dash_mask = static_cast<std::uint32_t>(_mm_movemask_epi8(_mm_cmpeq_epi8(mm_dashes, mm_expected_dashes)));
+            std::uint32_t dash_mask = static_cast< std::uint32_t >(_mm_movemask_epi8(_mm_cmpeq_epi8(mm_dashes, mm_expected_dashes)));
             unsigned int pos = detail::countr_zero_nz(~dash_mask) + 8u;
             if (pos < end_pos)
             {
@@ -811,7 +811,7 @@ BOOST_FORCEINLINE void from_chars_simd_core
     mm_char_code_pattern_lo = _mm_add_epi8(mm_char_code_pattern_lo, constants::mm_2);
     mm_char_code_pattern_hi = _mm_add_epi8(mm_char_code_pattern_hi, constants::mm_2);
 
-    const __m128i mm_char_code_sub = _mm_cvtsi32_si128(static_cast<int>(char_code_sub));
+    const __m128i mm_char_code_sub = _mm_cvtsi32_si128(static_cast< int >(char_code_sub));
     __m128i mm_char_code_sub_lo = _mm_shuffle_epi8(mm_char_code_sub, mm_char_code_pattern_lo);
     __m128i mm_char_code_sub_hi = _mm_shuffle_epi8(mm_char_code_sub, mm_char_code_pattern_hi);
 #else
@@ -850,8 +850,8 @@ BOOST_FORCEINLINE void from_chars_simd_core
         mm_hi_bits_lo = _mm_cmpeq_epi8(mm_hi_bits_lo, mm_0);
         mm_hi_bits_hi = _mm_cmpeq_epi8(mm_hi_bits_hi, mm_0);
 
-        std::uint32_t digits_mask_lo = static_cast<std::uint32_t>(_mm_movemask_epi8(mm_hi_bits_lo));
-        std::uint32_t digits_mask_hi = static_cast<std::uint32_t>(_mm_movemask_epi8(mm_hi_bits_hi));
+        std::uint32_t digits_mask_lo = static_cast< std::uint32_t >(_mm_movemask_epi8(mm_hi_bits_lo));
+        std::uint32_t digits_mask_hi = static_cast< std::uint32_t >(_mm_movemask_epi8(mm_hi_bits_hi));
 
         unsigned int pos_lo = detail::countr_zero_nz(~digits_mask_lo) * 2u + 1u;
         unsigned int pos_hi = detail::countr_zero_nz(~digits_mask_hi) * 2u;
