@@ -10,6 +10,7 @@
 #include <boost/config.hpp>
 #include <stdexcept>
 #include <cstdio>
+#include <cstddef>
 
 namespace boost {
 namespace uuids {
@@ -29,10 +30,10 @@ BOOST_CXX14_CONSTEXPR inline char const* fc_error_to_string( from_chars_error er
     }
 }
 
-BOOST_NORETURN inline void throw_invalid_uuid( int pos, from_chars_error err )
+BOOST_NORETURN inline void throw_invalid_uuid( std::ptrdiff_t pos, from_chars_error err )
 {
     char buffer[ 128 ];
-    std::snprintf( buffer, sizeof( buffer ), "Invalid UUID string at position %d: %s", pos, fc_error_to_string( err ) );
+    std::snprintf( buffer, sizeof( buffer ), "Invalid UUID string at position %td: %s", pos, fc_error_to_string( err ) );
 
     BOOST_THROW_EXCEPTION( std::runtime_error( buffer ) );
 }

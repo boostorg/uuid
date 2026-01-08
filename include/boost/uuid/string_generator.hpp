@@ -33,7 +33,7 @@ public:
     using result_type = uuid;
 
     template<class CharIterator>
-    BOOST_CXX14_CONSTEXPR uuid operator()( CharIterator first, CharIterator last, int& pos, from_chars_error& err ) const noexcept
+    BOOST_CXX14_CONSTEXPR uuid operator()( CharIterator first, CharIterator last, std::ptrdiff_t& pos, from_chars_error& err ) const noexcept
     {
         uuid u;
 
@@ -170,7 +170,7 @@ public:
     template<class CharIterator>
     BOOST_CXX14_CONSTEXPR uuid operator()( CharIterator first, CharIterator last ) const
     {
-        int pos = 0;
+        std::ptrdiff_t pos = 0;
         from_chars_error err = {};
 
         uuid r = operator()( first, last, pos, err );

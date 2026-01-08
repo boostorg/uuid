@@ -10,7 +10,6 @@
 #include <boost/uuid/detail/throw_invalid_uuid.hpp>
 #include <boost/uuid/detail/cstring.hpp>
 #include <boost/config.hpp>
-#include <string>
 
 namespace boost {
 namespace uuids {
@@ -27,12 +26,12 @@ uuid uuid_from_string( Ch const* first, Ch const* last )
 
     if( r.ec != from_chars_error::none )
     {
-        detail::throw_invalid_uuid( static_cast<int>( r.ptr - first ), r.ec );
+        detail::throw_invalid_uuid( r.ptr - first, r.ec );
     }
 
     if( r.ptr != last )
     {
-        detail::throw_invalid_uuid( static_cast<int>( r.ptr - first ), from_chars_error::unexpected_extra_input );
+        detail::throw_invalid_uuid( r.ptr - first, from_chars_error::unexpected_extra_input );
     }
 
     return u;
