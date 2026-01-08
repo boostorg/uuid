@@ -7,6 +7,7 @@
 
 #include <boost/uuid/detail/is_constant_evaluated.hpp>
 #include <boost/config.hpp>
+#include <string>
 #include <cstddef>
 #include <cstring>
 
@@ -109,6 +110,25 @@ BOOST_UUID_CXX14_CONSTEXPR_RT inline int memcmp_rt( unsigned char const* s1, uns
     else
     {
         return BOOST_UUID_DETAIL_MEMCMP( s1, s2, n );
+    }
+}
+
+// strlen
+
+template<class Ch>
+BOOST_CXX14_CONSTEXPR inline std::size_t strlen_cx( Ch const* s ) noexcept
+{
+    if( is_constant_evaluated_cx() )
+    {
+        std::size_t r = 0;
+
+        while( *s ) ++s, ++r;
+
+        return r;
+    }
+    else
+    {
+        return std::char_traits<Ch>::length( s );
     }
 }
 

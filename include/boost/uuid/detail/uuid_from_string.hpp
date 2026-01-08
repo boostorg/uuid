@@ -8,6 +8,7 @@
 #include <boost/uuid/uuid.hpp>
 #include <boost/uuid/detail/from_chars.hpp>
 #include <boost/uuid/detail/throw_invalid_uuid.hpp>
+#include <boost/uuid/detail/cstring.hpp>
 #include <boost/config.hpp>
 #include <string>
 
@@ -44,7 +45,7 @@ BOOST_CXX14_CONSTEXPR
 uuid uuid_from_string( Ch const* str )
 {
     Ch const* first = str;
-    Ch const* last = str + std::char_traits<Ch>::length( str );
+    Ch const* last = str + detail::strlen_cx( str );
 
     return detail::uuid_from_string( first, last );
 }

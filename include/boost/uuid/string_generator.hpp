@@ -9,25 +9,13 @@
 #include <boost/uuid/uuid.hpp>
 #include <boost/uuid/detail/from_chars.hpp>
 #include <boost/uuid/detail/throw_invalid_uuid.hpp>
+#include <boost/uuid/detail/cstring.hpp>
 #include <boost/config.hpp>
 #include <string>
 #include <cstddef>
 
 namespace boost {
 namespace uuids {
-
-namespace detail
-{
-
-template<class Ch>
-BOOST_CXX14_CONSTEXPR std::size_t cx_strlen( Ch const* s ) noexcept
-{
-    std::size_t r = 0;
-    while( *s ) ++s, ++r;
-    return r;
-}
-
-} // namespace detail
 
 // Generates a UUID from a string
 //
@@ -204,7 +192,7 @@ public:
     template<class Ch>
     BOOST_CXX14_CONSTEXPR uuid operator()( Ch const* s ) const
     {
-        return operator()( s, s + detail::cx_strlen( s ) );
+        return operator()( s, s + detail::strlen_cx( s ) );
     }
 };
 
