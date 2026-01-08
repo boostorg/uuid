@@ -13,8 +13,8 @@ find_package(Threads REQUIRED)
 
 set(BOOST_TEST_LINK_LIBRARIES Boost::uuid Boost::core)
 
-boost_test(TYPE run SOURCES test_uuid.cpp LINK_LIBRARIES Boost::container_hash COMPILE_DEFINITIONS BOOST_UUID_REPORT_IMPLEMENTATION=1)
-boost_test(TYPE run SOURCES test_uuid.cpp LINK_LIBRARIES Boost::container_hash COMPILE_DEFINITIONS BOOST_UUID_NO_SIMD=1 BOOST_UUID_REPORT_IMPLEMENTATION=1 NAME test_uuid_no_simd)
+boost_test(TYPE run SOURCES test_uuid.cpp LINK_LIBRARIES Boost::container_hash)
+boost_test(TYPE run SOURCES test_uuid.cpp LINK_LIBRARIES Boost::container_hash COMPILE_DEFINITIONS BOOST_UUID_NO_SIMD=1 NAME test_uuid_no_simd)
 boost_test(TYPE run SOURCES test_uuid_2.cpp)
 boost_test(TYPE run SOURCES test_uuid_3.cpp)
 
@@ -24,25 +24,25 @@ boost_test(TYPE run SOURCES test_attribute_packed.cpp)
 boost_test(TYPE run SOURCES test_pragma_pack.cpp)
 boost_test(TYPE run SOURCES test_data.cpp)
 
-boost_test(TYPE run SOURCES test_comparison.cpp COMPILE_DEFINITIONS BOOST_UUID_REPORT_IMPLEMENTATION=1)
-boost_test(TYPE run SOURCES test_comparison.cpp COMPILE_DEFINITIONS BOOST_UUID_NO_SIMD=1 BOOST_UUID_REPORT_IMPLEMENTATION=1 NAME test_comparison_no_simd)
+boost_test(TYPE run SOURCES test_comparison.cpp)
+boost_test(TYPE run SOURCES test_comparison.cpp COMPILE_DEFINITIONS BOOST_UUID_NO_SIMD=1 NAME test_comparison_no_simd)
 
 boost_test(TYPE run SOURCES test_include1.cpp test_include2.cpp)
 
-boost_test(TYPE run SOURCES test_io.cpp LINK_LIBRARIES Boost::lexical_cast Boost::predef COMPILE_DEFINITIONS BOOST_UUID_REPORT_IMPLEMENTATION=1)
-boost_test(TYPE run SOURCES test_io.cpp LINK_LIBRARIES Boost::lexical_cast Boost::predef COMPILE_DEFINITIONS BOOST_UUID_NO_SIMD=1 BOOST_UUID_REPORT_IMPLEMENTATION=1 NAME test_io_no_simd)
-boost_test(TYPE run SOURCES test_io_2.cpp COMPILE_DEFINITIONS BOOST_UUID_REPORT_IMPLEMENTATION=1)
-boost_test(TYPE run SOURCES test_io_2.cpp COMPILE_DEFINITIONS BOOST_UUID_NO_SIMD=1 BOOST_UUID_REPORT_IMPLEMENTATION=1 NAME test_io_2_no_simd)
+boost_test(TYPE run SOURCES test_io.cpp LINK_LIBRARIES Boost::lexical_cast Boost::predef)
+boost_test(TYPE run SOURCES test_io.cpp LINK_LIBRARIES Boost::lexical_cast Boost::predef COMPILE_DEFINITIONS BOOST_UUID_NO_SIMD=1 NAME test_io_no_simd)
+boost_test(TYPE run SOURCES test_io_2.cpp)
+boost_test(TYPE run SOURCES test_io_2.cpp COMPILE_DEFINITIONS BOOST_UUID_NO_SIMD=1 NAME test_io_2_no_simd)
 
-boost_test(TYPE run SOURCES test_to_chars.cpp COMPILE_DEFINITIONS BOOST_UUID_REPORT_IMPLEMENTATION=1)
-boost_test(TYPE run SOURCES test_to_chars.cpp COMPILE_DEFINITIONS BOOST_UUID_NO_SIMD=1 BOOST_UUID_REPORT_IMPLEMENTATION=1 NAME test_to_chars_no_simd)
-boost_test(TYPE run SOURCES test_to_chars_2.cpp COMPILE_DEFINITIONS BOOST_UUID_REPORT_IMPLEMENTATION=1)
-boost_test(TYPE run SOURCES test_to_chars_2.cpp COMPILE_DEFINITIONS BOOST_UUID_NO_SIMD=1 BOOST_UUID_REPORT_IMPLEMENTATION=1 NAME test_to_chars_2_no_simd)
+boost_test(TYPE run SOURCES test_to_chars.cpp)
+boost_test(TYPE run SOURCES test_to_chars.cpp COMPILE_DEFINITIONS BOOST_UUID_NO_SIMD=1 NAME test_to_chars_no_simd)
+boost_test(TYPE run SOURCES test_to_chars_2.cpp)
+boost_test(TYPE run SOURCES test_to_chars_2.cpp COMPILE_DEFINITIONS BOOST_UUID_NO_SIMD=1 NAME test_to_chars_2_no_simd)
 
-boost_test(TYPE run SOURCES test_from_chars.cpp COMPILE_DEFINITIONS BOOST_UUID_REPORT_IMPLEMENTATION=1)
-boost_test(TYPE run SOURCES test_from_chars.cpp COMPILE_DEFINITIONS BOOST_UUID_NO_SIMD=1 BOOST_UUID_REPORT_IMPLEMENTATION=1 NAME test_from_chars_no_simd)
-boost_test(TYPE run SOURCES test_from_chars_2.cpp COMPILE_DEFINITIONS BOOST_UUID_REPORT_IMPLEMENTATION=1)
-boost_test(TYPE run SOURCES test_from_chars_2.cpp COMPILE_DEFINITIONS BOOST_UUID_NO_SIMD=1 BOOST_UUID_REPORT_IMPLEMENTATION=1 NAME test_from_chars_2_no_simd)
+boost_test(TYPE run SOURCES test_from_chars.cpp)
+boost_test(TYPE run SOURCES test_from_chars.cpp COMPILE_DEFINITIONS BOOST_UUID_NO_SIMD=1 NAME test_from_chars_no_simd)
+boost_test(TYPE run SOURCES test_from_chars_2.cpp)
+boost_test(TYPE run SOURCES test_from_chars_2.cpp COMPILE_DEFINITIONS BOOST_UUID_NO_SIMD=1 NAME test_from_chars_2_no_simd)
 
 boost_test(TYPE run SOURCES test_uuid_from_string.cpp)
 

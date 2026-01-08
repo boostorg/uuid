@@ -74,8 +74,8 @@ run test_include1.cpp test_include2.cpp ;
 # main tests
 
 run test_uuid.cpp
-  : : : <library>/boost/container_hash//boost_container_hash <define>BOOST_UUID_REPORT_IMPLEMENTATION ;
-run test_uuid.cpp : : : <library>/boost/container_hash//boost_container_hash <define>BOOST_UUID_NO_SIMD <define>BOOST_UUID_REPORT_IMPLEMENTATION : test_uuid_no_simd ;
+  : : : <library>/boost/container_hash//boost_container_hash ;
+run test_uuid.cpp : : : <library>/boost/container_hash//boost_container_hash <define>BOOST_UUID_NO_SIMD : test_uuid_no_simd ;
 run test_uuid_2.cpp ;
 run test_uuid_3.cpp ;
 
@@ -90,28 +90,27 @@ run test_data.cpp ;
 
 # test comparison
 
-run test_comparison.cpp
-  : : : <define>BOOST_UUID_REPORT_IMPLEMENTATION ;
-run test_comparison.cpp : : : <define>BOOST_UUID_NO_SIMD <define>BOOST_UUID_REPORT_IMPLEMENTATION : test_comparison_no_simd ;
+run test_comparison.cpp ;
+run test_comparison.cpp : : : <define>BOOST_UUID_NO_SIMD : test_comparison_no_simd ;
 
 # test uuid_io.hpp
 
 run test_io.cpp
-  : : : <library>/boost/lexical_cast//boost_lexical_cast <library>/boost/predef//boost_predef <define>BOOST_UUID_REPORT_IMPLEMENTATION -$(WERROR) ;
+  : : : <library>/boost/lexical_cast//boost_lexical_cast <library>/boost/predef//boost_predef -$(WERROR) ;
 run test_io.cpp
-  : : : <library>/boost/lexical_cast//boost_lexical_cast <library>/boost/predef//boost_predef <define>BOOST_UUID_NO_SIMD <define>BOOST_UUID_REPORT_IMPLEMENTATION -$(WERROR) : test_io_no_simd ;
-run test_io_2.cpp : : : <define>BOOST_UUID_REPORT_IMPLEMENTATION ;
-run test_io_2.cpp : : : <define>BOOST_UUID_NO_SIMD <define>BOOST_UUID_REPORT_IMPLEMENTATION : test_io_2_no_simd ;
+  : : : <library>/boost/lexical_cast//boost_lexical_cast <library>/boost/predef//boost_predef <define>BOOST_UUID_NO_SIMD -$(WERROR) : test_io_no_simd ;
+run test_io_2.cpp ;
+run test_io_2.cpp : : : <define>BOOST_UUID_NO_SIMD : test_io_2_no_simd ;
 
-run test_to_chars.cpp : : : <define>BOOST_UUID_REPORT_IMPLEMENTATION ;
-run test_to_chars.cpp : : : <define>BOOST_UUID_NO_SIMD <define>BOOST_UUID_REPORT_IMPLEMENTATION : test_to_chars_no_simd ;
-run test_to_chars_2.cpp : : : <define>BOOST_UUID_REPORT_IMPLEMENTATION ;
-run test_to_chars_2.cpp : : : <define>BOOST_UUID_NO_SIMD <define>BOOST_UUID_REPORT_IMPLEMENTATION : test_to_chars_2_no_simd ;
+run test_to_chars.cpp ;
+run test_to_chars.cpp : : : <define>BOOST_UUID_NO_SIMD : test_to_chars_no_simd ;
+run test_to_chars_2.cpp ;
+run test_to_chars_2.cpp : : : <define>BOOST_UUID_NO_SIMD : test_to_chars_2_no_simd ;
 
-run test_from_chars.cpp : : : <define>BOOST_UUID_REPORT_IMPLEMENTATION ;
-run test_from_chars.cpp : : : <define>BOOST_UUID_NO_SIMD <define>BOOST_UUID_REPORT_IMPLEMENTATION : test_from_chars_no_simd ;
-run test_from_chars_2.cpp : : : <define>BOOST_UUID_REPORT_IMPLEMENTATION ;
-run test_from_chars_2.cpp : : : <define>BOOST_UUID_NO_SIMD <define>BOOST_UUID_REPORT_IMPLEMENTATION : test_from_chars_2_no_simd ;
+run test_from_chars.cpp ;
+run test_from_chars.cpp : : : <define>BOOST_UUID_NO_SIMD : test_from_chars_no_simd ;
+run test_from_chars_2.cpp ;
+run test_from_chars_2.cpp : : : <define>BOOST_UUID_NO_SIMD : test_from_chars_2_no_simd ;
 
 run test_uuid_from_string.cpp ;
 run test_uuid_from_string_2.cpp ;
@@ -235,9 +234,8 @@ run test_constants.cpp ;
 
 compile test_uuid_cx.cpp ;
 run test_uuid_cx2.cpp ;
-run test_uuid_cx3.cpp
-  : : : <define>BOOST_UUID_REPORT_IMPLEMENTATION ;
-run test_uuid_cx3.cpp : : : <define>BOOST_UUID_NO_SIMD <define>BOOST_UUID_REPORT_IMPLEMENTATION : test_uuid_cx3_no_simd ;
+run test_uuid_cx3.cpp ;
+run test_uuid_cx3.cpp : : : <define>BOOST_UUID_NO_SIMD : test_uuid_cx3_no_simd ;
 
 run test_hash_value_cx.cpp ;
 
