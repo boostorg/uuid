@@ -7,7 +7,7 @@
 
 #include <boost/uuid/detail/config.hpp>
 
-#if defined(BOOST_UUID_USE_SSE41)
+#if defined(BOOST_UUID_USE_SSE2)
 
 #include <cstddef>
 #include <cstdint>
@@ -29,20 +29,46 @@ BOOST_PRAGMA_MESSAGE( "Using from_chars_x86.hpp, AVX512v1" )
 #elif defined(BOOST_UUID_USE_AVX)
 BOOST_PRAGMA_MESSAGE( "Using from_chars_x86.hpp, AVX" )
 
-#else
+#elif defined(BOOST_UUID_USE_SSE41)
 BOOST_PRAGMA_MESSAGE( "Using from_chars_x86.hpp, SSE4.1" )
+
+#elif defined(BOOST_UUID_USE_SSSE3)
+BOOST_PRAGMA_MESSAGE( "Using from_chars_x86.hpp, SSSE3" )
+
+#else
+BOOST_PRAGMA_MESSAGE( "Using from_chars_x86.hpp, SSE2" )
 
 #endif
 #endif // #if defined(BOOST_UUID_REPORT_IMPLEMENTATION)
 
 #if defined(BOOST_UUID_USE_AVX)
 #include <immintrin.h>
-#else
+#elif defined(BOOST_UUID_USE_SSE41)
 #include <smmintrin.h>
+#elif defined(BOOST_UUID_USE_SSSE3)
+#include <tmmintrin.h>
+#else
+#include <emmintrin.h>
 #endif
 #if defined(_MSC_VER) && !defined(__clang__)
 #include <intrin.h>
 #pragma intrinsic(_BitScanForward)
+#endif
+
+// Unlike the legacy SSE4.1 pblendvb instruction, the VEX-coded vpblendvb is slow on Intel Lion Cove, Skymont and older.
+// Newer microarchitectures are unknown at the time of this writing. Also, on Intel Haswell/Broadwell, even the SSE4.1
+// pblendvb is slow.
+#if !defined(BOOST_UUID_FROM_CHARS_X86_SLOW_PBLENDVB) && \
+    (defined(__tune_haswell__) || defined(__tune_broadwell__) || defined(BOOST_UUID_USE_AVX))
+#define BOOST_UUID_FROM_CHARS_X86_SLOW_PBLENDVB
+#endif
+
+#if !defined(BOOST_UUID_FROM_CHARS_X86_USE_PBLENDVB) && defined(BOOST_UUID_USE_SSE41) && !defined(BOOST_UUID_FROM_CHARS_X86_SLOW_PBLENDVB)
+#define BOOST_UUID_FROM_CHARS_X86_USE_PBLENDVB
+#endif
+
+#if defined(BOOST_UUID_USE_AVX512_V1) || (defined(BOOST_UUID_USE_SSE41) && defined(BOOST_UUID_FROM_CHARS_X86_USE_PBLENDVB)) || !defined(BOOST_UUID_USE_SSSE3)
+#define BOOST_UUID_DETAIL_FROM_CHARS_X86_USE_BLENDS
 #endif
 
 namespace boost {
@@ -110,11 +136,11 @@ struct from_chars_simd_char_constants
     static const simd_vector128< std::uint8_t > mm_char_code2_cmp;
     static const simd_vector128< std::uint8_t > mm_char_code1_cmp;
 
-#if defined(BOOST_UUID_USE_AVX512_V1) || !defined(BOOST_UUID_USE_AVX)
+#if defined(BOOST_UUID_DETAIL_FROM_CHARS_X86_USE_BLENDS)
     static const simd_vector128< std::uint8_t > mm_char_code2_sub;
     static const simd_vector128< std::uint8_t > mm_char_code1_sub;
     static const simd_vector128< std::uint8_t > mm_char_code0_sub;
-#endif // defined(BOOST_UUID_USE_AVX512_V1) || !defined(BOOST_UUID_USE_AVX)
+#endif // defined(BOOST_UUID_DETAIL_FROM_CHARS_X86_USE_BLENDS)
 };
 
 template< typename Char, bool IsCharASCIICompatible, bool IsWCharASCIICompatible >
@@ -147,7 +173,7 @@ const simd_vector128< std::uint8_t > from_chars_simd_char_constants< Char, IsCha
     static_cast< std::uint8_t >(char_code1 - 1u), static_cast< std::uint8_t >(char_code1 - 1u)
 }};
 
-#if defined(BOOST_UUID_USE_AVX512_V1) || !defined(BOOST_UUID_USE_AVX)
+#if defined(BOOST_UUID_DETAIL_FROM_CHARS_X86_USE_BLENDS)
 
 template< typename Char, bool IsCharASCIICompatible, bool IsWCharASCIICompatible >
 const simd_vector128< std::uint8_t > from_chars_simd_char_constants< Char, IsCharASCIICompatible, IsWCharASCIICompatible >::mm_char_code2_sub =
@@ -170,7 +196,7 @@ const simd_vector128< std::uint8_t > from_chars_simd_char_constants< Char, IsCha
     char_code0_sub, char_code0_sub, char_code0_sub, char_code0_sub, char_code0_sub, char_code0_sub, char_code0_sub, char_code0_sub
 }};
 
-#endif // defined(BOOST_UUID_USE_AVX512_V1) || !defined(BOOST_UUID_USE_AVX)
+#endif // defined(BOOST_UUID_DETAIL_FROM_CHARS_X86_USE_BLENDS)
 
 template< bool IsWCharASCIICompatible >
 struct from_chars_simd_char_constants< char, false, IsWCharASCIICompatible >
@@ -225,11 +251,11 @@ struct from_chars_simd_char_constants< char, false, IsWCharASCIICompatible >
     static const simd_vector128< std::uint8_t > mm_char_code2_cmp;
     static const simd_vector128< std::uint8_t > mm_char_code1_cmp;
 
-#if defined(BOOST_UUID_USE_AVX512_V1) || !defined(BOOST_UUID_USE_AVX)
+#if defined(BOOST_UUID_DETAIL_FROM_CHARS_X86_USE_BLENDS)
     static const simd_vector128< std::uint8_t > mm_char_code2_sub;
     static const simd_vector128< std::uint8_t > mm_char_code1_sub;
     static const simd_vector128< std::uint8_t > mm_char_code0_sub;
-#endif // defined(BOOST_UUID_USE_AVX512_V1) || !defined(BOOST_UUID_USE_AVX)
+#endif // defined(BOOST_UUID_DETAIL_FROM_CHARS_X86_USE_BLENDS)
 };
 
 template< bool IsWCharASCIICompatible >
@@ -265,7 +291,7 @@ const simd_vector128< std::uint8_t > from_chars_simd_char_constants< char, false
     static_cast< std::uint8_t >(char_code1 - 1u), static_cast< std::uint8_t >(char_code1 - 1u)
 }};
 
-#if defined(BOOST_UUID_USE_AVX512_V1) || !defined(BOOST_UUID_USE_AVX)
+#if defined(BOOST_UUID_DETAIL_FROM_CHARS_X86_USE_BLENDS)
 
 template< bool IsWCharASCIICompatible >
 const simd_vector128< std::uint8_t > from_chars_simd_char_constants< char, false, IsWCharASCIICompatible >::mm_char_code2_sub =
@@ -288,7 +314,7 @@ const simd_vector128< std::uint8_t > from_chars_simd_char_constants< char, false
     char_code0_sub, char_code0_sub, char_code0_sub, char_code0_sub, char_code0_sub, char_code0_sub, char_code0_sub, char_code0_sub
 }};
 
-#endif // defined(BOOST_UUID_USE_AVX512_V1) || !defined(BOOST_UUID_USE_AVX)
+#endif // defined(BOOST_UUID_DETAIL_FROM_CHARS_X86_USE_BLENDS)
 
 template< bool IsCharASCIICompatible >
 struct from_chars_simd_char_constants< wchar_t, IsCharASCIICompatible, false >
@@ -348,11 +374,11 @@ struct from_chars_simd_char_constants< wchar_t, IsCharASCIICompatible, false >
     static const simd_vector128< std::uint8_t > mm_char_code2_cmp;
     static const simd_vector128< std::uint8_t > mm_char_code1_cmp;
 
-#if defined(BOOST_UUID_USE_AVX512_V1) || !defined(BOOST_UUID_USE_AVX)
+#if defined(BOOST_UUID_DETAIL_FROM_CHARS_X86_USE_BLENDS)
     static const simd_vector128< std::uint8_t > mm_char_code2_sub;
     static const simd_vector128< std::uint8_t > mm_char_code1_sub;
     static const simd_vector128< std::uint8_t > mm_char_code0_sub;
-#endif // defined(BOOST_UUID_USE_AVX512_V1) || !defined(BOOST_UUID_USE_AVX)
+#endif // defined(BOOST_UUID_DETAIL_FROM_CHARS_X86_USE_BLENDS)
 };
 
 template< bool IsCharASCIICompatible >
@@ -388,7 +414,7 @@ const simd_vector128< std::uint8_t > from_chars_simd_char_constants< wchar_t, Is
     static_cast< std::uint8_t >(char_code1 - 1u), static_cast< std::uint8_t >(char_code1 - 1u)
 }};
 
-#if defined(BOOST_UUID_USE_AVX512_V1) || !defined(BOOST_UUID_USE_AVX)
+#if defined(BOOST_UUID_DETAIL_FROM_CHARS_X86_USE_BLENDS)
 
 template< bool IsCharASCIICompatible >
 const simd_vector128< std::uint8_t > from_chars_simd_char_constants< wchar_t, IsCharASCIICompatible, false >::mm_char_code2_sub =
@@ -411,7 +437,7 @@ const simd_vector128< std::uint8_t > from_chars_simd_char_constants< wchar_t, Is
     char_code0_sub, char_code0_sub, char_code0_sub, char_code0_sub, char_code0_sub, char_code0_sub, char_code0_sub, char_code0_sub
 }};
 
-#endif // defined(BOOST_UUID_USE_AVX512_V1) || !defined(BOOST_UUID_USE_AVX)
+#endif // defined(BOOST_UUID_DETAIL_FROM_CHARS_X86_USE_BLENDS)
 
 
 template< typename >
@@ -426,12 +452,18 @@ struct from_chars_simd_constants
     static const simd_vector128< std::uint8_t > mm_split_half_bytes_pattern1;
     static const simd_vector128< std::uint8_t > mm_split_half_bytes_pattern2;
     static const simd_vector128< std::uint8_t > mm_split_half_bytes_pattern3;
-    static const simd_vector128< std::uint8_t > mm_split_half_bytes_blend_mask;
+    static const simd_vector128< std::uint8_t > mm_split_half_bytes_blend_mask1;
+#if !defined(BOOST_UUID_USE_SSE41)
+    static const simd_vector128< std::uint8_t > mm_split_half_bytes_blend_mask2;
+#endif
+#if !defined(BOOST_UUID_USE_SSSE3)
+    static const simd_vector128< std::uint8_t > mm_split_half_byte_chars_mask;
+#endif
 #endif
 
     static const simd_vector128< std::uint8_t > mm_F0;
 
-#if defined(BOOST_UUID_USE_AVX) && !defined(BOOST_UUID_USE_AVX512_V1)
+#if !defined(BOOST_UUID_DETAIL_FROM_CHARS_X86_USE_BLENDS)
     static const simd_vector128< std::uint8_t > mm_2;
 #endif
 };
@@ -457,13 +489,23 @@ template< typename T >
 const simd_vector128< std::uint8_t > from_chars_simd_constants< T >::mm_split_half_bytes_pattern3 =
     {{ 0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x01, 0x03, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x00, 0x02 }};
 template< typename T >
-const simd_vector128< std::uint8_t > from_chars_simd_constants< T >::mm_split_half_bytes_blend_mask =
+const simd_vector128< std::uint8_t > from_chars_simd_constants< T >::mm_split_half_bytes_blend_mask1 =
     {{ 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xFF, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xFF }};
+#if !defined(BOOST_UUID_USE_SSE41)
+template< typename T >
+const simd_vector128< std::uint8_t > from_chars_simd_constants< T >::mm_split_half_bytes_blend_mask2 =
+    {{ 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0x00, 0x00, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0x00, 0x00 }};
+#endif
+#if !defined(BOOST_UUID_USE_SSSE3)
+template< typename T >
+const simd_vector128< std::uint8_t > from_chars_simd_constants< T >::mm_split_half_byte_chars_mask =
+    {{ 0xFF, 0x00, 0xFF, 0x00, 0xFF, 0x00, 0xFF, 0x00, 0xFF, 0x00, 0xFF, 0x00, 0xFF, 0x00, 0xFF, 0x00 }};
+#endif
 #endif
 template< typename T >
 const simd_vector128< std::uint8_t > from_chars_simd_constants< T >::mm_F0 =
     {{ 0xF0, 0xF0, 0xF0, 0xF0, 0xF0, 0xF0, 0xF0, 0xF0, 0xF0, 0xF0, 0xF0, 0xF0, 0xF0, 0xF0, 0xF0, 0xF0 }};
-#if defined(BOOST_UUID_USE_AVX) && !defined(BOOST_UUID_USE_AVX512_V1)
+#if !defined(BOOST_UUID_DETAIL_FROM_CHARS_X86_USE_BLENDS)
 template< typename T >
 const simd_vector128< std::uint8_t > from_chars_simd_constants< T >::mm_2 =
     {{ 0x02, 0x02, 0x02, 0x02, 0x02, 0x02, 0x02, 0x02, 0x02, 0x02, 0x02, 0x02, 0x02, 0x02, 0x02, 0x02 }};
@@ -594,6 +636,38 @@ struct from_chars_simd_load_traits< Char, 2u >
 template< typename Char >
 struct from_chars_simd_load_traits< Char, 4u >
 {
+#if !defined(BOOST_UUID_USE_SSE41) && defined(BOOST_UUID_USE_SSSE3)
+    static const simd_vector128< std::uint8_t > mm_deinterleave_epi16_pattern;
+#endif
+
+    static BOOST_FORCEINLINE __m128i mm_packus_epi32(__m128i mm1, __m128i mm2) noexcept
+    {
+#if defined(BOOST_UUID_USE_SSE41)
+        return _mm_packus_epi32(mm1, mm2);
+#else // defined(BOOST_UUID_USE_SSE41)
+#if defined(BOOST_UUID_USE_SSSE3)
+        mm1 = _mm_shuffle_epi8(mm1, mm_deinterleave_epi16_pattern);
+        mm2 = _mm_shuffle_epi8(mm2, mm_deinterleave_epi16_pattern);
+
+        __m128i mm_lo = _mm_unpacklo_epi64(mm1, mm2);
+        __m128i mm_hi = _mm_unpackhi_epi64(mm1, mm2);
+#else // defined(BOOST_UUID_USE_SSSE3)
+        mm1 = _mm_shufflelo_epi16(mm1, _MM_SHUFFLE(3, 1, 2, 0));
+        mm2 = _mm_shufflelo_epi16(mm2, _MM_SHUFFLE(3, 1, 2, 0));
+        mm1 = _mm_shufflehi_epi16(mm1, _MM_SHUFFLE(3, 1, 2, 0));
+        mm2 = _mm_shufflehi_epi16(mm2, _MM_SHUFFLE(3, 1, 2, 0));
+
+        __m128i mm_lo = _mm_castps_si128(_mm_shuffle_ps(_mm_castsi128_ps(mm1), _mm_castsi128_ps(mm2), _MM_SHUFFLE(2, 0, 2, 0)));
+        __m128i mm_hi = _mm_castps_si128(_mm_shuffle_ps(_mm_castsi128_ps(mm1), _mm_castsi128_ps(mm2), _MM_SHUFFLE(3, 1, 3, 1)));
+#endif // defined(BOOST_UUID_USE_SSSE3)
+        const __m128i mm_0 = _mm_setzero_si128();
+        const __m128i mm_FF = _mm_cmpeq_epi32(mm_0, mm_0);
+
+        __m128i mm_sat = _mm_xor_si128(_mm_cmpeq_epi16(mm_hi, mm_0), mm_FF);
+        return _mm_or_si128(mm_lo, mm_sat);
+#endif // defined(BOOST_UUID_USE_SSE41)
+    }
+
     static BOOST_FORCEINLINE __m128i load_packed_16(const Char* p) noexcept
     {
 #if defined(BOOST_UUID_USE_AVX512_V1)
@@ -606,8 +680,8 @@ struct from_chars_simd_load_traits< Char, 4u >
         return _mm_unpacklo_epi64(mm1, mm2);
 #endif // defined(BOOST_UUID_TO_FROM_CHARS_X86_USE_ZMM)
 #else
-        __m128i mm1 = _mm_packus_epi32(_mm_loadu_si128(reinterpret_cast< const __m128i* >(p)), _mm_loadu_si128(reinterpret_cast< const __m128i* >(p + 4)));
-        __m128i mm2 = _mm_packus_epi32(_mm_loadu_si128(reinterpret_cast< const __m128i* >(p + 8)), _mm_loadu_si128(reinterpret_cast< const __m128i* >(p + 12)));
+        __m128i mm1 = mm_packus_epi32(_mm_loadu_si128(reinterpret_cast< const __m128i* >(p)), _mm_loadu_si128(reinterpret_cast< const __m128i* >(p + 4)));
+        __m128i mm2 = mm_packus_epi32(_mm_loadu_si128(reinterpret_cast< const __m128i* >(p + 8)), _mm_loadu_si128(reinterpret_cast< const __m128i* >(p + 12)));
         return _mm_packus_epi16(mm1, mm2);
 #endif
     }
@@ -619,7 +693,7 @@ struct from_chars_simd_load_traits< Char, 4u >
 #else
         __m128i mm1 = _mm_loadu_si128(reinterpret_cast< const __m128i* >(p));
         __m128i mm2 = _mm_setzero_si128();
-        return _mm_packus_epi16(_mm_packus_epi32(mm1, mm2), mm2);
+        return _mm_packus_epi16(mm_packus_epi32(mm1, mm2), mm2);
 #endif
     }
 
@@ -668,12 +742,18 @@ struct from_chars_simd_load_traits< Char, 4u >
             mm_chars1 = _mm_loadu_si128(reinterpret_cast< const __m128i* >(p));
             mm_chars2 = _mm_loadu_si128(reinterpret_cast< const __m128i* >(p + 4));
         }
-        mm_chars1 = _mm_packus_epi32(mm_chars1, mm_chars2);
-        mm_chars3 = _mm_packus_epi32(mm_chars3, mm_chars4);
+        mm_chars1 = mm_packus_epi32(mm_chars1, mm_chars2);
+        mm_chars3 = mm_packus_epi32(mm_chars3, mm_chars4);
         return _mm_packus_epi16(mm_chars1, mm_chars3);
 #endif
     }
 };
+
+#if !defined(BOOST_UUID_USE_SSE41) && defined(BOOST_UUID_USE_SSSE3)
+template< typename Char >
+const simd_vector128< std::uint8_t > from_chars_simd_load_traits< Char, 4u >::mm_deinterleave_epi16_pattern =
+    {{ 0x00, 0x01, 0x04, 0x05, 0x08, 0x09, 0x0C, 0x0D, 0x02, 0x03, 0x06, 0x07, 0x0A, 0x0B, 0x0E, 0x0F }};
+#endif
 
 #if defined(BOOST_GCC) && (BOOST_GCC >= 40600)
 #pragma GCC diagnostic pop
@@ -690,7 +770,7 @@ BOOST_FORCEINLINE void from_chars_simd_core
     __m128i const& mm_expected_dashes,
     __m128i const& mm_char_code1_cmp,
     __m128i const& mm_char_code2_cmp,
-#if defined(BOOST_UUID_USE_AVX512_V1) || !defined(BOOST_UUID_USE_AVX)
+#if defined(BOOST_UUID_DETAIL_FROM_CHARS_X86_USE_BLENDS)
     __m128i const& mm_char_code0_sub,
     __m128i const& mm_char_code1_sub,
     __m128i const& mm_char_code2_sub,
@@ -706,15 +786,24 @@ BOOST_FORCEINLINE void from_chars_simd_core
     // |01234567-89ab-cd|ef-0123-456789ab|cdefXXXXXXXXXXXX|
     //
     // Check if dashes are in the expected positions
+    //
+    //      mm_middle
+    // |-89ab-cdef-0123-|
+    const __m128i mm_middle = _mm_castpd_si128(_mm_shuffle_pd(_mm_castsi128_pd(mm_chars1), _mm_castsi128_pd(mm_chars2), _MM_SHUFFLE2(0, 1)));
     {
-        //      mm_dashes
-        // |-89ab-cdef-0123-|
-        __m128i mm_dashes = _mm_castpd_si128(_mm_shuffle_pd(_mm_castsi128_pd(mm_chars1), _mm_castsi128_pd(mm_chars2), _MM_SHUFFLE2(0, 1)));
-        if (BOOST_UNLIKELY(!_mm_test_all_zeros(_mm_xor_si128(mm_dashes, mm_expected_dashes), constants::mm_dashes_mask)))
+#if defined(BOOST_UUID_USE_SSE41)
+        if (BOOST_UNLIKELY(!_mm_test_all_zeros(_mm_xor_si128(mm_middle, mm_expected_dashes), constants::mm_dashes_mask)))
+#else
+        __m128i mm_dashes = _mm_and_si128(mm_middle, constants::mm_dashes_mask);
+        std::uint32_t dash_mask = static_cast< std::uint32_t >(_mm_movemask_epi8(_mm_cmpeq_epi8(mm_dashes, mm_expected_dashes)));
+        if (BOOST_UNLIKELY(dash_mask != 0xFFFF))
+#endif
         {
             // Some of the dashes are missing
-            mm_dashes = _mm_and_si128(mm_dashes, constants::mm_dashes_mask);
+#if defined(BOOST_UUID_USE_SSE41)
+            __m128i mm_dashes = _mm_and_si128(mm_middle, constants::mm_dashes_mask);
             std::uint32_t dash_mask = static_cast< std::uint32_t >(_mm_movemask_epi8(_mm_cmpeq_epi8(mm_dashes, mm_expected_dashes)));
+#endif
             unsigned int pos = detail::countr_zero_nz(~dash_mask) + 8u;
             if (pos < end_pos)
             {
@@ -733,7 +822,11 @@ BOOST_FORCEINLINE void from_chars_simd_core
     // mm_chars2: |02468ace13579bdf|
     mm_chars1 = _mm_permutex2var_epi8(mm_chars1, constants::mm_split_half_bytes_pattern1, mm_chars2);
     mm_chars2 = _mm_permutex2var_epi8(mm_chars2, constants::mm_split_half_bytes_pattern2, mm_chars3);
-#else
+
+    // Group half-byte characters
+    __m128i mm_lo = _mm_unpacklo_epi64(mm_chars1, mm_chars2);
+    __m128i mm_hi = _mm_unpackhi_epi64(mm_chars1, mm_chars2);
+#elif defined(BOOST_UUID_USE_SSSE3)
     // mm_chars1: |02468acZ13579bdZ|
     // mm_chars2: |02468aZe13579bZf|
     // mm_chars3: |ZZZZZZceZZZZZZdf|
@@ -743,20 +836,47 @@ BOOST_FORCEINLINE void from_chars_simd_core
 
     // mm_chars1: |02468ace13579bdf|
     // mm_chars2: |02468ace13579bdf|
-    // Avoid using vpblendvb, which is slow on Intel
 #if defined(BOOST_UUID_USE_AVX512_V1)
-    mm_chars1 = _mm_ternarylogic_epi64(mm_chars1, mm_chars2, constants::mm_split_half_bytes_blend_mask, 0xD8); // (_MM_TERNLOG_A & ~_MM_TERNLOG_C) | (_MM_TERNLOG_B & _MM_TERNLOG_C)
-#elif defined(BOOST_UUID_USE_AVX)
-    mm_chars1 = _mm_or_si128(mm_chars1, _mm_and_si128(mm_chars2, constants::mm_split_half_bytes_blend_mask));
+    // Avoid using vpblendvb, which is slow on Intel
+    mm_chars1 = _mm_ternarylogic_epi64(mm_chars1, mm_chars2, constants::mm_split_half_bytes_blend_mask1, 0xD8); // (_MM_TERNLOG_A & ~_MM_TERNLOG_C) | (_MM_TERNLOG_B & _MM_TERNLOG_C)
+#elif defined(BOOST_UUID_USE_SSE41) && defined(BOOST_UUID_FROM_CHARS_X86_USE_PBLENDVB)
+    mm_chars1 = _mm_blendv_epi8(mm_chars1, mm_chars2, constants::mm_split_half_bytes_blend_mask1);
 #else
-    mm_chars1 = _mm_blendv_epi8(mm_chars1, mm_chars2, constants::mm_split_half_bytes_blend_mask);
+    mm_chars1 = _mm_or_si128(mm_chars1, _mm_and_si128(mm_chars2, constants::mm_split_half_bytes_blend_mask1));
 #endif
+#if defined(BOOST_UUID_USE_SSE41)
     mm_chars2 = _mm_blend_epi16(mm_chars2, mm_chars3, 0x88);
+#else
+    mm_chars2 = _mm_or_si128(_mm_and_si128(mm_chars2, constants::mm_split_half_bytes_blend_mask2), mm_chars3);
 #endif
 
-    // Group half-byte digits
+    // Group half-byte characters
     __m128i mm_lo = _mm_unpacklo_epi64(mm_chars1, mm_chars2);
     __m128i mm_hi = _mm_unpackhi_epi64(mm_chars1, mm_chars2);
+#else
+    __m128i mm_lo, mm_hi;
+    {
+        // Remove dashes
+        __m128i mm_group1 = _mm_srli_epi64(mm_middle, 8);
+        __m128i mm_group2 = _mm_srli_si128(mm_middle, 6);
+        __m128i mm_group3 = _mm_srli_si128(mm_middle, 11);
+
+        mm_chars1 = _mm_unpacklo_epi64(mm_chars1, _mm_unpacklo_epi32(mm_group1, mm_group2));
+
+        mm_chars2 = _mm_castpd_si128(_mm_move_sd(_mm_castsi128_pd(mm_chars2), _mm_castsi128_pd(_mm_unpacklo_epi32(mm_group3, mm_chars3))));
+        mm_chars2 = _mm_shuffle_epi32(mm_chars2, _MM_SHUFFLE(1, 3, 2, 0));
+
+        // Deinterleave half-byte characters
+        __m128i mm_lo1 = _mm_srli_epi16(mm_chars1, 8);
+        __m128i mm_lo2 = _mm_srli_epi16(mm_chars2, 8);
+
+        __m128i mm_hi1 = _mm_and_si128(mm_chars1, constants::mm_split_half_byte_chars_mask);
+        __m128i mm_hi2 = _mm_and_si128(mm_chars2, constants::mm_split_half_byte_chars_mask);
+
+        mm_lo = _mm_packus_epi16(mm_lo1, mm_lo2);
+        mm_hi = _mm_packus_epi16(mm_hi1, mm_hi2);
+    }
+#endif
 
     // Convert characters to 8-bit integers. The algorithm is basically as follows:
     //
@@ -779,6 +899,7 @@ BOOST_FORCEINLINE void from_chars_simd_core
     // Note that there is one caveat due to the fact that there are only signed byte comparisons until AVX-512. This is a problem if the character encoding has
     // hexadecimal character codes with the highest bit set to 1. This is handled in from_chars_simd_char_constants by constructing mm_char_code1 and
     // mm_char_code2 in such a way that signed comparisons work as described. We also use signed comparisons in AVX-512 to reuse the same constants.
+#if defined(BOOST_UUID_DETAIL_FROM_CHARS_X86_USE_BLENDS)
 #if defined(BOOST_UUID_USE_AVX512_V1)
     __mmask16 k_char_code2_mask_lo = _mm_cmpgt_epi8_mask(mm_lo, mm_char_code2_cmp);
     __mmask16 k_char_code2_mask_hi = _mm_cmpgt_epi8_mask(mm_hi, mm_char_code2_cmp);
@@ -791,8 +912,29 @@ BOOST_FORCEINLINE void from_chars_simd_core
 
     mm_char_code_sub_lo = _mm_mask_blend_epi8(k_char_code1_mask_lo, mm_char_code0_sub, mm_char_code_sub_lo);
     mm_char_code_sub_hi = _mm_mask_blend_epi8(k_char_code1_mask_hi, mm_char_code0_sub, mm_char_code_sub_hi);
-#elif defined(BOOST_UUID_USE_AVX)
-    // Unlike the legacy SSE4.1 pblendvb instruction, the VEX-coded vpblendvb is slow on Intel. Use a different approach:
+#else
+    __m128i mm_char_code2_mask_lo = _mm_cmpgt_epi8(mm_lo, mm_char_code2_cmp);
+    __m128i mm_char_code2_mask_hi = _mm_cmpgt_epi8(mm_hi, mm_char_code2_cmp);
+
+    __m128i mm_char_code1_mask_lo = _mm_cmpgt_epi8(mm_lo, mm_char_code1_cmp);
+    __m128i mm_char_code1_mask_hi = _mm_cmpgt_epi8(mm_hi, mm_char_code1_cmp);
+
+#if defined(BOOST_UUID_USE_SSE41) && defined(BOOST_UUID_FROM_CHARS_X86_USE_PBLENDVB)
+    __m128i mm_char_code_sub_lo = _mm_blendv_epi8(mm_char_code1_sub, mm_char_code2_sub, mm_char_code2_mask_lo);
+    __m128i mm_char_code_sub_hi = _mm_blendv_epi8(mm_char_code1_sub, mm_char_code2_sub, mm_char_code2_mask_hi);
+
+    mm_char_code_sub_lo = _mm_blendv_epi8(mm_char_code0_sub, mm_char_code_sub_lo, mm_char_code1_mask_lo);
+    mm_char_code_sub_hi = _mm_blendv_epi8(mm_char_code0_sub, mm_char_code_sub_hi, mm_char_code1_mask_hi);
+#else
+    __m128i mm_char_code_sub_lo = _mm_or_si128(_mm_andnot_si128(mm_char_code2_mask_lo, mm_char_code1_sub), _mm_and_si128(mm_char_code2_mask_lo, mm_char_code2_sub));
+    __m128i mm_char_code_sub_hi = _mm_or_si128(_mm_andnot_si128(mm_char_code2_mask_hi, mm_char_code1_sub), _mm_and_si128(mm_char_code2_mask_hi, mm_char_code2_sub));
+
+    mm_char_code_sub_lo = _mm_or_si128(_mm_andnot_si128(mm_char_code1_mask_lo, mm_char_code0_sub), _mm_and_si128(mm_char_code1_mask_lo, mm_char_code_sub_lo));
+    mm_char_code_sub_hi = _mm_or_si128(_mm_andnot_si128(mm_char_code1_mask_hi, mm_char_code0_sub), _mm_and_si128(mm_char_code1_mask_hi, mm_char_code_sub_hi));
+#endif
+#endif
+#else // defined(BOOST_UUID_DETAIL_FROM_CHARS_X86_USE_BLENDS)
+    // Use a different approach:
     // - Each vpcmpgtb produces a mask, where 0 indicates false and -1 - true.
     // - mm_char_code1_mask_* always overlaps with the corresponding mm_char_code2_mask_*, which means adding them
     //   produces a vector where 0 means none of the vpcmpgtb matched the value, -1 - where mm_char_code1_mask_* matched
@@ -815,26 +957,19 @@ BOOST_FORCEINLINE void from_chars_simd_core
     const __m128i mm_char_code_sub = _mm_cvtsi32_si128(static_cast< int >(char_code_sub));
     __m128i mm_char_code_sub_lo = _mm_shuffle_epi8(mm_char_code_sub, mm_char_code_pattern_lo);
     __m128i mm_char_code_sub_hi = _mm_shuffle_epi8(mm_char_code_sub, mm_char_code_pattern_hi);
-#else
-    __m128i mm_char_code2_mask_lo = _mm_cmpgt_epi8(mm_lo, mm_char_code2_cmp);
-    __m128i mm_char_code2_mask_hi = _mm_cmpgt_epi8(mm_hi, mm_char_code2_cmp);
-
-    __m128i mm_char_code1_mask_lo = _mm_cmpgt_epi8(mm_lo, mm_char_code1_cmp);
-    __m128i mm_char_code1_mask_hi = _mm_cmpgt_epi8(mm_hi, mm_char_code1_cmp);
-
-    __m128i mm_char_code_sub_lo = _mm_blendv_epi8(mm_char_code1_sub, mm_char_code2_sub, mm_char_code2_mask_lo);
-    __m128i mm_char_code_sub_hi = _mm_blendv_epi8(mm_char_code1_sub, mm_char_code2_sub, mm_char_code2_mask_hi);
-
-    mm_char_code_sub_lo = _mm_blendv_epi8(mm_char_code0_sub, mm_char_code_sub_lo, mm_char_code1_mask_lo);
-    mm_char_code_sub_hi = _mm_blendv_epi8(mm_char_code0_sub, mm_char_code_sub_hi, mm_char_code1_mask_hi);
-#endif
+#endif // defined(BOOST_UUID_DETAIL_FROM_CHARS_X86_USE_BLENDS)
 
     mm_lo = _mm_sub_epi8(mm_lo, mm_char_code_sub_lo);
     mm_hi = _mm_sub_epi8(mm_hi, mm_char_code_sub_hi);
 
     // Check hexadecimal character validity. Proper hexadecimal characters always convert to values of 0-15 and any other characters convert
     // to values outside that range. Which means if the upper 4 bits of a resulting integer are non-zero then the corresponding character was invalid.
+#if defined(BOOST_UUID_USE_SSE41)
     if (BOOST_LIKELY(_mm_test_all_zeros(_mm_or_si128(mm_lo, mm_hi), constants::mm_F0)))
+#else
+    const __m128i mm_0 = _mm_setzero_si128();
+    if (BOOST_LIKELY(_mm_movemask_epi8(_mm_cmpeq_epi8(_mm_and_si128(_mm_or_si128(mm_lo, mm_hi), constants::mm_F0), mm_0)) == 0xFFFF))
+#endif
     {
         if (BOOST_LIKELY(ec == from_chars_error::none))
         {
@@ -845,12 +980,13 @@ BOOST_FORCEINLINE void from_chars_simd_core
     else
     {
         // Some of the hex digits are invalid
+#if defined(BOOST_UUID_USE_SSE41)
         const __m128i mm_0 = _mm_setzero_si128();
+#endif
         __m128i mm_hi_bits_lo = _mm_and_si128(mm_lo, constants::mm_F0);
         __m128i mm_hi_bits_hi = _mm_and_si128(mm_hi, constants::mm_F0);
         mm_hi_bits_lo = _mm_cmpeq_epi8(mm_hi_bits_lo, mm_0);
         mm_hi_bits_hi = _mm_cmpeq_epi8(mm_hi_bits_hi, mm_0);
-
         std::uint32_t digits_mask_lo = static_cast< std::uint32_t >(_mm_movemask_epi8(mm_hi_bits_lo));
         std::uint32_t digits_mask_hi = static_cast< std::uint32_t >(_mm_movemask_epi8(mm_hi_bits_hi));
 
@@ -931,7 +1067,7 @@ BOOST_FORCEINLINE from_chars_result< Char > from_chars_simd(const Char* begin, c
         char_constants::mm_expected_dashes,
         char_constants::mm_char_code1_cmp,
         char_constants::mm_char_code2_cmp,
-#if defined(BOOST_UUID_USE_AVX512_V1) || !defined(BOOST_UUID_USE_AVX)
+#if defined(BOOST_UUID_DETAIL_FROM_CHARS_X86_USE_BLENDS)
         char_constants::mm_char_code0_sub,
         char_constants::mm_char_code1_sub,
         char_constants::mm_char_code2_sub,
@@ -948,6 +1084,8 @@ BOOST_FORCEINLINE from_chars_result< Char > from_chars_simd(const Char* begin, c
 } // namespace uuids
 } // namespace boost
 
-#endif // defined(BOOST_UUID_USE_SSE41)
+#undef BOOST_UUID_DETAIL_FROM_CHARS_X86_USE_BLENDS
+
+#endif // defined(BOOST_UUID_USE_SSE2)
 
 #endif // BOOST_UUID_DETAIL_FROM_CHARS_X86_HPP_INCLUDED
