@@ -34,6 +34,20 @@ import path ;
 import regex ;
 import testing ;
 
+# The rule allows for suppressing running tests and instead only compile them.
+# This is useful e.g. if the tests are compiled for a target ISA that is not supported by the CPU.
+local rule run ( sources + : args * : input-files * : requirements * : target-name ? : default-build * )
+{
+    if [ os.environ BOOST_UUID_SKIP_RUNNING_TESTS ]
+    {
+        return [ testing.compile $(sources) : $(requirements) : $(target-name) ] ;
+    }
+    else
+    {
+        return [ testing.run $(sources) : $(args) : $(input-files) : $(requirements) : $(target-name) : $(default-build) ] ;
+    }
+}
+
 # this rule enumerates through all the headers and ensures
 # that inclusion of the header by itself is sufficient to
 # compile successfully, proving the header does not depend

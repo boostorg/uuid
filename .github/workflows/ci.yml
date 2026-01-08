@@ -355,8 +355,8 @@ jobs:
               if ! [[ "$cpu_flags" =~ $re ]]
               then
                 echo "CPU lacks required feature: $requirement"
-                echo "Skipping testing"
-                exit 0
+                echo "Skipping running tests"
+                export BOOST_UUID_SKIP_RUNNING_TESTS=1
               fi
             done
           fi
