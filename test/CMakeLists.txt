@@ -44,6 +44,8 @@ boost_test(TYPE run SOURCES test_from_chars.cpp COMPILE_DEFINITIONS BOOST_UUID_N
 boost_test(TYPE run SOURCES test_from_chars_2.cpp COMPILE_DEFINITIONS BOOST_UUID_REPORT_IMPLEMENTATION=1)
 boost_test(TYPE run SOURCES test_from_chars_2.cpp COMPILE_DEFINITIONS BOOST_UUID_NO_SIMD=1 BOOST_UUID_REPORT_IMPLEMENTATION=1 NAME test_from_chars_2_no_simd)
 
+boost_test(TYPE run SOURCES test_uuid_from_string.cpp)
+
 boost_test(TYPE run SOURCES test_uuid_clock.cpp)
 
 boost_test(TYPE run SOURCES test_nil_generator.cpp)
