@@ -9,6 +9,7 @@
 
 #if defined(BOOST_UUID_USE_SSE41)
 
+#include <cstddef>
 #include <cstdint>
 #include <cstring>
 #include <boost/uuid/uuid.hpp>
@@ -478,7 +479,7 @@ const simd_vector128< std::uint8_t > from_chars_simd_constants< T >::mm_2 =
 #pragma GCC diagnostic ignored "-Warray-bounds"
 #endif
 
-template< typename Char, unsigned int Size = sizeof(Char) >
+template< typename Char, std::size_t Size = sizeof(Char) >
 struct from_chars_simd_load_traits;
 
 template< typename Char >
