@@ -242,6 +242,8 @@ run test_from_chars_cx2.cpp ;
 
 run test_to_chars_cx.cpp ;
 
+run test_uuid_from_string_cx.cpp ;
+
 # 'quick' test for CI
 
 run quick.cpp ;
