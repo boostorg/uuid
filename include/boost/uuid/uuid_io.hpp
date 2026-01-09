@@ -13,16 +13,9 @@
 #include <boost/uuid/detail/uuid_from_string.hpp>
 #include <boost/config.hpp>
 #include <iosfwd>
-#include <istream>
-#include <locale>
-#include <algorithm>
+#include <ios>
 #include <string>
 #include <cstddef>
-
-#if defined(_MSC_VER)
-#pragma warning(push) // Save warning settings.
-#pragma warning(disable : 4996) // Disable deprecated std::ctype<char>::widen, std::copy
-#endif
 
 namespace boost {
 namespace uuids {
@@ -127,9 +120,5 @@ inline std::wstring to_wstring( uuid const& u )
 }
 
 }} //namespace boost::uuids
-
-#if defined(_MSC_VER)
-#pragma warning(pop) // Restore warnings to previous state.
-#endif
 
 #endif // BOOST_UUID_UUID_IO_HPP_INCLUDED
