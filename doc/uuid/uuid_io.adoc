@@ -63,6 +63,11 @@ template<class Ch>
   constexpr from_chars_result<Ch>
     from_chars( Ch const* first, Ch const* last, uuid& u ) noexcept;
 
+// uuid_from_string
+
+template<class Ch> constexpr uuid uuid_from_string( Ch const* str );
+template<class Str> constexpr uuid uuid_from_string( Str const& str );
+
 }} // namespace boost::uuids
 ----
 
@@ -269,3 +274,32 @@ Effects: ::
 
 NOTE: The values `from_chars_error::closing_brace_expected` and `from_chars_error::unexpected_extra_input` are never returned by `from_chars`.
   They can be returned from the nonthrowing `string_generator::operator()` overload.
+
+=== uuid_from_string
+
+```
+template<class Ch> constexpr uuid uuid_from_string( Ch const* str );
+```
+
+Requires: :: `Ch` must be a character type (one of `char`, `wchar_t`, `char8_t`, `char16_t`, `char32_t`).
+
+Effects: ::
+  Parses a `uuid` string representation from the characters in the range `[str, str + std::char_traits<Ch>::length(str))` and stores the result in `u`.
+  On error, throws `std::runtime_error`.
+
+NOTE:  Unlike `from_chars`, this function does not allow extra input; if after a complete UUID is parsed, unconsumed characters remain, an exception is thrown.
+
+```
+template<class Str> constexpr uuid uuid_from_string( Str const& str );
+```
+
+Requires: ::
+  `Str` must be a _string-like_ type; that is, one with a nested `value_type` type (`Ch`) and with a nested `traits_type` type.
+  `str.data()` must return `Ch const*`. `str.size()` must return `std::size_t`.
+  `Ch` must be a character type (one of `char`, `wchar_t`, `char8_t`, `char16_t`, `char32_t`).
+
+Effects: ::
+  Parses a `uuid` string representation from the characters in the range `[str.data(), str.data() + str.size())` and stores the result in `u`.
+  On error, throws `std::runtime_error`.
+
+NOTE:  Unlike `from_chars`, this function does not allow extra input; if after a complete UUID is parsed, unconsumed characters remain, an exception is thrown.

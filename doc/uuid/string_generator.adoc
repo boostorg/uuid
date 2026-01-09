@@ -25,7 +25,7 @@ struct string_generator
 
     template<class CharIterator>
       constexpr uuid operator()( CharIterator first, CharIterator last,
-        int& pos, from_chars_error& err ) const noexcept;
+        std::ptrdiff_t& pos, from_chars_error& err ) const noexcept;
 };
 
 }} // namespace boost::uuids
@@ -120,7 +120,7 @@ uuid u2 = gen( s2.begin(), s2.end() );
 ```
 template<class CharIterator>
   constexpr uuid operator()( CharIterator first, CharIterator last,
-    int& pos, from_chars_error& err ) const noexcept;
+    std::ptrdiff_t& pos, from_chars_error& err ) const noexcept;
 ```
 
 Requires: :: `CharIterator` must be an input iterator with a character value type (one of `char`, `wchar_t`, `char8_t`, `char16_t`, `char32_t`).
