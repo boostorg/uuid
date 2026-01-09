@@ -295,7 +295,7 @@ template<class Str> constexpr uuid uuid_from_string( Str const& str );
 
 Requires: ::
   `Str` must be a _string-like_ type; that is, one with a nested `value_type` type (`Ch`) and with a nested `traits_type` type.
-  `str.data()` must return `Ch const*`. `str.size()` must return `std::size_t`.
+  `str.data()` must return `Ch const*`. `str.data() + str.size()` must be of type `Ch const*`.
   `Ch` must be a character type (one of `char`, `wchar_t`, `char8_t`, `char16_t`, `char32_t`).
 
 Effects: ::
