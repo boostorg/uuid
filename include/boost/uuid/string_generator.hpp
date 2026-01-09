@@ -183,16 +183,24 @@ public:
         return r;
     }
 
-    template<class Ch, class Traits, class Alloc>
-    BOOST_CXX14_CONSTEXPR uuid operator()( std::basic_string<Ch, Traits, Alloc> const& s ) const
+    template<class Str, class Ch = typename Str::value_type, class Tr = typename Str::traits_type>
+    BOOST_CXX14_CONSTEXPR
+    uuid operator()( Str const& str ) const
     {
-        return operator()( s.begin(), s.end() );
+        Ch const* first = str.data();
+        Ch const* last = str.data() + str.size();
+
+        return operator()( first, last );
     }
 
     template<class Ch>
-    BOOST_CXX14_CONSTEXPR uuid operator()( Ch const* s ) const
+    BOOST_CXX14_CONSTEXPR
+    uuid operator()( Ch const* str ) const
     {
-        return operator()( s, s + detail::strlen_cx( s ) );
+        Ch const* first = str;
+        Ch const* last = str + detail::strlen_cx( str );
+
+        return operator()( first, last );
     }
 };
 

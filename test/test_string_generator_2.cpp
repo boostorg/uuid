@@ -5,13 +5,25 @@
 #include <boost/uuid/string_generator.hpp>
 #include <boost/uuid/uuid.hpp>
 #include <boost/uuid/uuid_io.hpp>
+#include <boost/core/detail/string_view.hpp>
 #include <boost/core/lightweight_test.hpp>
+#include <boost/config.hpp>
+#include <string>
+
+#if !defined(BOOST_NO_CXX17_HDR_STRING_VIEW)
+# include <string_view>
+#endif
 
 using namespace boost::uuids;
 
 template<class Ch> void test( uuid const& expected, Ch const* str )
 {
     BOOST_TEST_EQ( string_generator()( str ), expected );
+    BOOST_TEST_EQ( string_generator()( std::basic_string<Ch>( str ) ), expected );
+    BOOST_TEST_EQ( string_generator()( boost::core::basic_string_view<Ch>( str ) ), expected );
+#if !defined(BOOST_NO_CXX17_HDR_STRING_VIEW)
+    BOOST_TEST_EQ( string_generator()( std::basic_string_view<Ch>( str ) ), expected );
+#endif
 }
 
 int main()
