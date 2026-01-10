@@ -11,7 +11,7 @@
 #include <boost/uuid/detail/is_constant_evaluated.hpp>
 #include <boost/uuid/detail/to_chars_generic.hpp>
 
-#if defined(BOOST_UUID_USE_SSSE3)
+#if defined(BOOST_UUID_USE_SSE2)
 # include <boost/uuid/detail/to_chars_x86.hpp>
 
 #elif defined(BOOST_UUID_REPORT_IMPLEMENTATION)
@@ -26,7 +26,7 @@ namespace detail {
 
 template<class Ch> BOOST_UUID_CXX14_CONSTEXPR_RT inline Ch* to_chars( uuid const& u, Ch* out ) noexcept
 {
-#if defined(BOOST_UUID_USE_SSSE3)
+#if defined(BOOST_UUID_USE_SSE2)
     if( detail::is_constant_evaluated_rt() )
     {
         return detail::to_chars_generic( u, out );
@@ -40,7 +40,6 @@ template<class Ch> BOOST_UUID_CXX14_CONSTEXPR_RT inline Ch* to_chars( uuid const
 #endif
 }
 
-} // namespace detail
-}} //namespace boost::uuids
+}}} // namespace boost::uuids::detail
 
 #endif // BOOST_UUID_DETAIL_TO_CHARS_HPP_INCLUDED

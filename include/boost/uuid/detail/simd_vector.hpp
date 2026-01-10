@@ -27,12 +27,22 @@ union simd_vector
     >
     BOOST_FORCEINLINE operator Vector () const noexcept { return get< Vector >(); }
 
+#if defined(BOOST_GCC) && (BOOST_GCC >= 40600)
+#pragma GCC diagnostic push
+// dereferencing type-punned pointer will break strict-aliasing rules
+#pragma GCC diagnostic ignored "-Wstrict-aliasing"
+#endif
+
     template< typename Vector >
     BOOST_FORCEINLINE typename std::enable_if< sizeof(Vector) <= ByteSize, Vector >::type get() const noexcept
     {
         using vector_type = typename std::remove_cv< typename std::remove_reference< Vector >::type >::type;
         return *reinterpret_cast< const vector_type* >(bytes);
     }
+
+#if defined(BOOST_GCC) && (BOOST_GCC >= 40800)
+#pragma GCC diagnostic pop
+#endif
 };
 
 template< typename T >

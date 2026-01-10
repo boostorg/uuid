@@ -11,7 +11,7 @@
 #include <boost/uuid/detail/config.hpp>
 #include <boost/uuid/detail/is_constant_evaluated.hpp>
 
-#if defined(BOOST_UUID_USE_SSE41)
+#if defined(BOOST_UUID_USE_SSE2)
 # include <boost/uuid/detail/from_chars_x86.hpp>
 
 #elif defined(BOOST_UUID_REPORT_IMPLEMENTATION)
@@ -27,7 +27,7 @@ template<class Ch>
 BOOST_UUID_CXX14_CONSTEXPR_RT inline
 from_chars_result<Ch> from_chars( Ch const* first, Ch const* last, uuid& u ) noexcept
 {
-#if defined(BOOST_UUID_USE_SSE41)
+#if defined(BOOST_UUID_USE_SSE2)
     if( detail::is_constant_evaluated_rt() )
     {
         return detail::from_chars_generic( first, last, u );
