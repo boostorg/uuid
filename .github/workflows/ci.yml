@@ -94,8 +94,24 @@ jobs:
             address-model: 32,64
           - toolset: gcc-13
             cxxstd: "11,14,17,20,2b"
+            instruction-set: core2
+            cpu-requirements: [ ssse3 ]
+            os: ubuntu-latest
+            container: ubuntu:24.04
+            install: g++-13-multilib
+            address-model: 32,64
+          - toolset: gcc-13
+            cxxstd: "11,14,17,20,2b"
             instruction-set: nehalem
             cpu-requirements: [ sse4_1, sse4_2 ]
+            os: ubuntu-latest
+            container: ubuntu:24.04
+            install: g++-13-multilib
+            address-model: 32,64
+          - toolset: gcc-13
+            cxxstd: "11,14,17,20,2b"
+            instruction-set: sandy-bridge
+            cpu-requirements: [ avx ]
             os: ubuntu-latest
             container: ubuntu:24.04
             install: g++-13-multilib
@@ -120,6 +136,16 @@ jobs:
             cxxstd: "11,14,17,20,2b"
             instruction-set: rocketlake
             cpu-requirements: [ avx512f, avx512cd, avx512vl, avx512dq, avx512bw, avx512vbmi, avx512_vbmi2, avx512_bitalg, bmi1, bmi2 ]
+            os: ubuntu-latest
+            container: ubuntu:24.04
+            install: g++-13-multilib
+            address-model: 32,64
+            # Experimental features
+          - toolset: gcc-13
+            cxxstd: "11,14,17,20,2b"
+            instruction-set: rocketlake
+            cpu-requirements: [ avx512f, avx512cd, avx512vl, avx512dq, avx512bw, avx512vbmi, avx512_vbmi2, avx512_bitalg, bmi1, bmi2 ]
+            defines: [ BOOST_UUID_TO_FROM_CHARS_X86_USE_ZMM, BOOST_UUID_FROM_CHARS_X86_USE_VPERMI2B ]
             os: ubuntu-latest
             container: ubuntu:24.04
             install: g++-13-multilib
@@ -241,8 +267,24 @@ jobs:
           - toolset: clang
             compiler: clang++-17
             cxxstd: "11,14,17,20,2b"
+            instruction-set: core2
+            cpu-requirements: [ ssse3 ]
+            container: ubuntu:24.04
+            os: ubuntu-latest
+            install: clang-17
+          - toolset: clang
+            compiler: clang++-17
+            cxxstd: "11,14,17,20,2b"
             instruction-set: nehalem
             cpu-requirements: [ sse4_1, sse4_2 ]
+            container: ubuntu:24.04
+            os: ubuntu-latest
+            install: clang-17
+          - toolset: clang
+            compiler: clang++-17
+            cxxstd: "11,14,17,20,2b"
+            instruction-set: sandy-bridge
+            cpu-requirements: [ avx ]
             container: ubuntu:24.04
             os: ubuntu-latest
             install: clang-17
@@ -267,6 +309,16 @@ jobs:
             cxxstd: "11,14,17,20,2b"
             instruction-set: rocketlake
             cpu-requirements: [ avx512f, avx512cd, avx512vl, avx512dq, avx512bw, avx512vbmi, avx512_vbmi2, avx512_bitalg, bmi1, bmi2 ]
+            container: ubuntu:24.04
+            os: ubuntu-latest
+            install: clang-17
+            # Experimental features
+          - toolset: clang
+            compiler: clang++-17
+            cxxstd: "11,14,17,20,2b"
+            instruction-set: rocketlake
+            cpu-requirements: [ avx512f, avx512cd, avx512vl, avx512dq, avx512bw, avx512vbmi, avx512_vbmi2, avx512_bitalg, bmi1, bmi2 ]
+            defines: [ BOOST_UUID_TO_FROM_CHARS_X86_USE_ZMM, BOOST_UUID_FROM_CHARS_X86_USE_VPERMI2B ]
             container: ubuntu:24.04
             os: ubuntu-latest
             install: clang-17
@@ -346,6 +398,7 @@ jobs:
           cd ../boost-root
           ADDRMD=${{matrix.address-model}}
           INSTRUCTION_SET=${{matrix.instruction-set}}
+          b2_args=(-j2 libs/$LIBRARY/test toolset=${{matrix.toolset}} cxxstd=${{matrix.cxxstd}} ${ADDRMD:+address-model=$ADDRMD} ${INSTRUCTION_SET:+instruction-set=$INSTRUCTION_SET} variant=debug,release)
           if [ -n "${{matrix.cpu-requirements}}" ]
           then
             cpu_flags="$(lscpu | grep -F "Flags:" | sed "s/^Flags:\\s*//")";
@@ -355,12 +408,19 @@ jobs:
               if ! [[ "$cpu_flags" =~ $re ]]
               then
                 echo "CPU lacks required feature: $requirement"
-                echo "Skipping testing"
-                exit 0
+                echo "Skipping running tests"
+                export BOOST_UUID_SKIP_RUNNING_TESTS=1
               fi
             done
           fi
-          ./b2 -j2 libs/$LIBRARY/test toolset=${{matrix.toolset}} cxxstd=${{matrix.cxxstd}} ${ADDRMD:+address-model=$ADDRMD} ${INSTRUCTION_SET:+instruction-set=$INSTRUCTION_SET} variant=debug,release
+          if [ -n "${{matrix.defines}}" ]
+          then
+            for define in ${{join(matrix.defines, ' ')}}
+            do
+              b2_args+=("define=$define")
+            done
+          fi
+          ./b2 "${b2_args[@]}"
 
   windows:
     strategy:
