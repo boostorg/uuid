@@ -6,16 +6,16 @@
 #include <boost/uuid/uuid_io.hpp>
 #include <boost/core/lightweight_test.hpp>
 #include <string>
-#include <iterator>
 
 using namespace boost::uuids;
 
 template<class Ch> void test( uuid const& u, Ch const* expected )
 {
-    std::basic_string<Ch> str;
+    std::basic_string<Ch> str( 36, {} );
 
-    to_chars( u, std::back_inserter( str ) );
+    auto last = to_chars( u, str.begin() );
 
+    BOOST_TEST( last == str.end() );
     BOOST_TEST( str == expected );
 }
 
