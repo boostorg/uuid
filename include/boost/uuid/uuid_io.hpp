@@ -14,6 +14,7 @@
 #include <boost/config.hpp>
 #include <iosfwd>
 #include <ios>
+#include <iterator>
 #include <string>
 #include <cstddef>
 
@@ -22,10 +23,48 @@ namespace uuids {
 
 // to_chars
 
-template<class OutputIterator>
+namespace detail
+{
+
+template<class Vt> struct output_value_type
+{
+    using type = char;
+};
+
+template<> struct output_value_type<wchar_t>
+{
+    using type = wchar_t;
+};
+
+template<> struct output_value_type<char16_t>
+{
+    using type = char16_t;
+};
+
+template<> struct output_value_type<char32_t>
+{
+    using type = char32_t;
+};
+
+#if defined(__cpp_char8_t) && __cpp_char8_t >= 201811L
+
+template<> struct output_value_type<char8_t>
+{
+    using type = char8_t;
+};
+
+#endif
+
+} // namespace detail
+
+template<class OutputIterator,
+    class Vt = typename std::iterator_traits<OutputIterator>::value_type
+>
 BOOST_CXX14_CONSTEXPR OutputIterator to_chars( uuid const& u, OutputIterator out )
 {
-    alignas( 16 ) char tmp[ 36 ] = {};
+    using Ch = typename detail::output_value_type<Vt>::type;
+
+    alignas( 16 ) Ch tmp[ 36 ] = {};
     detail::to_chars( u, tmp );
 
     for( std::size_t i = 0; i < 36; ++i )
