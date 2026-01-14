@@ -4,6 +4,7 @@
 
 #include <boost/uuid/uuid.hpp>
 #include <boost/uuid/uuid_io.hpp>
+#include <boost/uuid/invalid_uuid.hpp>
 #include <boost/core/lightweight_test.hpp>
 #include <string>
 
@@ -11,25 +12,19 @@ using namespace boost::uuids;
 
 template<class Ch> void test( Ch const* str, int pos, from_chars_error err )
 {
-    std::string expected;
-
-    try
-    {
-        detail::throw_invalid_uuid( pos, err );
-    }
-    catch( std::exception const& x )
-    {
-        expected = x.what();
-    }
-
     try
     {
         uuid_from_string( str );
         BOOST_ERROR( "uuid_from_string failed to throw" );
     }
-    catch( std::exception const& x )
+    catch( invalid_uuid const& x )
     {
-        BOOST_TEST_EQ( expected, std::string( x.what() ) );
+        BOOST_TEST_EQ( x.position(), pos );
+        BOOST_TEST_EQ( static_cast<int>( x.error() ), static_cast<int>( err ) );
+    }
+    catch( std::exception const& /*x*/ )
+    {
+        BOOST_ERROR( "uuid_from_string failed to throw invalid_uuid" );
     }
 }
 
