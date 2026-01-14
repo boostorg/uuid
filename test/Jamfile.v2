@@ -129,6 +129,7 @@ run test_from_chars_2.cpp : : : <define>BOOST_UUID_NO_SIMD : test_from_chars_2_n
 
 run test_uuid_from_string.cpp ;
 run test_uuid_from_string_2.cpp ;
+run test_uuid_from_string_3.cpp ;
 
 # test uuid_clock
 
