@@ -255,7 +255,7 @@ not consumed during parsing and `ec` is `from_chars_error::none`, if parsing suc
 constexpr explicit operator bool() const noexcept;
 ```
 
-Returns: :: `this->ec == from_chars_error::none`.
+Returns: :: `this\->ec == from_chars_error::none`.
 
 === from_chars
 
