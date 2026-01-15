@@ -285,7 +285,7 @@ Requires: :: `Ch` must be a character type (one of `char`, `wchar_t`, `char8_t`,
 
 Effects: ::
   Parses a `uuid` string representation from the characters in the range `[str, str + std::char_traits<Ch>::length(str))` and stores the result in `u`.
-  On error, throws `std::runtime_error`.
+  On error, throws `invalid_uuid`.
 
 NOTE:  Unlike `from_chars`, this function does not allow extra input; if after a complete UUID is parsed, unconsumed characters remain, an exception is thrown.
 
@@ -300,6 +300,6 @@ Requires: ::
 
 Effects: ::
   Parses a `uuid` string representation from the characters in the range `[str.data(), str.data() + str.size())` and stores the result in `u`.
-  On error, throws `std::runtime_error`.
+  On error, throws `invalid_uuid`.
 
 NOTE:  Unlike `from_chars`, this function does not allow extra input; if after a complete UUID is parsed, unconsumed characters remain, an exception is thrown.

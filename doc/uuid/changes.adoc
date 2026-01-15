@@ -12,6 +12,7 @@
 * Added SIMD implementation of `to_chars`, which can offer up to 5.5x performance improvement in UUID formatting. (Andrey Semashev)
 * Added SIMD implementation of `from_chars`, which can offer up to 13x performance improvement in UUID parsing. (Andrey Semashev)
 * Added `uuid_from_string` to `boost/uuid/uuid_io.hpp`.
+* Added a dedicated `invalid_uuid` exception class, derived from `std::runtime_error` for backward compatibility.
 
 == Changes in Boost 1.90.0
 

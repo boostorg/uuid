@@ -52,7 +52,7 @@ hhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhh
 {hhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhh}
 ```
 
-Invalid input will generate a `std::runtime_error` exception.
+Invalid input will throw an `invalid_uuid` exception.
 
 ```
 template<class Str>
