@@ -40,7 +40,7 @@ union simd_vector
         return *reinterpret_cast< const vector_type* >(bytes);
     }
 
-#if defined(BOOST_GCC) && (BOOST_GCC >= 40800)
+#if defined(BOOST_GCC) && (BOOST_GCC >= 40600)
 #pragma GCC diagnostic pop
 #endif
 };

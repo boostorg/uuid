@@ -42,7 +42,7 @@ namespace detail {
 // memcpy
 
 // Note: The function below is a template to prevent an early check whether the function body can ever be evaluated in the context of a constant expression.
-//       It can't, and that causes compilation errors with clang. The function must still be marked as constexpr to be able to call them in other
+//       It can't, and that causes compilation errors with clang. The function must still be marked as constexpr to be able to call it in other
 //       functions that are constexpr, even if such calls are never evaluated in a constant expression. Otherwise, gcc 5 through 8 gets upset.
 
 template< typename = void >
