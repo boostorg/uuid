@@ -1012,7 +1012,7 @@ BOOST_FORCEINLINE void from_chars_simd_core
 template< typename Char >
 BOOST_FORCEINLINE from_chars_result< Char > from_chars_simd(const Char* begin, const Char* end, uuid& u) noexcept
 {
-    static_assert(sizeof(Char) == 1u || sizeof(Char) == 2u || sizeof(Char) == 4u, "Boost.UUID: Unsupported output character type for from_chars");
+    static_assert(sizeof(Char) == 1u || sizeof(Char) == 2u || sizeof(Char) == 4u, "Boost.UUID: Unsupported input character type for from_chars");
 
     using char_constants = uuids::detail::from_chars_simd_char_constants< Char >;
 
