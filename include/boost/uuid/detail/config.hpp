@@ -29,6 +29,7 @@
 #undef BOOST_UUID_USE_AVX2
 #undef BOOST_UUID_USE_AVX512_V1
 #undef BOOST_UUID_USE_AVX10_1
+#undef BOOST_UUID_USE_RISCV_V
 
 #else
 
@@ -91,6 +92,15 @@
 
 #endif
 
+#if defined(__riscv_v)
+
+// RISC-V Vector Extension (V 1.0+), GCC 12+ / Clang 15+
+#ifndef BOOST_UUID_USE_RISCV_V
+#define BOOST_UUID_USE_RISCV_V
+#endif
+
+#endif
+
 // More advanced ISA extensions imply less advanced are also available
 #if !defined(BOOST_UUID_USE_AVX512_V1) && defined(BOOST_UUID_USE_AVX10_1)
 #define BOOST_UUID_USE_AVX512_V1
@@ -128,7 +138,8 @@
     !defined(BOOST_UUID_USE_SSE41) && \
     !defined(BOOST_UUID_USE_SSSE3) && \
     !defined(BOOST_UUID_USE_SSE3) && \
-    !defined(BOOST_UUID_USE_SSE2)
+    !defined(BOOST_UUID_USE_SSE2) && \
+    !defined(BOOST_UUID_USE_RISCV_V)
 #define BOOST_UUID_NO_SIMD
 #endif
 
