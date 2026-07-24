@@ -3,6 +3,10 @@
 
 :idprefix: changes_
 
+== Changes in Boost 1.93.0
+
+* Added an overload of `time_generator_v7::operator()` taking the time point (Sebastian Goth).
+
 == Changes in Boost 1.91.0
 
 * Added `from_chars` to `boost/uuid/uuid_io.hpp`.
