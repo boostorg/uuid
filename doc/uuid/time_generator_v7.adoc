@@ -31,7 +31,7 @@ public:
     time_generator_v7& operator=( time_generator_v7&& rhs ) noexcept;
 
     result_type operator()() noexcept;
-    result_type operator()( std::chrono::time_point<std::chrono::system_clock> const& time_point ) noexcept;
+    result_type operator()( std::chrono::system_clock::time_point const& now ) noexcept;
 };
 
 }} // namespace boost::uuids
@@ -103,8 +103,8 @@ Remarks: :: `operator()` generates a monotonically increasing sequence of UUIDs,
 * No more than 64 UUIDs are generated per microsecond (no more than one every 16 nanoseconds).
 
 ```
-result_type operator()( std::chrono::time_point<std::chrono::system_clock> const& time_point ) noexcept;
+result_type operator()( std::chrono::system_clock::time_point const& now ) noexcept;
 ```
 
-Effects: :: The same as `operator()()` but allows the caller to provide the system time
-Remarks: :: The same as `operator()()`
+Effects: :: Same as `operator()()`, but allows the caller to provide the system time.
+Remarks: :: Same as `operator()()`.

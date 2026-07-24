@@ -46,11 +46,11 @@ public:
     time_generator_v7& operator=( time_generator_v7&& rhs ) noexcept;
 
     result_type operator()() noexcept;
-    result_type operator()( std::chrono::time_point<std::chrono::system_clock> const& time_point ) noexcept;
+    result_type operator()( std::chrono::system_clock::time_point const& now ) noexcept;
 
 private:
 
-    static state_type get_new_state( state_type const& oldst, std::chrono::time_point<std::chrono::system_clock> const& time_point = std::chrono::system_clock::now() ) noexcept;
+    static state_type get_new_state( state_type const& oldst, std::chrono::system_clock::time_point const& now ) noexcept;
 };
 
 // constructors
@@ -92,10 +92,10 @@ inline time_generator_v7& time_generator_v7::operator=( time_generator_v7&& rhs 
 
 // get_new_state
 
-inline time_generator_v7::state_type time_generator_v7::get_new_state( state_type const& oldst, std::chrono::time_point<std::chrono::system_clock> const& time_point ) noexcept
+inline time_generator_v7::state_type time_generator_v7::get_new_state( state_type const& oldst, std::chrono::system_clock::time_point const& now ) noexcept
 {
     // `now()` in microseconds
-    std::uint64_t now_in_us = static_cast<std::uint64_t>( std::chrono::time_point_cast< std::chrono::microseconds >( time_point ).time_since_epoch().count() );
+    std::uint64_t now_in_us = static_cast<std::uint64_t>( std::chrono::time_point_cast< std::chrono::microseconds >( now ).time_since_epoch().count() );
 
     std::uint64_t time_ms = now_in_us / 1000; // timestamp, ms part
     std::uint64_t time_us = now_in_us % 1000; // timestamp, us part
@@ -120,7 +120,7 @@ inline time_generator_v7::state_type time_generator_v7::get_new_state( state_typ
 
 // operator()
 
-inline time_generator_v7::result_type time_generator_v7::operator()( std::chrono::time_point<std::chrono::system_clock> const& time_point ) noexcept
+inline time_generator_v7::result_type time_generator_v7::operator()( std::chrono::system_clock::time_point const& now ) noexcept
 {
     uuid result;
 
@@ -132,7 +132,7 @@ inline time_generator_v7::result_type time_generator_v7::operator()( std::chrono
     detail::store_native_u32( result.data + 12, dist( rng_ ) );
 
     // get new timestamp
-    state_ = get_new_state( state_, time_point );
+    state_ = get_new_state( state_, now );
 
     std::uint64_t time_ms = state_ >> 16; // timestamp, ms part
     std::uint64_t time_us = ( state_ & 0xFFFF ) >> 6; // timestamp, us part
@@ -150,7 +150,7 @@ inline time_generator_v7::result_type time_generator_v7::operator()( std::chrono
 
 inline time_generator_v7::result_type time_generator_v7::operator()() noexcept
 {
-    return operator()(std::chrono::system_clock::now());
+    return operator()( std::chrono::system_clock::now() );
 }
 
 }} // namespace boost::uuids
