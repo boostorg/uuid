@@ -21,6 +21,7 @@ boost_test(TYPE run SOURCES test_comparison.cpp COMPILE_DEFINITIONS BOOST_UUID_N
 
 boost_test(TYPE run SOURCES test_io.cpp LINK_LIBRARIES Boost::lexical_cast Boost::predef COMPILE_DEFINITIONS BOOST_UUID_NO_SIMD=1 NAME test_io_no_simd)
 boost_test(TYPE run SOURCES test_io_2.cpp COMPILE_DEFINITIONS BOOST_UUID_NO_SIMD=1 NAME test_io_2_no_simd)
+boost_test(TYPE run SOURCES test_io_3.cpp COMPILE_DEFINITIONS BOOST_UUID_NO_SIMD=1 NAME test_io_3_no_simd)
 
 boost_test(TYPE run SOURCES test_to_chars.cpp COMPILE_DEFINITIONS BOOST_UUID_NO_SIMD=1 NAME test_to_chars_no_simd)
 boost_test(TYPE run SOURCES test_to_chars_2.cpp COMPILE_DEFINITIONS BOOST_UUID_NO_SIMD=1 NAME test_to_chars_2_no_simd)
