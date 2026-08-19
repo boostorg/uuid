@@ -16,6 +16,7 @@
 #include <ios>
 #include <iterator>
 #include <string>
+#include <locale>
 #include <cstddef>
 
 namespace boost {
@@ -114,6 +115,11 @@ std::basic_ostream<Ch, Traits>& operator<<( std::basic_ostream<Ch, Traits>& os, 
 {
     alignas( 16 ) Ch tmp[ 37 ];
     to_chars( u, tmp );
+
+    if( os.flags() & std::ios_base::uppercase )
+    {
+        std::use_facet< std::ctype<Ch> >( os.getloc() ).toupper( tmp + 0, tmp + 36 );
+    }
 
     os << tmp;
     return os;
