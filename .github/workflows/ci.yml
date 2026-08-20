@@ -37,17 +37,20 @@ jobs:
             address-model: 32,64
           - toolset: gcc-10
             cxxstd: "11,14,17,2a"
-            os: ubuntu-22.04
+            container: ubuntu:22.04
+            os: ubuntu-latest
             install: g++-10-multilib
             address-model: 32,64
           - toolset: gcc-11
             cxxstd: "11,14,17,20"
-            os: ubuntu-22.04
+            container: ubuntu:22.04
+            os: ubuntu-latest
             install: g++-11-multilib
             address-model: 32,64
           - toolset: gcc-12
             cxxstd: "11,14,17,20,2b"
-            os: ubuntu-22.04
+            container: ubuntu:22.04
+            os: ubuntu-latest
             install: g++-12-multilib
             address-model: 32,64
           - toolset: gcc-13
