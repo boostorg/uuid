@@ -403,7 +403,7 @@ const simd_vector128< std::uint8_t > from_chars_simd_constants< T >::mm_lower_id
     {{ 0x01, 0x03, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 }};
 
 
-BOOST_FORCEINLINE vuint8m1_t load_vector128(const simd_vector128< std::uint8_t >& v, size_t vl) noexcept
+BOOST_FORCEINLINE vuint8m1_t load_vector128(const simd_vector128< std::uint8_t >& v, std::size_t vl) noexcept
 {
     return __riscv_vle8_v_u8m1(v.bytes, vl);
 }
@@ -414,18 +414,18 @@ struct from_chars_simd_load_traits;
 template< typename Char >
 struct from_chars_simd_load_traits< Char, 1u >
 {
-    static BOOST_FORCEINLINE vuint8m1_t load_packed_16(const Char* p, size_t vl) noexcept
+    static BOOST_FORCEINLINE vuint8m1_t load_packed_16(const Char* p, std::size_t vl) noexcept
     {
         return __riscv_vle8_v_u8m1(reinterpret_cast< const std::uint8_t* >(p), vl);
     }
 
-    static BOOST_FORCEINLINE vuint8m1_t load_packed_4(const Char* p, size_t vl) noexcept
+    static BOOST_FORCEINLINE vuint8m1_t load_packed_4(const Char* p, std::size_t vl) noexcept
     {
         (void)vl;
         return __riscv_vle8_v_u8m1(reinterpret_cast< const std::uint8_t* >(p), 4);
     }
 
-    static BOOST_FORCEINLINE vuint8m1_t load_packed_n(const Char* p, unsigned int n, size_t vl) noexcept
+    static BOOST_FORCEINLINE vuint8m1_t load_packed_n(const Char* p, unsigned int n, std::size_t vl) noexcept
     {
         alignas(16) std::uint8_t buf[16] = {};
         detail::memcpy(buf, p, n);
@@ -436,15 +436,15 @@ struct from_chars_simd_load_traits< Char, 1u >
 template< typename Char >
 struct from_chars_simd_load_traits< Char, 2u >
 {
-    static BOOST_FORCEINLINE vuint8m1_t load_packed_16(const Char* p, size_t vl) noexcept
+    static BOOST_FORCEINLINE vuint8m1_t load_packed_16(const Char* p, std::size_t vl) noexcept
     {
         (void)vl;
-        size_t vl16 = __riscv_vsetvl_e16m2(16);
+        std::size_t vl16 = __riscv_vsetvl_e16m2(16);
         vuint16m2_t v16 = __riscv_vle16_v_u16m2(reinterpret_cast< const std::uint16_t* >(p), vl16);
         return __riscv_vnsrl_wx_u8m1(v16, 0, 16);
     }
 
-    static BOOST_FORCEINLINE vuint8m1_t load_packed_4(const Char* p, size_t vl) noexcept
+    static BOOST_FORCEINLINE vuint8m1_t load_packed_4(const Char* p, std::size_t vl) noexcept
     {
         (void)vl;
         vuint16m1_t v16 = __riscv_vle16_v_u16m1(reinterpret_cast< const std::uint16_t* >(p), 4);
@@ -452,7 +452,7 @@ struct from_chars_simd_load_traits< Char, 2u >
         return __riscv_vnsrl_wx_u8m1(v16_w, 0, 4);
     }
 
-    static BOOST_FORCEINLINE vuint8m1_t load_packed_n(const Char* p, unsigned int n, size_t vl) noexcept
+    static BOOST_FORCEINLINE vuint8m1_t load_packed_n(const Char* p, unsigned int n, std::size_t vl) noexcept
     {
         alignas(16) std::uint8_t buf[16] = {};
         for (unsigned int i = 0u; i < n; ++i)
@@ -466,16 +466,16 @@ struct from_chars_simd_load_traits< Char, 2u >
 template< typename Char >
 struct from_chars_simd_load_traits< Char, 4u >
 {
-    static BOOST_FORCEINLINE vuint8m1_t load_packed_16(const Char* p, size_t vl) noexcept
+    static BOOST_FORCEINLINE vuint8m1_t load_packed_16(const Char* p, std::size_t vl) noexcept
     {
         (void)vl;
-        size_t vl32 = __riscv_vsetvl_e32m4(16);
+        std::size_t vl32 = __riscv_vsetvl_e32m4(16);
         vuint32m4_t v32 = __riscv_vle32_v_u32m4(reinterpret_cast< const std::uint32_t* >(p), vl32);
         vuint16m2_t v16 = __riscv_vnsrl_wx_u16m2(v32, 0, 16);
         return __riscv_vnsrl_wx_u8m1(v16, 0, 16);
     }
 
-    static BOOST_FORCEINLINE vuint8m1_t load_packed_4(const Char* p, size_t vl) noexcept
+    static BOOST_FORCEINLINE vuint8m1_t load_packed_4(const Char* p, std::size_t vl) noexcept
     {
         (void)vl;
         vuint32m1_t v32 = __riscv_vle32_v_u32m1(reinterpret_cast< const std::uint32_t* >(p), 4);
@@ -484,7 +484,7 @@ struct from_chars_simd_load_traits< Char, 4u >
         return __riscv_vnsrl_wx_u8m1(v16, 0, 4);
     }
 
-    static BOOST_FORCEINLINE vuint8m1_t load_packed_n(const Char* p, unsigned int n, size_t vl) noexcept
+    static BOOST_FORCEINLINE vuint8m1_t load_packed_n(const Char* p, unsigned int n, std::size_t vl) noexcept
     {
         alignas(16) std::uint8_t buf[16] = {};
         for (unsigned int i = 0u; i < n; ++i)
@@ -511,7 +511,7 @@ BOOST_FORCEINLINE void from_chars_simd_core
     vuint8m1_t const& char_code0_sub,
     vuint8m1_t const& char_code1_sub,
     vuint8m1_t const& char_code2_sub,
-    std::uint8_t* data, unsigned int& end_pos, from_chars_error& ec, size_t vl
+    std::uint8_t* data, unsigned int& end_pos, from_chars_error& ec, std::size_t vl
 )
 {
     using constants = uuids::detail::from_chars_simd_constants< void >;
@@ -661,7 +661,7 @@ BOOST_FORCEINLINE from_chars_result< Char > from_chars_simd(const Char* begin, c
 
     using char_constants = uuids::detail::from_chars_simd_char_constants< Char >;
 
-    const size_t vl = __riscv_vsetvl_e8m1(16);
+    const std::size_t vl = __riscv_vsetvl_e8m1(16);
 
     unsigned int end_pos = 36u;
     from_chars_error ec = from_chars_error::none;
