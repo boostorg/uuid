@@ -383,6 +383,66 @@ jobs:
           fi
           ./b2 "${b2_args[@]}"
 
+  posix-riscv64:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - toolset: gcc-riscv64
+            cxxstd: "11,14,17,20"
+            os: ubuntu-latest
+            install: [g++-riscv64-linux-gnu, qemu-user-static, binfmt-support, libc6-riscv64-cross, libstdc++6-riscv64-cross]
+            address-model: 64
+
+    runs-on: ${{matrix.os}}
+
+    defaults:
+      run:
+        shell: bash
+
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Install packages
+        if: matrix.install
+        run: |
+          sudo apt-get update
+          sudo apt-get -y install ${{join(matrix.install, ' ')}}
+          sudo update-binfmts --enable qemu-riscv64
+
+      - name: Setup Boost
+        run: |
+          echo GITHUB_REPOSITORY: $GITHUB_REPOSITORY
+          LIBRARY=${GITHUB_REPOSITORY#*/}
+          echo LIBRARY: $LIBRARY
+          echo "LIBRARY=$LIBRARY" >> $GITHUB_ENV
+          echo GITHUB_BASE_REF: $GITHUB_BASE_REF
+          echo GITHUB_REF: $GITHUB_REF
+          REF=${GITHUB_BASE_REF:-$GITHUB_REF}
+          REF=${REF#refs/heads/}
+          echo REF: $REF
+          BOOST_BRANCH=develop && [ "$REF" == "master" ] && BOOST_BRANCH=master || true
+          echo BOOST_BRANCH: $BOOST_BRANCH
+          cd ..
+          git clone -b $BOOST_BRANCH --depth 1 https://github.com/boostorg/boost.git boost-root
+          cd boost-root
+          cp -r $GITHUB_WORKSPACE/* libs/$LIBRARY
+          git submodule update --init tools/boostdep
+          python3 tools/boostdep/depinst/depinst.py -I examples $LIBRARY
+          ./bootstrap.sh
+          ./b2 -d0 headers
+
+      - name: Create user-config.jam
+        run: |
+          echo "using gcc : riscv64 : riscv64-linux-gnu-g++ ;" > ~/user-config.jam
+
+      - name: Run tests
+        env:
+          QEMU_LD_PREFIX: /usr/riscv64-linux-gnu
+        run: |
+          cd ../boost-root
+          ./b2 -j2 libs/$LIBRARY/test toolset=${{matrix.toolset}} cxxstd=${{matrix.cxxstd}} address-model=${{matrix.address-model}} variant=debug,release
+
   windows:
     strategy:
       fail-fast: false
