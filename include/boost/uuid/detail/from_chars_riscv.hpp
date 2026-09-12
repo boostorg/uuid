@@ -402,9 +402,9 @@ const simd_vector128< std::uint8_t > from_chars_simd_constants< T >::mm_lower_id
     {{ 0x01, 0x03, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 }};
 
 
-BOOST_FORCEINLINE vuint8m1_t load_vector128(const simd_vector128< std::uint8_t >& v, std::size_t vl) noexcept
+BOOST_FORCEINLINE vuint8m1_t load_vector128(const simd_vector128< std::uint8_t >& v) noexcept
 {
-    return __riscv_vle8_v_u8m1(v.bytes, vl);
+    return __riscv_vle8_v_u8m1(v.bytes, 16);
 }
 
 template< typename Char, std::size_t Size = sizeof(Char) >
@@ -413,20 +413,18 @@ struct from_chars_simd_load_traits;
 template< typename Char >
 struct from_chars_simd_load_traits< Char, 1u >
 {
-    static BOOST_FORCEINLINE vuint8m1_t load_packed_16(const Char* p, std::size_t vl) noexcept
+    static BOOST_FORCEINLINE vuint8m1_t load_packed_16(const Char* p) noexcept
     {
-        return __riscv_vle8_v_u8m1(reinterpret_cast< const std::uint8_t* >(p), vl);
+        return __riscv_vle8_v_u8m1(reinterpret_cast< const std::uint8_t* >(p), 16);
     }
 
-    static BOOST_FORCEINLINE vuint8m1_t load_packed_4(const Char* p, std::size_t vl) noexcept
+    static BOOST_FORCEINLINE vuint8m1_t load_packed_4(const Char* p) noexcept
     {
-        (void)vl;
         return __riscv_vle8_v_u8m1(reinterpret_cast< const std::uint8_t* >(p), 4);
     }
 
-    static BOOST_FORCEINLINE vuint8m1_t load_packed_n(const Char* p, unsigned int n, std::size_t vl) noexcept
+    static BOOST_FORCEINLINE vuint8m1_t load_packed_n(const Char* p, unsigned int n) noexcept
     {
-        (void)vl;
         return __riscv_vle8_v_u8m1(reinterpret_cast< const std::uint8_t* >(p), n);
     }
 };
@@ -434,25 +432,21 @@ struct from_chars_simd_load_traits< Char, 1u >
 template< typename Char >
 struct from_chars_simd_load_traits< Char, 2u >
 {
-    static BOOST_FORCEINLINE vuint8m1_t load_packed_16(const Char* p, std::size_t vl) noexcept
+    static BOOST_FORCEINLINE vuint8m1_t load_packed_16(const Char* p) noexcept
     {
-        (void)vl;
-        std::size_t vl16 = __riscv_vsetvl_e16m2(16);
-        vuint16m2_t v16 = __riscv_vle16_v_u16m2(reinterpret_cast< const std::uint16_t* >(p), vl16);
+        vuint16m2_t v16 = __riscv_vle16_v_u16m2(reinterpret_cast< const std::uint16_t* >(p), 16);
         return __riscv_vnsrl_wx_u8m1(v16, 0, 16);
     }
 
-    static BOOST_FORCEINLINE vuint8m1_t load_packed_4(const Char* p, std::size_t vl) noexcept
+    static BOOST_FORCEINLINE vuint8m1_t load_packed_4(const Char* p) noexcept
     {
-        (void)vl;
         vuint16m1_t v16 = __riscv_vle16_v_u16m1(reinterpret_cast< const std::uint16_t* >(p), 4);
         vuint16m2_t v16_w = __riscv_vlmul_ext_v_u16m1_u16m2(v16);
         return __riscv_vnsrl_wx_u8m1(v16_w, 0, 4);
     }
 
-    static BOOST_FORCEINLINE vuint8m1_t load_packed_n(const Char* p, unsigned int n, std::size_t vl) noexcept
+    static BOOST_FORCEINLINE vuint8m1_t load_packed_n(const Char* p, unsigned int n) noexcept
     {
-        (void)vl;
         vuint16m2_t v16 = __riscv_vle16_v_u16m2(reinterpret_cast< const std::uint16_t* >(p), n);
         return __riscv_vnsrl_wx_u8m1(v16, 0, 16);
     }
@@ -461,27 +455,23 @@ struct from_chars_simd_load_traits< Char, 2u >
 template< typename Char >
 struct from_chars_simd_load_traits< Char, 4u >
 {
-    static BOOST_FORCEINLINE vuint8m1_t load_packed_16(const Char* p, std::size_t vl) noexcept
+    static BOOST_FORCEINLINE vuint8m1_t load_packed_16(const Char* p) noexcept
     {
-        (void)vl;
-        std::size_t vl32 = __riscv_vsetvl_e32m4(16);
-        vuint32m4_t v32 = __riscv_vle32_v_u32m4(reinterpret_cast< const std::uint32_t* >(p), vl32);
+        vuint32m4_t v32 = __riscv_vle32_v_u32m4(reinterpret_cast< const std::uint32_t* >(p), 16);
         vuint16m2_t v16 = __riscv_vnsrl_wx_u16m2(v32, 0, 16);
         return __riscv_vnsrl_wx_u8m1(v16, 0, 16);
     }
 
-    static BOOST_FORCEINLINE vuint8m1_t load_packed_4(const Char* p, std::size_t vl) noexcept
+    static BOOST_FORCEINLINE vuint8m1_t load_packed_4(const Char* p) noexcept
     {
-        (void)vl;
         vuint32m1_t v32 = __riscv_vle32_v_u32m1(reinterpret_cast< const std::uint32_t* >(p), 4);
         vuint32m4_t v32_w = __riscv_vlmul_ext_v_u32m1_u32m4(v32);
         vuint16m2_t v16 = __riscv_vnsrl_wx_u16m2(v32_w, 0, 4);
         return __riscv_vnsrl_wx_u8m1(v16, 0, 4);
     }
 
-    static BOOST_FORCEINLINE vuint8m1_t load_packed_n(const Char* p, unsigned int n, std::size_t vl) noexcept
+    static BOOST_FORCEINLINE vuint8m1_t load_packed_n(const Char* p, unsigned int n) noexcept
     {
-        (void)vl;
         vuint32m4_t v32 = __riscv_vle32_v_u32m4(reinterpret_cast< const std::uint32_t* >(p), n);
         vuint16m2_t v16 = __riscv_vnsrl_wx_u16m2(v32, 0, 16);
         return __riscv_vnsrl_wx_u8m1(v16, 0, 16);
@@ -498,18 +488,22 @@ template< typename Char >
 BOOST_FORCEINLINE void from_chars_simd_core
 (
     vuint8m1_t chars1, vuint8m1_t chars2, vuint8m1_t chars3,
-    std::uint8_t* data, unsigned int& end_pos, from_chars_error& ec, std::size_t vl
+    std::uint8_t* data, unsigned int& end_pos, from_chars_error& ec
 )
 {
     using constants = uuids::detail::from_chars_simd_constants< void >;
     using char_constants = uuids::detail::from_chars_simd_char_constants< Char >;
 
+    // The algorithm processes 16 characters at a time. BOOST_UUID_USE_RISCV_V is only defined for
+    // targets with vectors of at least 128 bits, so 16 lanes are always available.
+    constexpr std::size_t vl = 16u;
+
     // Check if dashes are in the expected positions
     {
         const vuint8m1_t dash_char = __riscv_vmv_v_x_u8m1(static_cast< std::uint8_t >('-'), vl);
 
-        const vuint8m1_t expected_dashes1 = load_vector128(char_constants::mm_expected_dashes1, vl);
-        const vuint8m1_t expected_dashes2 = load_vector128(char_constants::mm_expected_dashes2, vl);
+        const vuint8m1_t expected_dashes1 = load_vector128(char_constants::mm_expected_dashes1);
+        const vuint8m1_t expected_dashes2 = load_vector128(char_constants::mm_expected_dashes2);
 
         const vbool8_t expected1 = __riscv_vmsgtu_vx_u8m1_b8(expected_dashes1, 0, vl);
         const vbool8_t expected2 = __riscv_vmsgtu_vx_u8m1_b8(expected_dashes2, 0, vl);
@@ -547,9 +541,9 @@ BOOST_FORCEINLINE void from_chars_simd_core
     vuint8m1_t lower = __riscv_vmv_v_x_u8m1(0, vl);
 
     {
-        const vuint8m1_t upper_idx1 = load_vector128(constants::mm_upper_idx_chars1, vl);
-        const vuint8m1_t upper_idx2 = load_vector128(constants::mm_upper_idx_chars2, vl);
-        const vuint8m1_t upper_idx3 = load_vector128(constants::mm_upper_idx_chars3, vl);
+        const vuint8m1_t upper_idx1 = load_vector128(constants::mm_upper_idx_chars1);
+        const vuint8m1_t upper_idx2 = load_vector128(constants::mm_upper_idx_chars2);
+        const vuint8m1_t upper_idx3 = load_vector128(constants::mm_upper_idx_chars3);
 
         const vuint8m1_t upper1 = __riscv_vrgather_vv_u8m1(chars1, upper_idx1, vl);
         const vuint8m1_t upper2 = __riscv_vrgather_vv_u8m1(chars2, upper_idx2, vl);
@@ -561,9 +555,9 @@ BOOST_FORCEINLINE void from_chars_simd_core
     }
 
     {
-        const vuint8m1_t lower_idx1 = load_vector128(constants::mm_lower_idx_chars1, vl);
-        const vuint8m1_t lower_idx2 = load_vector128(constants::mm_lower_idx_chars2, vl);
-        const vuint8m1_t lower_idx3 = load_vector128(constants::mm_lower_idx_chars3, vl);
+        const vuint8m1_t lower_idx1 = load_vector128(constants::mm_lower_idx_chars1);
+        const vuint8m1_t lower_idx2 = load_vector128(constants::mm_lower_idx_chars2);
+        const vuint8m1_t lower_idx3 = load_vector128(constants::mm_lower_idx_chars3);
 
         const vuint8m1_t lower1 = __riscv_vrgather_vv_u8m1(chars1, lower_idx1, vl);
         const vuint8m1_t lower2 = __riscv_vrgather_vv_u8m1(chars2, lower_idx2, vl);
@@ -577,8 +571,8 @@ BOOST_FORCEINLINE void from_chars_simd_core
     // Convert characters to 8-bit integers. See the comment in from_chars_x86.hpp for the algorithm description.
     const vint8m1_t upper_i8 = __riscv_vreinterpret_v_u8m1_i8m1(upper);
     const vint8m1_t lower_i8 = __riscv_vreinterpret_v_u8m1_i8m1(lower);
-    const vuint8m1_t char_code1_cmp = load_vector128(char_constants::mm_char_code1_cmp, vl);
-    const vuint8m1_t char_code2_cmp = load_vector128(char_constants::mm_char_code2_cmp, vl);
+    const vuint8m1_t char_code1_cmp = load_vector128(char_constants::mm_char_code1_cmp);
+    const vuint8m1_t char_code2_cmp = load_vector128(char_constants::mm_char_code2_cmp);
 
     const vint8m1_t char_code1_cmp_i8 = __riscv_vreinterpret_v_u8m1_i8m1(char_code1_cmp);
     const vint8m1_t char_code2_cmp_i8 = __riscv_vreinterpret_v_u8m1_i8m1(char_code2_cmp);
@@ -588,9 +582,9 @@ BOOST_FORCEINLINE void from_chars_simd_core
     const vbool8_t lower_code2_mask = __riscv_vmsgt_vv_i8m1_b8(lower_i8, char_code2_cmp_i8, vl);
     const vbool8_t lower_code1_mask = __riscv_vmsgt_vv_i8m1_b8(lower_i8, char_code1_cmp_i8, vl);
 
-    const vuint8m1_t char_code0_sub = load_vector128(char_constants::mm_char_code0_sub, vl);
-    const vuint8m1_t char_code1_sub = load_vector128(char_constants::mm_char_code1_sub, vl);
-    const vuint8m1_t char_code2_sub = load_vector128(char_constants::mm_char_code2_sub, vl);
+    const vuint8m1_t char_code0_sub = load_vector128(char_constants::mm_char_code0_sub);
+    const vuint8m1_t char_code1_sub = load_vector128(char_constants::mm_char_code1_sub);
+    const vuint8m1_t char_code2_sub = load_vector128(char_constants::mm_char_code2_sub);
 
     vuint8m1_t upper_sub = __riscv_vmerge_vvm_u8m1(char_code1_sub, char_code2_sub, upper_code2_mask, vl);
     upper_sub = __riscv_vmerge_vvm_u8m1(char_code0_sub, upper_sub, upper_code1_mask, vl);
@@ -602,7 +596,7 @@ BOOST_FORCEINLINE void from_chars_simd_core
     lower = __riscv_vsub_vv_u8m1(lower, lower_sub, vl);
 
     // Check hexadecimal character validity. Values outside 0-15 will have non-zero upper 4 bits.
-    const vuint8m1_t mm_F0 = load_vector128(constants::mm_F0, vl);
+    const vuint8m1_t mm_F0 = load_vector128(constants::mm_F0);
     const vuint8m1_t upper_hi_bits = __riscv_vand_vv_u8m1(upper, mm_F0, vl);
     const vuint8m1_t lower_hi_bits = __riscv_vand_vv_u8m1(lower, mm_F0, vl);
 
@@ -657,17 +651,15 @@ BOOST_FORCEINLINE from_chars_result< Char > from_chars_simd(const Char* begin, c
 {
     static_assert(sizeof(Char) == 1u || sizeof(Char) == 2u || sizeof(Char) == 4u, "Boost.UUID: Unsupported input character type for from_chars");
 
-    const std::size_t vl = __riscv_vsetvl_e8m1(16);
-
     unsigned int end_pos = 36u;
     from_chars_error ec = from_chars_error::none;
     vuint8m1_t chars1, chars2, chars3;
 
     if (BOOST_LIKELY((end - begin) >= 36))
     {
-        chars1 = from_chars_simd_load_traits< Char >::load_packed_16(begin, vl);
-        chars2 = from_chars_simd_load_traits< Char >::load_packed_16(begin + 16, vl);
-        chars3 = from_chars_simd_load_traits< Char >::load_packed_4(begin + 32, vl);
+        chars1 = from_chars_simd_load_traits< Char >::load_packed_16(begin);
+        chars2 = from_chars_simd_load_traits< Char >::load_packed_16(begin + 16);
+        chars3 = from_chars_simd_load_traits< Char >::load_packed_4(begin + 32);
     }
     else
     {
@@ -678,37 +670,37 @@ BOOST_FORCEINLINE from_chars_result< Char > from_chars_simd(const Char* begin, c
         unsigned int n = static_cast< unsigned int >(end - begin);
         if (n >= 16u)
         {
-            chars1 = from_chars_simd_load_traits< Char >::load_packed_16(p, vl);
+            chars1 = from_chars_simd_load_traits< Char >::load_packed_16(p);
             p += 16;
             n -= 16u;
         }
         else
         {
-            chars1 = from_chars_simd_load_traits< Char >::load_packed_n(p, n, vl);
+            chars1 = from_chars_simd_load_traits< Char >::load_packed_n(p, n);
             p += n;
             n = 0u;
         }
 
         if (n >= 16u)
         {
-            chars2 = from_chars_simd_load_traits< Char >::load_packed_16(p, vl);
+            chars2 = from_chars_simd_load_traits< Char >::load_packed_16(p);
             p += 16;
             n -= 16u;
         }
         else
         {
-            chars2 = from_chars_simd_load_traits< Char >::load_packed_n(p, n, vl);
+            chars2 = from_chars_simd_load_traits< Char >::load_packed_n(p, n);
             p += n;
             n = 0u;
         }
 
-        chars3 = from_chars_simd_load_traits< Char >::load_packed_n(p, n, vl);
+        chars3 = from_chars_simd_load_traits< Char >::load_packed_n(p, n);
     }
 
     from_chars_simd_core< Char >
     (
         chars1, chars2, chars3,
-        u.data(), end_pos, ec, vl
+        u.data(), end_pos, ec
     );
 
     return { begin + end_pos, ec };
