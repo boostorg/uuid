@@ -381,11 +381,6 @@ const simd_vector128< std::uint8_t > from_chars_simd_constants< T >::mm_lower_id
     {{ 0x01, 0x03, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 }};
 
 
-BOOST_FORCEINLINE vuint8m1_t load_vector128(const simd_vector128< std::uint8_t >& v) noexcept
-{
-    return __riscv_vle8_v_u8m1(v.bytes, 16);
-}
-
 template< typename Char, std::size_t Size = sizeof(Char) >
 struct from_chars_simd_load_traits;
 
@@ -484,7 +479,7 @@ BOOST_FORCEINLINE void from_chars_simd_core
         const vuint8m1_t middle_lower = __riscv_vslidedown_vx_u8m1(chars1, 8, vl);
         const vuint8m1_t middle = __riscv_vslideup_vx_u8m1(middle_lower, chars2, 8, vl);
 
-        const vuint8m1_t expected_dashes = load_vector128(char_constants::mm_expected_dashes);
+        const vuint8m1_t expected_dashes = __riscv_vle8_v_u8m1(char_constants::mm_expected_dashes.bytes, vl);
         const vbool8_t expected = __riscv_vmsgtu_vx_u8m1_b8(expected_dashes, 0, vl);
         const vbool8_t is_dash = __riscv_vmseq_vv_u8m1_b8(middle, expected_dashes, vl);
         const vbool8_t missing = __riscv_vmandn_mm_b8(expected, is_dash, vl);
@@ -506,9 +501,9 @@ BOOST_FORCEINLINE void from_chars_simd_core
     vuint8m1_t lower = __riscv_vmv_v_x_u8m1(0, vl);
 
     {
-        const vuint8m1_t upper_idx1 = load_vector128(constants::mm_upper_idx_chars1);
-        const vuint8m1_t upper_idx2 = load_vector128(constants::mm_upper_idx_chars2);
-        const vuint8m1_t upper_idx3 = load_vector128(constants::mm_upper_idx_chars3);
+        const vuint8m1_t upper_idx1 = __riscv_vle8_v_u8m1(constants::mm_upper_idx_chars1.bytes, vl);
+        const vuint8m1_t upper_idx2 = __riscv_vle8_v_u8m1(constants::mm_upper_idx_chars2.bytes, vl);
+        const vuint8m1_t upper_idx3 = __riscv_vle8_v_u8m1(constants::mm_upper_idx_chars3.bytes, vl);
 
         const vuint8m1_t upper1 = __riscv_vrgather_vv_u8m1(chars1, upper_idx1, vl);
         const vuint8m1_t upper2 = __riscv_vrgather_vv_u8m1(chars2, upper_idx2, vl);
@@ -520,9 +515,9 @@ BOOST_FORCEINLINE void from_chars_simd_core
     }
 
     {
-        const vuint8m1_t lower_idx1 = load_vector128(constants::mm_lower_idx_chars1);
-        const vuint8m1_t lower_idx2 = load_vector128(constants::mm_lower_idx_chars2);
-        const vuint8m1_t lower_idx3 = load_vector128(constants::mm_lower_idx_chars3);
+        const vuint8m1_t lower_idx1 = __riscv_vle8_v_u8m1(constants::mm_lower_idx_chars1.bytes, vl);
+        const vuint8m1_t lower_idx2 = __riscv_vle8_v_u8m1(constants::mm_lower_idx_chars2.bytes, vl);
+        const vuint8m1_t lower_idx3 = __riscv_vle8_v_u8m1(constants::mm_lower_idx_chars3.bytes, vl);
 
         const vuint8m1_t lower1 = __riscv_vrgather_vv_u8m1(chars1, lower_idx1, vl);
         const vuint8m1_t lower2 = __riscv_vrgather_vv_u8m1(chars2, lower_idx2, vl);
@@ -536,8 +531,8 @@ BOOST_FORCEINLINE void from_chars_simd_core
     // Convert characters to 8-bit integers. See the comment in from_chars_x86.hpp for the algorithm description.
     const vint8m1_t upper_i8 = __riscv_vreinterpret_v_u8m1_i8m1(upper);
     const vint8m1_t lower_i8 = __riscv_vreinterpret_v_u8m1_i8m1(lower);
-    const vuint8m1_t char_code1_cmp = load_vector128(char_constants::mm_char_code1_cmp);
-    const vuint8m1_t char_code2_cmp = load_vector128(char_constants::mm_char_code2_cmp);
+    const vuint8m1_t char_code1_cmp = __riscv_vle8_v_u8m1(char_constants::mm_char_code1_cmp.bytes, vl);
+    const vuint8m1_t char_code2_cmp = __riscv_vle8_v_u8m1(char_constants::mm_char_code2_cmp.bytes, vl);
 
     const vint8m1_t char_code1_cmp_i8 = __riscv_vreinterpret_v_u8m1_i8m1(char_code1_cmp);
     const vint8m1_t char_code2_cmp_i8 = __riscv_vreinterpret_v_u8m1_i8m1(char_code2_cmp);
@@ -547,9 +542,9 @@ BOOST_FORCEINLINE void from_chars_simd_core
     const vbool8_t lower_code2_mask = __riscv_vmsgt_vv_i8m1_b8(lower_i8, char_code2_cmp_i8, vl);
     const vbool8_t lower_code1_mask = __riscv_vmsgt_vv_i8m1_b8(lower_i8, char_code1_cmp_i8, vl);
 
-    const vuint8m1_t char_code0_sub = load_vector128(char_constants::mm_char_code0_sub);
-    const vuint8m1_t char_code1_sub = load_vector128(char_constants::mm_char_code1_sub);
-    const vuint8m1_t char_code2_sub = load_vector128(char_constants::mm_char_code2_sub);
+    const vuint8m1_t char_code0_sub = __riscv_vle8_v_u8m1(char_constants::mm_char_code0_sub.bytes, vl);
+    const vuint8m1_t char_code1_sub = __riscv_vle8_v_u8m1(char_constants::mm_char_code1_sub.bytes, vl);
+    const vuint8m1_t char_code2_sub = __riscv_vle8_v_u8m1(char_constants::mm_char_code2_sub.bytes, vl);
 
     vuint8m1_t upper_sub = __riscv_vmerge_vvm_u8m1(char_code1_sub, char_code2_sub, upper_code2_mask, vl);
     upper_sub = __riscv_vmerge_vvm_u8m1(char_code0_sub, upper_sub, upper_code1_mask, vl);
@@ -561,7 +556,7 @@ BOOST_FORCEINLINE void from_chars_simd_core
     lower = __riscv_vsub_vv_u8m1(lower, lower_sub, vl);
 
     // Check hexadecimal character validity. Values outside 0-15 will have non-zero upper 4 bits.
-    const vuint8m1_t mm_F0 = load_vector128(constants::mm_F0);
+    const vuint8m1_t mm_F0 = __riscv_vle8_v_u8m1(constants::mm_F0.bytes, vl);
     const vuint8m1_t upper_hi_bits = __riscv_vand_vv_u8m1(upper, mm_F0, vl);
     const vuint8m1_t lower_hi_bits = __riscv_vand_vv_u8m1(lower, mm_F0, vl);
 
