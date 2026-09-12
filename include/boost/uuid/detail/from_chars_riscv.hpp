@@ -11,7 +11,6 @@
 
 #include <cstddef>
 #include <cstdint>
-#include <cstring>
 #include <riscv_vector.h>
 #include <boost/uuid/uuid.hpp>
 #include <boost/uuid/detail/endian.hpp>
@@ -427,9 +426,8 @@ struct from_chars_simd_load_traits< Char, 1u >
 
     static BOOST_FORCEINLINE vuint8m1_t load_packed_n(const Char* p, unsigned int n, std::size_t vl) noexcept
     {
-        alignas(16) std::uint8_t buf[16] = {};
-        detail::memcpy(buf, p, n);
-        return __riscv_vle8_v_u8m1(buf, vl);
+        (void)vl;
+        return __riscv_vle8_v_u8m1(reinterpret_cast< const std::uint8_t* >(p), n);
     }
 };
 
@@ -454,12 +452,9 @@ struct from_chars_simd_load_traits< Char, 2u >
 
     static BOOST_FORCEINLINE vuint8m1_t load_packed_n(const Char* p, unsigned int n, std::size_t vl) noexcept
     {
-        alignas(16) std::uint8_t buf[16] = {};
-        for (unsigned int i = 0u; i < n; ++i)
-        {
-            buf[i] = static_cast< std::uint8_t >(p[i]);
-        }
-        return __riscv_vle8_v_u8m1(buf, vl);
+        (void)vl;
+        vuint16m2_t v16 = __riscv_vle16_v_u16m2(reinterpret_cast< const std::uint16_t* >(p), n);
+        return __riscv_vnsrl_wx_u8m1(v16, 0, 16);
     }
 };
 
@@ -486,12 +481,10 @@ struct from_chars_simd_load_traits< Char, 4u >
 
     static BOOST_FORCEINLINE vuint8m1_t load_packed_n(const Char* p, unsigned int n, std::size_t vl) noexcept
     {
-        alignas(16) std::uint8_t buf[16] = {};
-        for (unsigned int i = 0u; i < n; ++i)
-        {
-            buf[i] = static_cast< std::uint8_t >(p[i]);
-        }
-        return __riscv_vle8_v_u8m1(buf, vl);
+        (void)vl;
+        vuint32m4_t v32 = __riscv_vle32_v_u32m4(reinterpret_cast< const std::uint32_t* >(p), n);
+        vuint16m2_t v16 = __riscv_vnsrl_wx_u16m2(v32, 0, 16);
+        return __riscv_vnsrl_wx_u8m1(v16, 0, 16);
     }
 };
 
