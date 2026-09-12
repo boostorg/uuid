@@ -600,11 +600,8 @@ BOOST_FORCEINLINE void from_chars_simd_core
     const vuint8m1_t upper_hi_bits = __riscv_vand_vv_u8m1(upper, mm_F0, vl);
     const vuint8m1_t lower_hi_bits = __riscv_vand_vv_u8m1(lower, mm_F0, vl);
 
-    const vbool8_t upper_valid = __riscv_vmseq_vx_u8m1_b8(upper_hi_bits, 0, vl);
-    const vbool8_t lower_valid = __riscv_vmseq_vx_u8m1_b8(lower_hi_bits, 0, vl);
-
-    const vbool8_t upper_invalid = __riscv_vmnand_mm_b8(upper_valid, upper_valid, vl);
-    const vbool8_t lower_invalid = __riscv_vmnand_mm_b8(lower_valid, lower_valid, vl);
+    const vbool8_t upper_invalid = __riscv_vmsne_vx_u8m1_b8(upper_hi_bits, 0, vl);
+    const vbool8_t lower_invalid = __riscv_vmsne_vx_u8m1_b8(lower_hi_bits, 0, vl);
 
     const long first_invalid_upper = __riscv_vfirst_m_b8(upper_invalid, vl);
     const long first_invalid_lower = __riscv_vfirst_m_b8(lower_invalid, vl);
