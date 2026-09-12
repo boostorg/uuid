@@ -2,6 +2,10 @@
 // Distributed under the Boost Software License, Version 1.0.
 // https://www.boost.org/LICENSE_1_0.txt
 
+#if defined(_MSC_VER) && _MSC_VER >= 1920 && _MSC_VER < 1930
+# pragma warning(disable: 4848) // support for attribute 'msvc::no_unique_address' in C++17 and earlier is a vendor extension
+#endif
+
 #include <boost/uuid/uuid.hpp>
 #include <boost/uuid/random_generator.hpp>
 #include <boost/unordered/unordered_flat_set.hpp>
