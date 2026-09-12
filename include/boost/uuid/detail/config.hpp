@@ -29,6 +29,7 @@
 #undef BOOST_UUID_USE_AVX2
 #undef BOOST_UUID_USE_AVX512_V1
 #undef BOOST_UUID_USE_AVX10_1
+#undef BOOST_UUID_USE_RISCV_V
 
 #else
 
@@ -91,6 +92,19 @@
 
 #endif
 
+#if defined(__riscv_vector) && defined(__riscv_v_min_vlen) && (__riscv_v_min_vlen >= 128)
+
+// RISC-V Vector Extension (V 1.0+), GCC 12+ / Clang 15+
+// The implementation processes 16 characters at a time, so it requires at least 16 8-bit
+// vector lanes, i.e. vectors of at least 128 bits. __riscv_v_min_vlen is 128 for the V
+// extension and for targets with Zvl128b and above, and lower for the Zve32*/Zve64*
+// subsets, on which the implementation would produce incorrect results.
+#ifndef BOOST_UUID_USE_RISCV_V
+#define BOOST_UUID_USE_RISCV_V
+#endif
+
+#endif
+
 // More advanced ISA extensions imply less advanced are also available
 #if !defined(BOOST_UUID_USE_AVX512_V1) && defined(BOOST_UUID_USE_AVX10_1)
 #define BOOST_UUID_USE_AVX512_V1
@@ -128,7 +142,8 @@
     !defined(BOOST_UUID_USE_SSE41) && \
     !defined(BOOST_UUID_USE_SSSE3) && \
     !defined(BOOST_UUID_USE_SSE3) && \
-    !defined(BOOST_UUID_USE_SSE2)
+    !defined(BOOST_UUID_USE_SSE2) && \
+    !defined(BOOST_UUID_USE_RISCV_V)
 #define BOOST_UUID_NO_SIMD
 #endif
 
