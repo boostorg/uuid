@@ -494,24 +494,22 @@ struct from_chars_simd_load_traits< Char, 4u >
  * if successful, stores it into `data`. If not successful, stores the failure character position to `end_pos`
  * and error code to `ec`.
  */
+template< typename Char >
 BOOST_FORCEINLINE void from_chars_simd_core
 (
     vuint8m1_t chars1, vuint8m1_t chars2, vuint8m1_t chars3,
-    vuint8m1_t const& expected_dashes1,
-    vuint8m1_t const& expected_dashes2,
-    vuint8m1_t const& char_code1_cmp,
-    vuint8m1_t const& char_code2_cmp,
-    vuint8m1_t const& char_code0_sub,
-    vuint8m1_t const& char_code1_sub,
-    vuint8m1_t const& char_code2_sub,
     std::uint8_t* data, unsigned int& end_pos, from_chars_error& ec, std::size_t vl
 )
 {
     using constants = uuids::detail::from_chars_simd_constants< void >;
+    using char_constants = uuids::detail::from_chars_simd_char_constants< Char >;
 
     // Check if dashes are in the expected positions
     {
         const vuint8m1_t dash_char = __riscv_vmv_v_x_u8m1(static_cast< std::uint8_t >('-'), vl);
+
+        const vuint8m1_t expected_dashes1 = load_vector128(char_constants::mm_expected_dashes1, vl);
+        const vuint8m1_t expected_dashes2 = load_vector128(char_constants::mm_expected_dashes2, vl);
 
         const vbool8_t expected1 = __riscv_vmsgtu_vx_u8m1_b8(expected_dashes1, 0, vl);
         const vbool8_t expected2 = __riscv_vmsgtu_vx_u8m1_b8(expected_dashes2, 0, vl);
@@ -579,6 +577,9 @@ BOOST_FORCEINLINE void from_chars_simd_core
     // Convert characters to 8-bit integers. See the comment in from_chars_x86.hpp for the algorithm description.
     const vint8m1_t upper_i8 = __riscv_vreinterpret_v_u8m1_i8m1(upper);
     const vint8m1_t lower_i8 = __riscv_vreinterpret_v_u8m1_i8m1(lower);
+    const vuint8m1_t char_code1_cmp = load_vector128(char_constants::mm_char_code1_cmp, vl);
+    const vuint8m1_t char_code2_cmp = load_vector128(char_constants::mm_char_code2_cmp, vl);
+
     const vint8m1_t char_code1_cmp_i8 = __riscv_vreinterpret_v_u8m1_i8m1(char_code1_cmp);
     const vint8m1_t char_code2_cmp_i8 = __riscv_vreinterpret_v_u8m1_i8m1(char_code2_cmp);
 
@@ -586,6 +587,10 @@ BOOST_FORCEINLINE void from_chars_simd_core
     const vbool8_t upper_code1_mask = __riscv_vmsgt_vv_i8m1_b8(upper_i8, char_code1_cmp_i8, vl);
     const vbool8_t lower_code2_mask = __riscv_vmsgt_vv_i8m1_b8(lower_i8, char_code2_cmp_i8, vl);
     const vbool8_t lower_code1_mask = __riscv_vmsgt_vv_i8m1_b8(lower_i8, char_code1_cmp_i8, vl);
+
+    const vuint8m1_t char_code0_sub = load_vector128(char_constants::mm_char_code0_sub, vl);
+    const vuint8m1_t char_code1_sub = load_vector128(char_constants::mm_char_code1_sub, vl);
+    const vuint8m1_t char_code2_sub = load_vector128(char_constants::mm_char_code2_sub, vl);
 
     vuint8m1_t upper_sub = __riscv_vmerge_vvm_u8m1(char_code1_sub, char_code2_sub, upper_code2_mask, vl);
     upper_sub = __riscv_vmerge_vvm_u8m1(char_code0_sub, upper_sub, upper_code1_mask, vl);
@@ -652,8 +657,6 @@ BOOST_FORCEINLINE from_chars_result< Char > from_chars_simd(const Char* begin, c
 {
     static_assert(sizeof(Char) == 1u || sizeof(Char) == 2u || sizeof(Char) == 4u, "Boost.UUID: Unsupported input character type for from_chars");
 
-    using char_constants = uuids::detail::from_chars_simd_char_constants< Char >;
-
     const std::size_t vl = __riscv_vsetvl_e8m1(16);
 
     unsigned int end_pos = 36u;
@@ -702,16 +705,9 @@ BOOST_FORCEINLINE from_chars_result< Char > from_chars_simd(const Char* begin, c
         chars3 = from_chars_simd_load_traits< Char >::load_packed_n(p, n, vl);
     }
 
-    from_chars_simd_core
+    from_chars_simd_core< Char >
     (
         chars1, chars2, chars3,
-        load_vector128(char_constants::mm_expected_dashes1, vl),
-        load_vector128(char_constants::mm_expected_dashes2, vl),
-        load_vector128(char_constants::mm_char_code1_cmp, vl),
-        load_vector128(char_constants::mm_char_code2_cmp, vl),
-        load_vector128(char_constants::mm_char_code0_sub, vl),
-        load_vector128(char_constants::mm_char_code1_sub, vl),
-        load_vector128(char_constants::mm_char_code2_sub, vl),
         u.data(), end_pos, ec, vl
     );
 
