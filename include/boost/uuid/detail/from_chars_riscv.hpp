@@ -33,8 +33,7 @@ template<
 >
 struct from_chars_simd_char_constants
 {
-    static const simd_vector128< std::uint8_t > mm_expected_dashes1;
-    static const simd_vector128< std::uint8_t > mm_expected_dashes2;
+    static const simd_vector128< std::uint8_t > mm_expected_dashes;
 
     static constexpr std::uint8_t char_code2 = 0x61; // 'a' in ASCII
     static constexpr std::uint8_t char_code2_sub = static_cast< std::uint8_t >(char_code2 - 10u);
@@ -55,12 +54,8 @@ struct from_chars_simd_char_constants
 };
 
 template< typename Char, bool IsCharASCIICompatible, bool IsWCharASCIICompatible >
-const simd_vector128< std::uint8_t > from_chars_simd_char_constants< Char, IsCharASCIICompatible, IsWCharASCIICompatible >::mm_expected_dashes1 =
-    {{ 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x2D, 0x00, 0x00, 0x00, 0x00, 0x2D, 0x00, 0x00 }};
-
-template< typename Char, bool IsCharASCIICompatible, bool IsWCharASCIICompatible >
-const simd_vector128< std::uint8_t > from_chars_simd_char_constants< Char, IsCharASCIICompatible, IsWCharASCIICompatible >::mm_expected_dashes2 =
-    {{ 0x00, 0x00, 0x2D, 0x00, 0x00, 0x00, 0x00, 0x2D, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 }};
+const simd_vector128< std::uint8_t > from_chars_simd_char_constants< Char, IsCharASCIICompatible, IsWCharASCIICompatible >::mm_expected_dashes =
+    {{ 0x2D, 0x00, 0x00, 0x00, 0x00, 0x2D, 0x00, 0x00, 0x00, 0x00, 0x2D, 0x00, 0x00, 0x00, 0x00, 0x2D }};
 
 template< typename Char, bool IsCharASCIICompatible, bool IsWCharASCIICompatible >
 const simd_vector128< std::uint8_t > from_chars_simd_char_constants< Char, IsCharASCIICompatible, IsWCharASCIICompatible >::mm_char_code2_cmp =
@@ -115,8 +110,7 @@ struct from_chars_simd_char_constants< char, false, IsWCharASCIICompatible >
     static_assert(static_cast< std::int8_t >('0') > -128 && static_cast< std::int8_t >('A') > -128 && static_cast< std::int8_t >('a') > -128,
         "Boost.UUID: Unsupported char encoding, hexadecimal character codes are expected to be greater than -128");
 
-    static const simd_vector128< std::uint8_t > mm_expected_dashes1;
-    static const simd_vector128< std::uint8_t > mm_expected_dashes2;
+    static const simd_vector128< std::uint8_t > mm_expected_dashes;
 
     static constexpr std::uint8_t char_code2 = static_cast< std::uint8_t >
     (
@@ -169,17 +163,10 @@ struct from_chars_simd_char_constants< char, false, IsWCharASCIICompatible >
 };
 
 template< bool IsWCharASCIICompatible >
-const simd_vector128< std::uint8_t > from_chars_simd_char_constants< char, false, IsWCharASCIICompatible >::mm_expected_dashes1 =
+const simd_vector128< std::uint8_t > from_chars_simd_char_constants< char, false, IsWCharASCIICompatible >::mm_expected_dashes =
 {{
-    0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-    static_cast< std::uint8_t >('-'), 0x00, 0x00, 0x00, 0x00, static_cast< std::uint8_t >('-'), 0x00, 0x00
-}};
-
-template< bool IsWCharASCIICompatible >
-const simd_vector128< std::uint8_t > from_chars_simd_char_constants< char, false, IsWCharASCIICompatible >::mm_expected_dashes2 =
-{{
-    0x00, 0x00, static_cast< std::uint8_t >('-'), 0x00, 0x00, 0x00, 0x00, static_cast< std::uint8_t >('-'),
-    0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
+    static_cast< std::uint8_t >('-'), 0x00, 0x00, 0x00, 0x00, static_cast< std::uint8_t >('-'), 0x00, 0x00,
+    0x00, 0x00, static_cast< std::uint8_t >('-'), 0x00, 0x00, 0x00, 0x00, static_cast< std::uint8_t >('-')
 }};
 
 template< bool IsWCharASCIICompatible >
@@ -240,8 +227,7 @@ struct from_chars_simd_char_constants< wchar_t, IsCharASCIICompatible, false >
     static_assert(static_cast< std::int8_t >(L'0') > -128 && static_cast< std::int8_t >(L'A') > -128 && static_cast< std::int8_t >(L'a') > -128,
         "Boost.UUID: Unsupported wchar_t encoding, hexadecimal character codes are expected to be greater than -128");
 
-    static const simd_vector128< std::uint8_t > mm_expected_dashes1;
-    static const simd_vector128< std::uint8_t > mm_expected_dashes2;
+    static const simd_vector128< std::uint8_t > mm_expected_dashes;
 
     static constexpr std::uint8_t char_code2 = static_cast< std::uint8_t >
     (
@@ -294,17 +280,10 @@ struct from_chars_simd_char_constants< wchar_t, IsCharASCIICompatible, false >
 };
 
 template< bool IsCharASCIICompatible >
-const simd_vector128< std::uint8_t > from_chars_simd_char_constants< wchar_t, IsCharASCIICompatible, false >::mm_expected_dashes1 =
+const simd_vector128< std::uint8_t > from_chars_simd_char_constants< wchar_t, IsCharASCIICompatible, false >::mm_expected_dashes =
 {{
-    0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-    static_cast< std::uint8_t >(L'-'), 0x00, 0x00, 0x00, 0x00, static_cast< std::uint8_t >(L'-'), 0x00, 0x00
-}};
-
-template< bool IsCharASCIICompatible >
-const simd_vector128< std::uint8_t > from_chars_simd_char_constants< wchar_t, IsCharASCIICompatible, false >::mm_expected_dashes2 =
-{{
-    0x00, 0x00, static_cast< std::uint8_t >(L'-'), 0x00, 0x00, 0x00, 0x00, static_cast< std::uint8_t >(L'-'),
-    0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
+    static_cast< std::uint8_t >(L'-'), 0x00, 0x00, 0x00, 0x00, static_cast< std::uint8_t >(L'-'), 0x00, 0x00,
+    0x00, 0x00, static_cast< std::uint8_t >(L'-'), 0x00, 0x00, 0x00, 0x00, static_cast< std::uint8_t >(L'-')
 }};
 
 template< bool IsCharASCIICompatible >
@@ -498,41 +477,27 @@ BOOST_FORCEINLINE void from_chars_simd_core
     // targets with vectors of at least 128 bits, so 16 lanes are always available.
     constexpr std::size_t vl = 16u;
 
-    // Check if dashes are in the expected positions
+    // Check if dashes are in the expected positions. All four dashes are at character positions
+    // 8, 13, 18 and 23, so they all fit into the middle vector formed by characters 8..23, where
+    // they are in lanes 0, 5, 10 and 15.
     {
-        const vuint8m1_t dash_char = __riscv_vmv_v_x_u8m1(static_cast< std::uint8_t >('-'), vl);
+        const vuint8m1_t middle_lower = __riscv_vslidedown_vx_u8m1(chars1, 8, vl);
+        const vuint8m1_t middle = __riscv_vslideup_vx_u8m1(middle_lower, chars2, 8, vl);
 
-        const vuint8m1_t expected_dashes1 = load_vector128(char_constants::mm_expected_dashes1);
-        const vuint8m1_t expected_dashes2 = load_vector128(char_constants::mm_expected_dashes2);
+        const vuint8m1_t expected_dashes = load_vector128(char_constants::mm_expected_dashes);
+        const vbool8_t expected = __riscv_vmsgtu_vx_u8m1_b8(expected_dashes, 0, vl);
+        const vbool8_t is_dash = __riscv_vmseq_vv_u8m1_b8(middle, expected_dashes, vl);
+        const vbool8_t missing = __riscv_vmandn_mm_b8(expected, is_dash, vl);
 
-        const vbool8_t expected1 = __riscv_vmsgtu_vx_u8m1_b8(expected_dashes1, 0, vl);
-        const vbool8_t expected2 = __riscv_vmsgtu_vx_u8m1_b8(expected_dashes2, 0, vl);
-
-        const vbool8_t is_dash1 = __riscv_vmseq_vv_u8m1_b8(chars1, dash_char, vl);
-        const vbool8_t is_dash2 = __riscv_vmseq_vv_u8m1_b8(chars2, dash_char, vl);
-
-        const vbool8_t missing1 = __riscv_vmandn_mm_b8(expected1, is_dash1, vl);
-        const vbool8_t missing2 = __riscv_vmandn_mm_b8(expected2, is_dash2, vl);
-
-        const long first_missing1 = __riscv_vfirst_m_b8(missing1, vl);
-        const long first_missing2 = __riscv_vfirst_m_b8(missing2, vl);
-
-        unsigned int dash_pos = 0xFFFFFFFFu;
-        if (first_missing1 >= 0)
+        const long first_missing = __riscv_vfirst_m_b8(missing, vl);
+        if (first_missing >= 0)
         {
-            dash_pos = static_cast< unsigned int >(first_missing1);
-        }
-        if (first_missing2 >= 0)
-        {
-            const unsigned int pos2 = static_cast< unsigned int >(first_missing2) + 16u;
-            if (pos2 < dash_pos)
-                dash_pos = pos2;
-        }
-
-        if (BOOST_UNLIKELY(dash_pos < end_pos))
-        {
-            end_pos = dash_pos;
-            ec = from_chars_error::dash_expected;
+            const unsigned int dash_pos = static_cast< unsigned int >(first_missing) + 8u;
+            if (dash_pos < end_pos)
+            {
+                end_pos = dash_pos;
+                ec = from_chars_error::dash_expected;
+            }
         }
     }
 
