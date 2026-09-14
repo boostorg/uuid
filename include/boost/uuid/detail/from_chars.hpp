@@ -14,6 +14,9 @@
 #if defined(BOOST_UUID_USE_SSE2)
 # include <boost/uuid/detail/from_chars_x86.hpp>
 
+#elif defined(BOOST_UUID_USE_RISCV_V)
+# include <boost/uuid/detail/from_chars_riscv.hpp>
+
 #elif defined(BOOST_UUID_REPORT_IMPLEMENTATION)
 # include <boost/config/pragma_message.hpp>
   BOOST_PRAGMA_MESSAGE( "Using from_chars_generic.hpp" )
@@ -27,7 +30,7 @@ template<class Ch>
 BOOST_UUID_CXX14_CONSTEXPR_RT inline
 from_chars_result<Ch> from_chars( Ch const* first, Ch const* last, uuid& u ) noexcept
 {
-#if defined(BOOST_UUID_USE_SSE2)
+#if defined(BOOST_UUID_USE_SSE2) || defined(BOOST_UUID_USE_RISCV_V)
     if( detail::is_constant_evaluated_rt() )
     {
         return detail::from_chars_generic( first, last, u );
