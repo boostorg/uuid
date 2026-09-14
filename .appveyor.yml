@@ -27,11 +27,27 @@ environment:
       CXXSTD: 14,17
     - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2019
       TOOLSET: msvc-14.2
-      CXXSTD: 14,17,20
+      CXXSTD: 14,17
+      ADDRMD: 32,64
+    - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2019
+      TOOLSET: msvc-14.2
+      CXXSTD: 20
       ADDRMD: 32,64
     - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2019
       TOOLSET: clang-win
       CXXSTD: 14,17,latest
+      ADDRMD: 64
+    - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2022
+      TOOLSET: msvc-14.3
+      CXXSTD: 14,17
+      ADDRMD: 32,64
+    - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2022
+      TOOLSET: msvc-14.3
+      CXXSTD: 20
+      ADDRMD: 32,64
+    - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2022
+      TOOLSET: clang-win
+      CXXSTD: 14,17,20
       ADDRMD: 64
     - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2015
       ADDPATH: C:\cygwin\bin;
