@@ -70,7 +70,8 @@
 
 #elif defined(_MSC_VER)
 
-#if (defined(_M_X64) || (defined(_M_IX86) && defined(_M_IX86_FP) && _M_IX86_FP >= 2)) && !defined(BOOST_UUID_USE_SSE2)
+// ARM64EC defines _M_X64 but does not support the x86 SIMD code paths
+#if ((defined(_M_X64) && !defined(_M_ARM64EC)) || (defined(_M_IX86) && defined(_M_IX86_FP) && _M_IX86_FP >= 2)) && !defined(BOOST_UUID_USE_SSE2)
 #define BOOST_UUID_USE_SSE2
 #endif
 
