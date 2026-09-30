@@ -406,15 +406,12 @@ BOOST_FORCEINLINE Char* to_chars_simd(uuid const& u, Char* out) noexcept
         _mm_storeu_si128(reinterpret_cast< __m128i* >(out + 24), _mm_unpacklo_epi16(mm, mm_0));
         _mm_storeu_si128(reinterpret_cast< __m128i* >(out + 28), _mm_unpackhi_epi16(mm, mm_0));
 #endif
-        _mm_storeu_si128
-        (
-            reinterpret_cast< __m128i* >(out + 32),
 #if defined(BOOST_UUID_USE_SSSE3)
-            _mm_unpackhi_epi16(_mm_unpackhi_epi8(mm_chars3, mm_0), mm_0)
+        mm_chars3 = _mm_unpackhi_epi16(_mm_unpackhi_epi8(mm_chars3, mm_0), mm_0);
 #else
-            _mm_unpacklo_epi16(_mm_unpacklo_epi8(mm_chars3, mm_0), mm_0)
+        mm_chars3 = _mm_unpacklo_epi16(_mm_unpacklo_epi8(mm_chars3, mm_0), mm_0);
 #endif
-        );
+        _mm_storeu_si128(reinterpret_cast< __m128i* >(out + 32), mm_chars3);
     }
 
     return out + 36;
