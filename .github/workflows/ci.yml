@@ -504,6 +504,13 @@ jobs:
             addrmd: 64
             os: windows-11-arm
 
+          - toolset: msvc-14.5
+            cxxflags: "/arm64EC"
+            linkflags: "/MACHINE:ARM64EC"
+            cxxstd: "14,17,20,latest"
+            addrmd: 64
+            os: windows-11-arm
+
     runs-on: ${{matrix.os}}
 
     steps:
@@ -535,7 +542,7 @@ jobs:
         shell: cmd
         run: |
           cd ../boost-root
-          b2 -j2 libs/%LIBRARY%/test toolset=${{matrix.toolset}} cxxstd=${{matrix.cxxstd}} address-model=${{matrix.addrmd}} variant=debug,release embed-manifest-via=linker ${{ matrix.arch && format('cxxflags=/arch:{0}', matrix.arch) }} ${{ matrix.define && format('define={0}', matrix.define) }}
+          b2 -j2 libs/%LIBRARY%/test toolset=${{matrix.toolset}} cxxstd=${{matrix.cxxstd}} address-model=${{matrix.addrmd}} variant=debug,release embed-manifest-via=linker cxxflags=${{matrix.cxxflags}} linkflags=${{matrix.linkflags}} ${{ matrix.arch && format('cxxflags=/arch:{0}', matrix.arch) }} ${{ matrix.define && format('define={0}', matrix.define) }}
 
   posix-cmake-subdir:
     strategy:
