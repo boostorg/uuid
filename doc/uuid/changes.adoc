@@ -5,7 +5,10 @@
 
 == Changes in Boost 1.93.0
 
-* Added an overload of `time_generator_v7::operator()` taking the time point (Sebastian Goth).
+* Added an overload of `time_generator_v7::operator()` taking the time point. (Sebastian Goth)
+* Added a RISC-V implementation of `from_chars`. (contributed by Dan Kahyan)
+* Handle `std::uppercase` correctly in `operator<<`.
+* Fixed a compilation issue under ARM64EC.
 
 == Changes in Boost 1.91.0
 
