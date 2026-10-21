@@ -9,6 +9,7 @@
 #include <boost/uuid/detail/endian.hpp>
 #include <boost/uuid/detail/static_assert.hpp>
 #include <boost/uuid/uuid.hpp> // for version
+#include <boost/config.hpp>
 #include <cstddef>
 #include <stdexcept>
 #include <string>
@@ -93,6 +94,11 @@ inline void sha1::process_byte(unsigned char byte)
     }
 }
 
+#if defined(BOOST_GCC) && BOOST_GCC >= 160000 && BOOST_GCC < 170000
+# pragma GCC diagnostic push
+# pragma GCC diagnostic ignored "-Wstringop-overflow"
+#endif
+
 inline void sha1::process_byte_impl(unsigned char byte)
 {
     block_[block_byte_index_++] = byte;
@@ -102,6 +108,10 @@ inline void sha1::process_byte_impl(unsigned char byte)
         process_block();
     }
 }
+
+#if defined(BOOST_GCC) && BOOST_GCC >= 160000 && BOOST_GCC < 170000
+# pragma GCC diagnostic pop
+#endif
 
 inline void sha1::process_block(void const* bytes_begin, void const* bytes_end)
 {
