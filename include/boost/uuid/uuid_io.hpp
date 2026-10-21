@@ -188,7 +188,7 @@ public:
         return fmt_.parse( ctx );
     }
 
-    auto format( boost::uuids::uuid const& u, std::format_context& ctx ) const
+    template<class Context> auto format( boost::uuids::uuid const& u, Context& ctx ) const
     {
         alignas( 16 ) char tmp[ 37 ];
         boost::uuids::to_chars( u, tmp );
