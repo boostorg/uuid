@@ -116,6 +116,8 @@ run test_io_2.cpp ;
 run test_io_2.cpp : : : <define>BOOST_UUID_NO_SIMD : test_io_2_no_simd ;
 run test_io_3.cpp ;
 run test_io_3.cpp : : : <define>BOOST_UUID_NO_SIMD : test_io_3_no_simd ;
+run test_io_4.cpp ;
+run test_io_4.cpp : : : <define>BOOST_UUID_NO_SIMD : test_io_4_no_simd ;
 
 run test_to_chars.cpp ;
 run test_to_chars.cpp : : : <define>BOOST_UUID_NO_SIMD : test_to_chars_no_simd ;

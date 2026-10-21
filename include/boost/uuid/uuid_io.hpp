@@ -2,7 +2,7 @@
 #define BOOST_UUID_UUID_IO_HPP_INCLUDED
 
 // Copyright 2009 Andy Tompkins
-// Copyright 2024 Peter Dimov
+// Copyright 2024-2026 Peter Dimov
 // Distributed under the Boost Software License, Version 1.0.
 // https://www.boost.org/LICENSE_1_0.txt
 
@@ -18,6 +18,11 @@
 #include <string>
 #include <locale>
 #include <cstddef>
+
+#if !defined(BOOST_NO_CXX20_HDR_FORMAT)
+# include <format>
+# include <string_view>
+#endif
 
 namespace boost {
 namespace uuids {
@@ -165,5 +170,33 @@ inline std::wstring to_wstring( uuid const& u )
 }
 
 }} //namespace boost::uuids
+
+// std::format support
+
+#if !defined(BOOST_NO_CXX20_HDR_FORMAT)
+
+template<> class std::formatter<boost::uuids::uuid, char>
+{
+private:
+
+    std::formatter<std::string_view, char> fmt_;
+
+public:
+
+    constexpr auto parse( std::format_parse_context& ctx )
+    {
+        return fmt_.parse( ctx );
+    }
+
+    auto format( boost::uuids::uuid const& u, std::format_context& ctx ) const
+    {
+        alignas( 16 ) char tmp[ 37 ];
+        boost::uuids::to_chars( u, tmp );
+
+        return fmt_.format( tmp, ctx );
+    }
+};
+
+#endif
 
 #endif // BOOST_UUID_UUID_IO_HPP_INCLUDED
