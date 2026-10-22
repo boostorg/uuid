@@ -14,6 +14,10 @@
 
 BOOST_PRAGMA_MESSAGE( "Test skipped, because __cpp_lib_format_ranges is not >= 202207L" )
 
+#elif defined(_LIBCPP_VERSION) && _LIBCPP_VERSION < 180000
+
+BOOST_PRAGMA_MESSAGE( "Test skipped, because _LIBCPP_VERSION < 180000" )
+
 #else
 
 static_assert( std::formattable<boost::uuids::uuid, char> );
