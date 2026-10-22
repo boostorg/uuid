@@ -25,7 +25,7 @@
 #  include <compare>
 #  if defined(__cpp_lib_three_way_comparison) && __cpp_lib_three_way_comparison >= 201907L
 #   define BOOST_UUID_HAS_THREE_WAY_COMPARISON __cpp_lib_three_way_comparison
-#  elif defined(_LIBCPP_VERSION)
+#  elif defined(_LIBCPP_VERSION) && _LIBCPP_VERSION >= 11000
 //  https://github.com/llvm/llvm-project/issues/73953
 #   define BOOST_UUID_HAS_THREE_WAY_COMPARISON _LIBCPP_VERSION
 #  endif
