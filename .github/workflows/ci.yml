@@ -138,10 +138,9 @@ jobs:
           - toolset: clang
             compiler: clang++-6.0
             cxxstd: "11,14,17"
-            stdlib: "native,libc++"
             container: ubuntu:20.04
             os: ubuntu-latest
-            install: clang-6.0 libc++-6.0-dev libc++abi-6.0-dev
+            install: clang-6.0
           - toolset: clang
             compiler: clang++-7
             cxxstd: "11,14,17"
