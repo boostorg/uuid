@@ -9,6 +9,7 @@
 * Added a RISC-V implementation of `from_chars`. (contributed by Dan Kahyan)
 * Handle `std::uppercase` correctly in `operator<<`.
 * Fixed a compilation issue under ARM64EC.
+* Added `std::format` support for `uuid`.
 
 == Changes in Boost 1.91.0
 
