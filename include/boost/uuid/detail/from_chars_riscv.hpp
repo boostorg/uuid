@@ -42,9 +42,6 @@ struct from_chars_simd_char_constants
     static constexpr std::uint8_t char_code0 = 0x30; // '0' in ASCII
     static constexpr std::uint8_t char_code0_sub = char_code0;
 
-    static constexpr std::uint32_t char_code_sub =
-        (static_cast< std::uint32_t >(char_code0_sub) << 16u) | (static_cast< std::uint32_t >(char_code1_sub) << 8u) | char_code2_sub;
-
     static const simd_vector128< std::uint8_t > mm_char_code2_cmp;
     static const simd_vector128< std::uint8_t > mm_char_code1_cmp;
 
@@ -150,9 +147,6 @@ struct from_chars_simd_char_constants< char, false, IsWCharASCIICompatible >
     );
     static constexpr std::uint8_t char_code0_sub = char_code0 == static_cast< std::uint8_t >('0') ?
         static_cast< std::uint8_t >('0') : static_cast< std::uint8_t >(char_code0 - 10u);
-
-    static constexpr std::uint32_t char_code_sub =
-        (static_cast< std::uint32_t >(char_code0_sub) << 16u) | (static_cast< std::uint32_t >(char_code1_sub) << 8u) | char_code2_sub;
 
     static const simd_vector128< std::uint8_t > mm_char_code2_cmp;
     static const simd_vector128< std::uint8_t > mm_char_code1_cmp;
@@ -267,9 +261,6 @@ struct from_chars_simd_char_constants< wchar_t, IsCharASCIICompatible, false >
     );
     static constexpr std::uint8_t char_code0_sub = char_code0 == static_cast< std::uint8_t >(L'0') ?
         static_cast< std::uint8_t >(L'0') : static_cast< std::uint8_t >(char_code0 - 10u);
-
-    static constexpr std::uint32_t char_code_sub =
-        (static_cast< std::uint32_t >(char_code0_sub) << 16u) | (static_cast< std::uint32_t >(char_code1_sub) << 8u) | char_code2_sub;
 
     static const simd_vector128< std::uint8_t > mm_char_code2_cmp;
     static const simd_vector128< std::uint8_t > mm_char_code1_cmp;
