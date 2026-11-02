@@ -16,6 +16,7 @@
 #include <boost/uuid/detail/endian.hpp>
 #include <boost/uuid/detail/from_chars_result.hpp>
 #include <boost/uuid/detail/simd_vector.hpp>
+#include <boost/uuid/detail/type_list.hpp>
 
 #if defined(BOOST_UUID_REPORT_IMPLEMENTATION)
 #include <boost/config/pragma_message.hpp>
@@ -123,20 +124,25 @@ struct from_chars_simd_char_constants
 {
     static const simd_vector128< std::uint8_t > mm_expected_dashes;
 
-    static constexpr std::uint8_t char_code2 = 0x61; // 'a' in ASCII
+    static constexpr std::uint8_t char_code3 = 0x61; // 'a' in ASCII
+    static constexpr std::uint8_t char_code3_sub = static_cast< std::uint8_t >(char_code3 - 10u);
+    static constexpr std::uint8_t char_code2 = 0x41; // 'A' in ASCII
     static constexpr std::uint8_t char_code2_sub = static_cast< std::uint8_t >(char_code2 - 10u);
-    static constexpr std::uint8_t char_code1 = 0x41; // 'A' in ASCII
-    static constexpr std::uint8_t char_code1_sub = static_cast< std::uint8_t >(char_code1 - 10u);
+    static constexpr std::uint8_t char_code1 = 0x3A; // ('9' + 1) in ASCII
+    static constexpr std::uint8_t char_code1_sub = static_cast< std::uint8_t >(char_code1 - 16u);
     static constexpr std::uint8_t char_code0 = 0x30; // '0' in ASCII
     static constexpr std::uint8_t char_code0_sub = char_code0;
 
     static constexpr std::uint32_t char_code_sub =
-        (static_cast< std::uint32_t >(char_code0_sub) << 16u) | (static_cast< std::uint32_t >(char_code1_sub) << 8u) | char_code2_sub;
+        (static_cast< std::uint32_t >(char_code3_sub) << 24u) | (static_cast< std::uint32_t >(char_code2_sub) << 16u) |
+        (static_cast< std::uint32_t >(char_code1_sub) << 8u) | char_code0_sub;
 
+    static const simd_vector128< std::uint8_t > mm_char_code3_cmp;
     static const simd_vector128< std::uint8_t > mm_char_code2_cmp;
     static const simd_vector128< std::uint8_t > mm_char_code1_cmp;
 
 #if defined(BOOST_UUID_DETAIL_FROM_CHARS_X86_USE_BLENDS)
+    static const simd_vector128< std::uint8_t > mm_char_code3_sub;
     static const simd_vector128< std::uint8_t > mm_char_code2_sub;
     static const simd_vector128< std::uint8_t > mm_char_code1_sub;
     static const simd_vector128< std::uint8_t > mm_char_code0_sub;
@@ -146,6 +152,19 @@ struct from_chars_simd_char_constants
 template< typename Char, bool IsCharASCIICompatible, bool IsWCharASCIICompatible >
 const simd_vector128< std::uint8_t > from_chars_simd_char_constants< Char, IsCharASCIICompatible, IsWCharASCIICompatible >::mm_expected_dashes =
     {{ 0x2D, 0x00, 0x00, 0x00, 0x00, 0x2D, 0x00, 0x00, 0x00, 0x00, 0x2D, 0x00, 0x00, 0x00, 0x00, 0x2D }}; // 0x2D is '-' in ASCII
+
+template< typename Char, bool IsCharASCIICompatible, bool IsWCharASCIICompatible >
+const simd_vector128< std::uint8_t > from_chars_simd_char_constants< Char, IsCharASCIICompatible, IsWCharASCIICompatible >::mm_char_code3_cmp =
+{{
+    static_cast< std::uint8_t >(char_code3 - 1u), static_cast< std::uint8_t >(char_code3 - 1u),
+    static_cast< std::uint8_t >(char_code3 - 1u), static_cast< std::uint8_t >(char_code3 - 1u),
+    static_cast< std::uint8_t >(char_code3 - 1u), static_cast< std::uint8_t >(char_code3 - 1u),
+    static_cast< std::uint8_t >(char_code3 - 1u), static_cast< std::uint8_t >(char_code3 - 1u),
+    static_cast< std::uint8_t >(char_code3 - 1u), static_cast< std::uint8_t >(char_code3 - 1u),
+    static_cast< std::uint8_t >(char_code3 - 1u), static_cast< std::uint8_t >(char_code3 - 1u),
+    static_cast< std::uint8_t >(char_code3 - 1u), static_cast< std::uint8_t >(char_code3 - 1u),
+    static_cast< std::uint8_t >(char_code3 - 1u), static_cast< std::uint8_t >(char_code3 - 1u)
+}};
 
 template< typename Char, bool IsCharASCIICompatible, bool IsWCharASCIICompatible >
 const simd_vector128< std::uint8_t > from_chars_simd_char_constants< Char, IsCharASCIICompatible, IsWCharASCIICompatible >::mm_char_code2_cmp =
@@ -176,6 +195,13 @@ const simd_vector128< std::uint8_t > from_chars_simd_char_constants< Char, IsCha
 #if defined(BOOST_UUID_DETAIL_FROM_CHARS_X86_USE_BLENDS)
 
 template< typename Char, bool IsCharASCIICompatible, bool IsWCharASCIICompatible >
+const simd_vector128< std::uint8_t > from_chars_simd_char_constants< Char, IsCharASCIICompatible, IsWCharASCIICompatible >::mm_char_code3_sub =
+{{
+    char_code3_sub, char_code3_sub, char_code3_sub, char_code3_sub, char_code3_sub, char_code3_sub, char_code3_sub, char_code3_sub,
+    char_code3_sub, char_code3_sub, char_code3_sub, char_code3_sub, char_code3_sub, char_code3_sub, char_code3_sub, char_code3_sub
+}};
+
+template< typename Char, bool IsCharASCIICompatible, bool IsWCharASCIICompatible >
 const simd_vector128< std::uint8_t > from_chars_simd_char_constants< Char, IsCharASCIICompatible, IsWCharASCIICompatible >::mm_char_code2_sub =
 {{
     char_code2_sub, char_code2_sub, char_code2_sub, char_code2_sub, char_code2_sub, char_code2_sub, char_code2_sub, char_code2_sub,
@@ -198,6 +224,19 @@ const simd_vector128< std::uint8_t > from_chars_simd_char_constants< Char, IsCha
 
 #endif // defined(BOOST_UUID_DETAIL_FROM_CHARS_X86_USE_BLENDS)
 
+template< std::int8_t CharCode, std::uint8_t Subtrahend >
+struct char_code_info
+{
+    static constexpr std::int8_t char_code = CharCode;
+    static constexpr std::uint8_t subtrahend = Subtrahend;
+};
+
+template< typename Left, typename Right >
+struct order_char_codes
+{
+    static constexpr bool value = (Left::char_code < Right::char_code);
+};
+
 template< bool IsWCharASCIICompatible >
 struct from_chars_simd_char_constants< char, false, IsWCharASCIICompatible >
 {
@@ -206,52 +245,38 @@ struct from_chars_simd_char_constants< char, false, IsWCharASCIICompatible >
 
     static const simd_vector128< std::uint8_t > mm_expected_dashes;
 
-    static constexpr std::uint8_t char_code2 = static_cast< std::uint8_t >
-    (
-        static_cast< std::int8_t >('a') > static_cast< std::int8_t >('A') ?
-        (
-            static_cast< std::int8_t >('a') > static_cast< std::int8_t >('0') ? 'a' : '0'
-        ) :
-        (
-            static_cast< std::int8_t >('A') > static_cast< std::int8_t >('0') ? 'A' : '0'
-        )
-    );
-    static constexpr std::uint8_t char_code2_sub = char_code2 == static_cast< std::uint8_t >('0') ?
-        static_cast< std::uint8_t >('0') : static_cast< std::uint8_t >(char_code2 - 10u);
+    using char_codes = detail::sort<
+        detail::type_list<
+            char_code_info< static_cast< std::int8_t >('a'), static_cast< std::uint8_t >('a' - 10u) >,
+            char_code_info< static_cast< std::int8_t >('A'), static_cast< std::uint8_t >('A' - 10u) >,
+            char_code_info< static_cast< std::int8_t >('0'), static_cast< std::uint8_t >('0') >,
+            char_code_info< static_cast< std::int8_t >('9' + 1), static_cast< std::uint8_t >('9' + 1u - 16u) >
+        >,
+        order_char_codes
+    >::type;
 
-    static constexpr std::uint8_t char_code1 = static_cast< std::uint8_t >
-    (
-        static_cast< std::int8_t >('a') > static_cast< std::int8_t >('A') ?
-        (
-            static_cast< std::int8_t >('a') < static_cast< std::int8_t >('0') ? 'a' : '0'
-        ) :
-        (
-            static_cast< std::int8_t >('A') < static_cast< std::int8_t >('0') ? 'A' : '0'
-        )
-    );
-    static constexpr std::uint8_t char_code1_sub = char_code1 == static_cast< std::uint8_t >('0') ?
-        static_cast< std::uint8_t >('0') : static_cast< std::uint8_t >(char_code1 - 10u);
+    static constexpr std::uint8_t char_code3 = static_cast< std::uint8_t >(detail::elem_at< char_codes, 3u >::type::char_code);
+    static constexpr std::uint8_t char_code3_sub = detail::elem_at< char_codes, 3u >::type::subtrahend;
 
-    static constexpr std::uint8_t char_code0 = static_cast< std::uint8_t >
-    (
-        static_cast< std::int8_t >('a') < static_cast< std::int8_t >('A') ?
-        (
-            static_cast< std::int8_t >('a') < static_cast< std::int8_t >('0') ? 'a' : '0'
-        ) :
-        (
-            static_cast< std::int8_t >('A') < static_cast< std::int8_t >('0') ? 'A' : '0'
-        )
-    );
-    static constexpr std::uint8_t char_code0_sub = char_code0 == static_cast< std::uint8_t >('0') ?
-        static_cast< std::uint8_t >('0') : static_cast< std::uint8_t >(char_code0 - 10u);
+    static constexpr std::uint8_t char_code2 = static_cast< std::uint8_t >(detail::elem_at< char_codes, 2u >::type::char_code);
+    static constexpr std::uint8_t char_code2_sub = detail::elem_at< char_codes, 2u >::type::subtrahend;
+
+    static constexpr std::uint8_t char_code1 = static_cast< std::uint8_t >(detail::elem_at< char_codes, 1u >::type::char_code);
+    static constexpr std::uint8_t char_code1_sub = detail::elem_at< char_codes, 1u >::type::subtrahend;
+
+    static constexpr std::uint8_t char_code0 = static_cast< std::uint8_t >(detail::elem_at< char_codes, 0u >::type::char_code);
+    static constexpr std::uint8_t char_code0_sub = detail::elem_at< char_codes, 0u >::type::subtrahend;
 
     static constexpr std::uint32_t char_code_sub =
-        (static_cast< std::uint32_t >(char_code0_sub) << 16u) | (static_cast< std::uint32_t >(char_code1_sub) << 8u) | char_code2_sub;
+        (static_cast< std::uint32_t >(char_code3_sub) << 24u) | (static_cast< std::uint32_t >(char_code2_sub) << 16u) |
+        (static_cast< std::uint32_t >(char_code1_sub) << 8u) | char_code0_sub;
 
+    static const simd_vector128< std::uint8_t > mm_char_code3_cmp;
     static const simd_vector128< std::uint8_t > mm_char_code2_cmp;
     static const simd_vector128< std::uint8_t > mm_char_code1_cmp;
 
 #if defined(BOOST_UUID_DETAIL_FROM_CHARS_X86_USE_BLENDS)
+    static const simd_vector128< std::uint8_t > mm_char_code3_sub;
     static const simd_vector128< std::uint8_t > mm_char_code2_sub;
     static const simd_vector128< std::uint8_t > mm_char_code1_sub;
     static const simd_vector128< std::uint8_t > mm_char_code0_sub;
@@ -263,6 +288,19 @@ const simd_vector128< std::uint8_t > from_chars_simd_char_constants< char, false
 {{
     static_cast< std::uint8_t >('-'), 0x00, 0x00, 0x00, 0x00, static_cast< std::uint8_t >('-'), 0x00, 0x00,
     0x00, 0x00, static_cast< std::uint8_t >('-'), 0x00, 0x00, 0x00, 0x00, static_cast< std::uint8_t >('-')
+}};
+
+template< bool IsWCharASCIICompatible >
+const simd_vector128< std::uint8_t > from_chars_simd_char_constants< char, false, IsWCharASCIICompatible >::mm_char_code3_cmp =
+{{
+    static_cast< std::uint8_t >(char_code3 - 1u), static_cast< std::uint8_t >(char_code3 - 1u),
+    static_cast< std::uint8_t >(char_code3 - 1u), static_cast< std::uint8_t >(char_code3 - 1u),
+    static_cast< std::uint8_t >(char_code3 - 1u), static_cast< std::uint8_t >(char_code3 - 1u),
+    static_cast< std::uint8_t >(char_code3 - 1u), static_cast< std::uint8_t >(char_code3 - 1u),
+    static_cast< std::uint8_t >(char_code3 - 1u), static_cast< std::uint8_t >(char_code3 - 1u),
+    static_cast< std::uint8_t >(char_code3 - 1u), static_cast< std::uint8_t >(char_code3 - 1u),
+    static_cast< std::uint8_t >(char_code3 - 1u), static_cast< std::uint8_t >(char_code3 - 1u),
+    static_cast< std::uint8_t >(char_code3 - 1u), static_cast< std::uint8_t >(char_code3 - 1u)
 }};
 
 template< bool IsWCharASCIICompatible >
@@ -292,6 +330,13 @@ const simd_vector128< std::uint8_t > from_chars_simd_char_constants< char, false
 }};
 
 #if defined(BOOST_UUID_DETAIL_FROM_CHARS_X86_USE_BLENDS)
+
+template< bool IsWCharASCIICompatible >
+const simd_vector128< std::uint8_t > from_chars_simd_char_constants< char, false, IsWCharASCIICompatible >::mm_char_code3_sub =
+{{
+    char_code3_sub, char_code3_sub, char_code3_sub, char_code3_sub, char_code3_sub, char_code3_sub, char_code3_sub, char_code3_sub,
+    char_code3_sub, char_code3_sub, char_code3_sub, char_code3_sub, char_code3_sub, char_code3_sub, char_code3_sub, char_code3_sub
+}};
 
 template< bool IsWCharASCIICompatible >
 const simd_vector128< std::uint8_t > from_chars_simd_char_constants< char, false, IsWCharASCIICompatible >::mm_char_code2_sub =
@@ -329,52 +374,38 @@ struct from_chars_simd_char_constants< wchar_t, IsCharASCIICompatible, false >
 
     static const simd_vector128< std::uint8_t > mm_expected_dashes;
 
-    static constexpr std::uint8_t char_code2 = static_cast< std::uint8_t >
-    (
-        static_cast< std::int8_t >(L'a') > static_cast< std::int8_t >(L'A') ?
-        (
-            static_cast< std::int8_t >(L'a') > static_cast< std::int8_t >(L'0') ? L'a' : L'0'
-        ) :
-        (
-            static_cast< std::int8_t >(L'A') > static_cast< std::int8_t >(L'0') ? L'A' : L'0'
-        )
-    );
-    static constexpr std::uint8_t char_code2_sub = char_code2 == static_cast< std::uint8_t >(L'0') ?
-        static_cast< std::uint8_t >(L'0') : static_cast< std::uint8_t >(char_code2 - 10u);
+    using char_codes = detail::sort<
+        detail::type_list<
+            char_code_info< static_cast< std::int8_t >(L'a'), static_cast< std::uint8_t >(L'a' - 10u) >,
+            char_code_info< static_cast< std::int8_t >(L'A'), static_cast< std::uint8_t >(L'A' - 10u) >,
+            char_code_info< static_cast< std::int8_t >(L'0'), static_cast< std::uint8_t >(L'0') >,
+            char_code_info< static_cast< std::int8_t >(L'9' + 1), static_cast< std::uint8_t >(L'9' + 1u - 16u) >
+        >,
+        order_char_codes
+    >::type;
 
-    static constexpr std::uint8_t char_code1 = static_cast< std::uint8_t >
-    (
-        static_cast< std::int8_t >(L'a') > static_cast< std::int8_t >(L'A') ?
-        (
-            static_cast< std::int8_t >(L'a') < static_cast< std::int8_t >(L'0') ? L'a' : L'0'
-        ) :
-        (
-            static_cast< std::int8_t >(L'A') < static_cast< std::int8_t >(L'0') ? L'A' : L'0'
-        )
-    );
-    static constexpr std::uint8_t char_code1_sub = char_code1 == static_cast< std::uint8_t >(L'0') ?
-        static_cast< std::uint8_t >(L'0') : static_cast< std::uint8_t >(char_code1 - 10u);
+    static constexpr std::uint8_t char_code3 = static_cast< std::uint8_t >(detail::elem_at< char_codes, 3u >::type::char_code);
+    static constexpr std::uint8_t char_code3_sub = detail::elem_at< char_codes, 3u >::type::subtrahend;
 
-    static constexpr std::uint8_t char_code0 = static_cast< std::uint8_t >
-    (
-        static_cast< std::int8_t >(L'a') < static_cast< std::int8_t >(L'A') ?
-        (
-            static_cast< std::int8_t >(L'a') < static_cast< std::int8_t >(L'0') ? L'a' : L'0'
-        ) :
-        (
-            static_cast< std::int8_t >(L'A') < static_cast< std::int8_t >(L'0') ? L'A' : L'0'
-        )
-    );
-    static constexpr std::uint8_t char_code0_sub = char_code0 == static_cast< std::uint8_t >(L'0') ?
-        static_cast< std::uint8_t >(L'0') : static_cast< std::uint8_t >(char_code0 - 10u);
+    static constexpr std::uint8_t char_code2 = static_cast< std::uint8_t >(detail::elem_at< char_codes, 2u >::type::char_code);
+    static constexpr std::uint8_t char_code2_sub = detail::elem_at< char_codes, 2u >::type::subtrahend;
+
+    static constexpr std::uint8_t char_code1 = static_cast< std::uint8_t >(detail::elem_at< char_codes, 1u >::type::char_code);
+    static constexpr std::uint8_t char_code1_sub = detail::elem_at< char_codes, 1u >::type::subtrahend;
+
+    static constexpr std::uint8_t char_code0 = static_cast< std::uint8_t >(detail::elem_at< char_codes, 0u >::type::char_code);
+    static constexpr std::uint8_t char_code0_sub = detail::elem_at< char_codes, 0u >::type::subtrahend;
 
     static constexpr std::uint32_t char_code_sub =
-        (static_cast< std::uint32_t >(char_code0_sub) << 16u) | (static_cast< std::uint32_t >(char_code1_sub) << 8u) | char_code2_sub;
+        (static_cast< std::uint32_t >(char_code3_sub) << 24u) | (static_cast< std::uint32_t >(char_code2_sub) << 16u) |
+        (static_cast< std::uint32_t >(char_code1_sub) << 8u) | char_code0_sub;
 
+    static const simd_vector128< std::uint8_t > mm_char_code3_cmp;
     static const simd_vector128< std::uint8_t > mm_char_code2_cmp;
     static const simd_vector128< std::uint8_t > mm_char_code1_cmp;
 
 #if defined(BOOST_UUID_DETAIL_FROM_CHARS_X86_USE_BLENDS)
+    static const simd_vector128< std::uint8_t > mm_char_code3_sub;
     static const simd_vector128< std::uint8_t > mm_char_code2_sub;
     static const simd_vector128< std::uint8_t > mm_char_code1_sub;
     static const simd_vector128< std::uint8_t > mm_char_code0_sub;
@@ -386,6 +417,19 @@ const simd_vector128< std::uint8_t > from_chars_simd_char_constants< wchar_t, Is
 {{
     static_cast< std::uint8_t >(L'-'), 0x00, 0x00, 0x00, 0x00, static_cast< std::uint8_t >(L'-'), 0x00, 0x00,
     0x00, 0x00, static_cast< std::uint8_t >(L'-'), 0x00, 0x00, 0x00, 0x00, static_cast< std::uint8_t >(L'-')
+}};
+
+template< bool IsCharASCIICompatible >
+const simd_vector128< std::uint8_t > from_chars_simd_char_constants< wchar_t, IsCharASCIICompatible, false >::mm_char_code3_cmp =
+{{
+    static_cast< std::uint8_t >(char_code3 - 1u), static_cast< std::uint8_t >(char_code3 - 1u),
+    static_cast< std::uint8_t >(char_code3 - 1u), static_cast< std::uint8_t >(char_code3 - 1u),
+    static_cast< std::uint8_t >(char_code3 - 1u), static_cast< std::uint8_t >(char_code3 - 1u),
+    static_cast< std::uint8_t >(char_code3 - 1u), static_cast< std::uint8_t >(char_code3 - 1u),
+    static_cast< std::uint8_t >(char_code3 - 1u), static_cast< std::uint8_t >(char_code3 - 1u),
+    static_cast< std::uint8_t >(char_code3 - 1u), static_cast< std::uint8_t >(char_code3 - 1u),
+    static_cast< std::uint8_t >(char_code3 - 1u), static_cast< std::uint8_t >(char_code3 - 1u),
+    static_cast< std::uint8_t >(char_code3 - 1u), static_cast< std::uint8_t >(char_code3 - 1u)
 }};
 
 template< bool IsCharASCIICompatible >
@@ -415,6 +459,13 @@ const simd_vector128< std::uint8_t > from_chars_simd_char_constants< wchar_t, Is
 }};
 
 #if defined(BOOST_UUID_DETAIL_FROM_CHARS_X86_USE_BLENDS)
+
+template< bool IsCharASCIICompatible >
+const simd_vector128< std::uint8_t > from_chars_simd_char_constants< wchar_t, IsCharASCIICompatible, false >::mm_char_code3_sub =
+{{
+    char_code3_sub, char_code3_sub, char_code3_sub, char_code3_sub, char_code3_sub, char_code3_sub, char_code3_sub, char_code3_sub,
+    char_code3_sub, char_code3_sub, char_code3_sub, char_code3_sub, char_code3_sub, char_code3_sub, char_code3_sub, char_code3_sub
+}};
 
 template< bool IsCharASCIICompatible >
 const simd_vector128< std::uint8_t > from_chars_simd_char_constants< wchar_t, IsCharASCIICompatible, false >::mm_char_code2_sub =
@@ -462,10 +513,6 @@ struct from_chars_simd_constants
 #endif
 
     static const simd_vector128< std::uint8_t > mm_F0;
-
-#if !defined(BOOST_UUID_DETAIL_FROM_CHARS_X86_USE_BLENDS)
-    static const simd_vector128< std::uint8_t > mm_2;
-#endif
 };
 
 template< typename T >
@@ -505,11 +552,6 @@ const simd_vector128< std::uint8_t > from_chars_simd_constants< T >::mm_split_ha
 template< typename T >
 const simd_vector128< std::uint8_t > from_chars_simd_constants< T >::mm_F0 =
     {{ 0xF0, 0xF0, 0xF0, 0xF0, 0xF0, 0xF0, 0xF0, 0xF0, 0xF0, 0xF0, 0xF0, 0xF0, 0xF0, 0xF0, 0xF0, 0xF0 }};
-#if !defined(BOOST_UUID_DETAIL_FROM_CHARS_X86_USE_BLENDS)
-template< typename T >
-const simd_vector128< std::uint8_t > from_chars_simd_constants< T >::mm_2 =
-    {{ 0x02, 0x02, 0x02, 0x02, 0x02, 0x02, 0x02, 0x02, 0x02, 0x02, 0x02, 0x02, 0x02, 0x02, 0x02, 0x02 }};
-#endif
 
 
 #if defined(BOOST_GCC) && (BOOST_GCC >= 40600)
@@ -770,10 +812,12 @@ BOOST_FORCEINLINE void from_chars_simd_core
     __m128i const& mm_expected_dashes,
     __m128i const& mm_char_code1_cmp,
     __m128i const& mm_char_code2_cmp,
+    __m128i const& mm_char_code3_cmp,
 #if defined(BOOST_UUID_DETAIL_FROM_CHARS_X86_USE_BLENDS)
     __m128i const& mm_char_code0_sub,
     __m128i const& mm_char_code1_sub,
     __m128i const& mm_char_code2_sub,
+    __m128i const& mm_char_code3_sub,
 #else
     std::uint32_t char_code_sub,
 #endif
@@ -880,18 +924,22 @@ BOOST_FORCEINLINE void from_chars_simd_core
 
     // Convert characters to 8-bit integers. The algorithm is basically as follows:
     //
-    // - Order the '0'-'9', 'A'-'F' and 'a'-'f' groups of characters in the order of increasing their character code values. From them, pick the two with
-    //   the highest character codes. E.g. in ASCII, that would be 'A'-'F' and 'a'-'f'. This is handled at compile time in from_chars_simd_char_constants.
-    // - Let mm_char_code2_cmp be a vector of the smallest character code of the second picked group minus 1 (i.e. 'a' - 1), and mm_char_code1_cmp - that
-    //   of the first picked group ('A' - 1).
-    // - Compare the input hex characters for being greater than mm_char_code2_cmp and mm_char_code1_cmp. This gives the masks where the input contains
-    //   hexadecimal characters of the two greatest character groups, with the mask for mm_char_code1_cmp always including the one for mm_char_code2_cmp.
-    //   Call those masks mm_char_code1_mask and mm_char_code2_mask.
-    // - For each of the three groups of characters, have a corresponding vector of subtrahends, such that when it is subtracted from the input character codes,
-    //   the characters in the group are mapped onto the corresponding value in the range 0-15. I.e. these would be '0', 'A' + 10 and 'a' + 10. Those are called
-    //   mm_char_code0_sub, mm_char_code1_sub and mm_char_code2_sub, corresponding to the ordered list of groups of characters.
-    // - Combine the subtrahends such that for elements where mm_char_code2_mask is non-zero, mm_char_code2_sub is used, otherwise where
-    //   mm_char_code1_mask is non-zero, mm_char_code1_sub is used, otherwise mm_char_code0_sub is used.
+    // - Take the following groups of character codes: '0'-'9', one character code that comes immediately after '9', 'A'-'F' and 'a'-'f'. Sort these
+    //   groups in the order of increasing their character code values. This is handled at compile time in from_chars_simd_char_constants. (Note: The character code
+    //   group past '9' is used to map 6 characters immediately following '9' to invalid values outside the 0-15 range instead of parsing them as values 10-15.)
+    // - Let mm_char_codeN_cmp be a vector of the smallest character code in the N'th group minus 1 (i.e. in ASCII, mm_char_code3_cmp would consist of 'a' - 1,
+    //   mm_char_code2_cmp - of 'A' - 1, mm_char_code1_cmp - of '9').
+    // - Compare the input characters for being greater than mm_char_code3_cmp, mm_char_code2_cmp and mm_char_code1_cmp. This gives the masks where the input
+    //   contains characters from the three greatest character groups. Note that the masks for the higher groups will be included in the masks for the lower ones.
+    //   Call those masks mm_char_code1_mask, mm_char_code2_mask and mm_char_code3_mask.
+    // - For each of the three groups of characters, have a corresponding vector of subtrahends. For the '0'-'9', 'A'-'F' and 'a'-'f' character groups, the subtrahends
+    //   are such that when they are subtracted from the input character codes, the characters in the group are mapped onto the corresponding value in the range 0-15.
+    //   I.e. these would be '0', 'A' + 10 and 'a' + 10. For the character group immediately past '9', the subtrahends are such that when they are subtracted, the result
+    //   is greater than 15 (e.g. '9' + 1 + 16). Those are called mm_char_code0_sub, mm_char_code1_sub, mm_char_code2_sub and mm_char_code3_sub, corresponding to
+    //   the ordered list of groups of characters.
+    // - Combine the subtrahends such that for elements where mm_char_code3_mask is non-zero, mm_char_code3_sub is used, otherwise, where
+    //   mm_char_code2_mask is non-zero, mm_char_code2_sub is used, otherwise, where mm_char_code1_mask is non-zero, mm_char_code1_sub is used, otherwise
+    //   mm_char_code0_sub is used.
     // - Subtract the combined subtrahends from the input character codes.
     //
     // The result will be a vector of bytes, where the values 0-15 correspond the hexadecimal characters on input.
@@ -901,18 +949,27 @@ BOOST_FORCEINLINE void from_chars_simd_core
     // mm_char_code2 in such a way that signed comparisons work as described. We also use signed comparisons in AVX-512 to reuse the same constants.
 #if defined(BOOST_UUID_DETAIL_FROM_CHARS_X86_USE_BLENDS)
 #if defined(BOOST_UUID_USE_AVX512_V1)
+    __mmask16 k_char_code3_mask_lo = _mm_cmpgt_epi8_mask(mm_lo, mm_char_code3_cmp);
+    __mmask16 k_char_code3_mask_hi = _mm_cmpgt_epi8_mask(mm_hi, mm_char_code3_cmp);
+
     __mmask16 k_char_code2_mask_lo = _mm_cmpgt_epi8_mask(mm_lo, mm_char_code2_cmp);
     __mmask16 k_char_code2_mask_hi = _mm_cmpgt_epi8_mask(mm_hi, mm_char_code2_cmp);
 
     __mmask16 k_char_code1_mask_lo = _mm_cmpgt_epi8_mask(mm_lo, mm_char_code1_cmp);
     __mmask16 k_char_code1_mask_hi = _mm_cmpgt_epi8_mask(mm_hi, mm_char_code1_cmp);
 
-    __m128i mm_char_code_sub_lo = _mm_mask_blend_epi8(k_char_code2_mask_lo, mm_char_code1_sub, mm_char_code2_sub);
-    __m128i mm_char_code_sub_hi = _mm_mask_blend_epi8(k_char_code2_mask_hi, mm_char_code1_sub, mm_char_code2_sub);
+    __m128i mm_char_code_sub_lo = _mm_mask_blend_epi8(k_char_code3_mask_lo, mm_char_code2_sub, mm_char_code3_sub);
+    __m128i mm_char_code_sub_hi = _mm_mask_blend_epi8(k_char_code3_mask_hi, mm_char_code2_sub, mm_char_code3_sub);
+
+    mm_char_code_sub_lo = _mm_mask_blend_epi8(k_char_code2_mask_lo, mm_char_code1_sub, mm_char_code_sub_lo);
+    mm_char_code_sub_hi = _mm_mask_blend_epi8(k_char_code2_mask_hi, mm_char_code1_sub, mm_char_code_sub_hi);
 
     mm_char_code_sub_lo = _mm_mask_blend_epi8(k_char_code1_mask_lo, mm_char_code0_sub, mm_char_code_sub_lo);
     mm_char_code_sub_hi = _mm_mask_blend_epi8(k_char_code1_mask_hi, mm_char_code0_sub, mm_char_code_sub_hi);
 #else
+    __m128i mm_char_code3_mask_lo = _mm_cmpgt_epi8(mm_lo, mm_char_code3_cmp);
+    __m128i mm_char_code3_mask_hi = _mm_cmpgt_epi8(mm_hi, mm_char_code3_cmp);
+
     __m128i mm_char_code2_mask_lo = _mm_cmpgt_epi8(mm_lo, mm_char_code2_cmp);
     __m128i mm_char_code2_mask_hi = _mm_cmpgt_epi8(mm_hi, mm_char_code2_cmp);
 
@@ -920,14 +977,20 @@ BOOST_FORCEINLINE void from_chars_simd_core
     __m128i mm_char_code1_mask_hi = _mm_cmpgt_epi8(mm_hi, mm_char_code1_cmp);
 
 #if defined(BOOST_UUID_USE_SSE41) && defined(BOOST_UUID_FROM_CHARS_X86_USE_PBLENDVB)
-    __m128i mm_char_code_sub_lo = _mm_blendv_epi8(mm_char_code1_sub, mm_char_code2_sub, mm_char_code2_mask_lo);
-    __m128i mm_char_code_sub_hi = _mm_blendv_epi8(mm_char_code1_sub, mm_char_code2_sub, mm_char_code2_mask_hi);
+    __m128i mm_char_code_sub_lo = _mm_blendv_epi8(mm_char_code2_sub, mm_char_code3_sub, mm_char_code3_mask_lo);
+    __m128i mm_char_code_sub_hi = _mm_blendv_epi8(mm_char_code2_sub, mm_char_code3_sub, mm_char_code3_mask_hi);
+
+    mm_char_code_sub_lo = _mm_blendv_epi8(mm_char_code1_sub, mm_char_code_sub_lo, mm_char_code2_mask_lo);
+    mm_char_code_sub_hi = _mm_blendv_epi8(mm_char_code1_sub, mm_char_code_sub_hi, mm_char_code2_mask_hi);
 
     mm_char_code_sub_lo = _mm_blendv_epi8(mm_char_code0_sub, mm_char_code_sub_lo, mm_char_code1_mask_lo);
     mm_char_code_sub_hi = _mm_blendv_epi8(mm_char_code0_sub, mm_char_code_sub_hi, mm_char_code1_mask_hi);
 #else
-    __m128i mm_char_code_sub_lo = _mm_or_si128(_mm_andnot_si128(mm_char_code2_mask_lo, mm_char_code1_sub), _mm_and_si128(mm_char_code2_mask_lo, mm_char_code2_sub));
-    __m128i mm_char_code_sub_hi = _mm_or_si128(_mm_andnot_si128(mm_char_code2_mask_hi, mm_char_code1_sub), _mm_and_si128(mm_char_code2_mask_hi, mm_char_code2_sub));
+    __m128i mm_char_code_sub_lo = _mm_or_si128(_mm_andnot_si128(mm_char_code3_mask_lo, mm_char_code2_sub), _mm_and_si128(mm_char_code3_mask_lo, mm_char_code3_sub));
+    __m128i mm_char_code_sub_hi = _mm_or_si128(_mm_andnot_si128(mm_char_code3_mask_hi, mm_char_code2_sub), _mm_and_si128(mm_char_code3_mask_hi, mm_char_code3_sub));
+
+    mm_char_code_sub_lo = _mm_or_si128(_mm_andnot_si128(mm_char_code2_mask_lo, mm_char_code1_sub), _mm_and_si128(mm_char_code2_mask_lo, mm_char_code_sub_lo));
+    mm_char_code_sub_hi = _mm_or_si128(_mm_andnot_si128(mm_char_code2_mask_hi, mm_char_code1_sub), _mm_and_si128(mm_char_code2_mask_hi, mm_char_code_sub_hi));
 
     mm_char_code_sub_lo = _mm_or_si128(_mm_andnot_si128(mm_char_code1_mask_lo, mm_char_code0_sub), _mm_and_si128(mm_char_code1_mask_lo, mm_char_code_sub_lo));
     mm_char_code_sub_hi = _mm_or_si128(_mm_andnot_si128(mm_char_code1_mask_hi, mm_char_code0_sub), _mm_and_si128(mm_char_code1_mask_hi, mm_char_code_sub_hi));
@@ -936,23 +999,32 @@ BOOST_FORCEINLINE void from_chars_simd_core
 #else // defined(BOOST_UUID_DETAIL_FROM_CHARS_X86_USE_BLENDS)
     // Use a different approach:
     // - Each vpcmpgtb produces a mask, where 0 indicates false and -1 - true.
-    // - mm_char_code1_mask_* always overlaps with the corresponding mm_char_code2_mask_*, which means adding them
-    //   produces a vector where 0 means none of the vpcmpgtb matched the value, -1 - where mm_char_code1_mask_* matched
-    //   and -2 - where mm_char_code2_mask_* matched.
-    // - Shift that mask to the positive range by adding 2.
-    // - Use it as a pattern for vpshufb to place one of the 3 lowest bytes in char_code_sub to the positions corresponding
+    // - Masks for higher character code groups always include masks for lower ones, which means adding them together
+    //   produces a vector where 0 means none of the vpcmpgtb matched the value, -1 - where mm_char_code1_mask_* matched,
+    //   -2 - where mm_char_code2_mask_* matched and -3 - where mm_char_code3_mask_* matched.
+    // - Negate the added masks by subtracting from zero.
+    // - Use it as a pattern for vpshufb to place one of the 4 lowest bytes in char_code_sub to the positions corresponding
     //   to the matched characters. This will be the mm_char_code_sub_* subtrahends.
+    __m128i mm_char_code3_mask_lo = _mm_cmpgt_epi8(mm_lo, mm_char_code3_cmp);
+    __m128i mm_char_code3_mask_hi = _mm_cmpgt_epi8(mm_hi, mm_char_code3_cmp);
+
     __m128i mm_char_code2_mask_lo = _mm_cmpgt_epi8(mm_lo, mm_char_code2_cmp);
     __m128i mm_char_code2_mask_hi = _mm_cmpgt_epi8(mm_hi, mm_char_code2_cmp);
 
     __m128i mm_char_code1_mask_lo = _mm_cmpgt_epi8(mm_lo, mm_char_code1_cmp);
     __m128i mm_char_code1_mask_hi = _mm_cmpgt_epi8(mm_hi, mm_char_code1_cmp);
 
-    __m128i mm_char_code_pattern_lo = _mm_add_epi8(mm_char_code1_mask_lo, mm_char_code2_mask_lo);
-    __m128i mm_char_code_pattern_hi = _mm_add_epi8(mm_char_code1_mask_hi, mm_char_code2_mask_hi);
+    __m128i mm_char_code_pattern_lo = _mm_add_epi8(mm_char_code2_mask_lo, mm_char_code3_mask_lo);
+    __m128i mm_char_code_pattern_hi = _mm_add_epi8(mm_char_code2_mask_hi, mm_char_code3_mask_hi);
 
-    mm_char_code_pattern_lo = _mm_add_epi8(mm_char_code_pattern_lo, constants::mm_2);
-    mm_char_code_pattern_hi = _mm_add_epi8(mm_char_code_pattern_hi, constants::mm_2);
+    mm_char_code_pattern_lo = _mm_add_epi8(mm_char_code_pattern_lo, mm_char_code1_mask_lo);
+    mm_char_code_pattern_hi = _mm_add_epi8(mm_char_code_pattern_hi, mm_char_code1_mask_hi);
+
+    {
+        const __m128i mm_0 = _mm_setzero_si128();
+        mm_char_code_pattern_lo = _mm_sub_epi8(mm_0, mm_char_code_pattern_lo);
+        mm_char_code_pattern_hi = _mm_sub_epi8(mm_0, mm_char_code_pattern_hi);
+    }
 
     const __m128i mm_char_code_sub = _mm_cvtsi32_si128(static_cast< int >(char_code_sub));
     __m128i mm_char_code_sub_lo = _mm_shuffle_epi8(mm_char_code_sub, mm_char_code_pattern_lo);
@@ -967,8 +1039,7 @@ BOOST_FORCEINLINE void from_chars_simd_core
 #if defined(BOOST_UUID_USE_SSE41)
     if (BOOST_LIKELY(_mm_test_all_zeros(_mm_or_si128(mm_lo, mm_hi), constants::mm_F0)))
 #else
-    const __m128i mm_0 = _mm_setzero_si128();
-    if (BOOST_LIKELY(_mm_movemask_epi8(_mm_cmpeq_epi8(_mm_and_si128(_mm_or_si128(mm_lo, mm_hi), constants::mm_F0), mm_0)) == 0xFFFF))
+    if (BOOST_LIKELY(_mm_movemask_epi8(_mm_cmpeq_epi8(_mm_and_si128(_mm_or_si128(mm_lo, mm_hi), constants::mm_F0), _mm_setzero_si128())) == 0xFFFF))
 #endif
     {
         if (BOOST_LIKELY(ec == from_chars_error::none))
@@ -980,9 +1051,7 @@ BOOST_FORCEINLINE void from_chars_simd_core
     else
     {
         // Some of the hex digits are invalid
-#if defined(BOOST_UUID_USE_SSE41)
         const __m128i mm_0 = _mm_setzero_si128();
-#endif
         __m128i mm_hi_bits_lo = _mm_and_si128(mm_lo, constants::mm_F0);
         __m128i mm_hi_bits_hi = _mm_and_si128(mm_hi, constants::mm_F0);
         mm_hi_bits_lo = _mm_cmpeq_epi8(mm_hi_bits_lo, mm_0);
@@ -1067,10 +1136,12 @@ BOOST_FORCEINLINE from_chars_result< Char > from_chars_simd(const Char* begin, c
         char_constants::mm_expected_dashes,
         char_constants::mm_char_code1_cmp,
         char_constants::mm_char_code2_cmp,
+        char_constants::mm_char_code3_cmp,
 #if defined(BOOST_UUID_DETAIL_FROM_CHARS_X86_USE_BLENDS)
         char_constants::mm_char_code0_sub,
         char_constants::mm_char_code1_sub,
         char_constants::mm_char_code2_sub,
+        char_constants::mm_char_code3_sub,
 #else
         char_constants::char_code_sub,
 #endif
