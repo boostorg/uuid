@@ -16,6 +16,7 @@
 #include <boost/uuid/detail/endian.hpp>
 #include <boost/uuid/detail/from_chars_result.hpp>
 #include <boost/uuid/detail/simd_vector.hpp>
+#include <boost/uuid/detail/type_list.hpp>
 
 #if defined(BOOST_UUID_REPORT_IMPLEMENTATION)
 #include <boost/config/pragma_message.hpp>
@@ -35,19 +36,20 @@ struct from_chars_simd_char_constants
 {
     static const simd_vector128< std::uint8_t > mm_expected_dashes;
 
-    static constexpr std::uint8_t char_code2 = 0x61; // 'a' in ASCII
+    static constexpr std::uint8_t char_code3 = 0x61; // 'a' in ASCII
+    static constexpr std::uint8_t char_code3_sub = static_cast< std::uint8_t >(char_code3 - 10u);
+    static constexpr std::uint8_t char_code2 = 0x41; // 'A' in ASCII
     static constexpr std::uint8_t char_code2_sub = static_cast< std::uint8_t >(char_code2 - 10u);
-    static constexpr std::uint8_t char_code1 = 0x41; // 'A' in ASCII
-    static constexpr std::uint8_t char_code1_sub = static_cast< std::uint8_t >(char_code1 - 10u);
+    static constexpr std::uint8_t char_code1 = 0x3A; // ('9' + 1) in ASCII
+    static constexpr std::uint8_t char_code1_sub = static_cast< std::uint8_t >(char_code1 - 16u);
     static constexpr std::uint8_t char_code0 = 0x30; // '0' in ASCII
     static constexpr std::uint8_t char_code0_sub = char_code0;
 
-    static constexpr std::uint32_t char_code_sub =
-        (static_cast< std::uint32_t >(char_code0_sub) << 16u) | (static_cast< std::uint32_t >(char_code1_sub) << 8u) | char_code2_sub;
-
+    static const simd_vector128< std::uint8_t > mm_char_code3_cmp;
     static const simd_vector128< std::uint8_t > mm_char_code2_cmp;
     static const simd_vector128< std::uint8_t > mm_char_code1_cmp;
 
+    static const simd_vector128< std::uint8_t > mm_char_code3_sub;
     static const simd_vector128< std::uint8_t > mm_char_code2_sub;
     static const simd_vector128< std::uint8_t > mm_char_code1_sub;
     static const simd_vector128< std::uint8_t > mm_char_code0_sub;
@@ -56,6 +58,19 @@ struct from_chars_simd_char_constants
 template< typename Char, bool IsCharASCIICompatible, bool IsWCharASCIICompatible >
 const simd_vector128< std::uint8_t > from_chars_simd_char_constants< Char, IsCharASCIICompatible, IsWCharASCIICompatible >::mm_expected_dashes =
     {{ 0x2D, 0x00, 0x00, 0x00, 0x00, 0x2D, 0x00, 0x00, 0x00, 0x00, 0x2D, 0x00, 0x00, 0x00, 0x00, 0x2D }};
+
+template< typename Char, bool IsCharASCIICompatible, bool IsWCharASCIICompatible >
+const simd_vector128< std::uint8_t > from_chars_simd_char_constants< Char, IsCharASCIICompatible, IsWCharASCIICompatible >::mm_char_code3_cmp =
+{{
+    static_cast< std::uint8_t >(char_code3 - 1u), static_cast< std::uint8_t >(char_code3 - 1u),
+    static_cast< std::uint8_t >(char_code3 - 1u), static_cast< std::uint8_t >(char_code3 - 1u),
+    static_cast< std::uint8_t >(char_code3 - 1u), static_cast< std::uint8_t >(char_code3 - 1u),
+    static_cast< std::uint8_t >(char_code3 - 1u), static_cast< std::uint8_t >(char_code3 - 1u),
+    static_cast< std::uint8_t >(char_code3 - 1u), static_cast< std::uint8_t >(char_code3 - 1u),
+    static_cast< std::uint8_t >(char_code3 - 1u), static_cast< std::uint8_t >(char_code3 - 1u),
+    static_cast< std::uint8_t >(char_code3 - 1u), static_cast< std::uint8_t >(char_code3 - 1u),
+    static_cast< std::uint8_t >(char_code3 - 1u), static_cast< std::uint8_t >(char_code3 - 1u)
+}};
 
 template< typename Char, bool IsCharASCIICompatible, bool IsWCharASCIICompatible >
 const simd_vector128< std::uint8_t > from_chars_simd_char_constants< Char, IsCharASCIICompatible, IsWCharASCIICompatible >::mm_char_code2_cmp =
@@ -84,6 +99,13 @@ const simd_vector128< std::uint8_t > from_chars_simd_char_constants< Char, IsCha
 }};
 
 template< typename Char, bool IsCharASCIICompatible, bool IsWCharASCIICompatible >
+const simd_vector128< std::uint8_t > from_chars_simd_char_constants< Char, IsCharASCIICompatible, IsWCharASCIICompatible >::mm_char_code3_sub =
+{{
+    char_code3_sub, char_code3_sub, char_code3_sub, char_code3_sub, char_code3_sub, char_code3_sub, char_code3_sub, char_code3_sub,
+    char_code3_sub, char_code3_sub, char_code3_sub, char_code3_sub, char_code3_sub, char_code3_sub, char_code3_sub, char_code3_sub
+}};
+
+template< typename Char, bool IsCharASCIICompatible, bool IsWCharASCIICompatible >
 const simd_vector128< std::uint8_t > from_chars_simd_char_constants< Char, IsCharASCIICompatible, IsWCharASCIICompatible >::mm_char_code2_sub =
 {{
     char_code2_sub, char_code2_sub, char_code2_sub, char_code2_sub, char_code2_sub, char_code2_sub, char_code2_sub, char_code2_sub,
@@ -104,59 +126,54 @@ const simd_vector128< std::uint8_t > from_chars_simd_char_constants< Char, IsCha
     char_code0_sub, char_code0_sub, char_code0_sub, char_code0_sub, char_code0_sub, char_code0_sub, char_code0_sub, char_code0_sub
 }};
 
+template< std::uint8_t CharCode, std::uint8_t Subtrahend >
+struct char_code_info
+{
+    static constexpr std::uint8_t char_code = CharCode;
+    static constexpr std::uint8_t subtrahend = Subtrahend;
+};
+
+template< typename Left, typename Right >
+struct order_char_codes
+{
+    static constexpr bool value = (Left::char_code < Right::char_code);
+};
+
 template< bool IsWCharASCIICompatible >
 struct from_chars_simd_char_constants< char, false, IsWCharASCIICompatible >
 {
-    static_assert(static_cast< std::int8_t >('0') > -128 && static_cast< std::int8_t >('A') > -128 && static_cast< std::int8_t >('a') > -128,
-        "Boost.UUID: Unsupported char encoding, hexadecimal character codes are expected to be greater than -128");
+    static_assert(static_cast< std::uint8_t >('0') > 0u && static_cast< std::uint8_t >('A') > 0u && static_cast< std::uint8_t >('a') > 0u,
+        "Boost.UUID: Unsupported char encoding, hexadecimal character codes are expected to be greater than 0");
 
     static const simd_vector128< std::uint8_t > mm_expected_dashes;
 
-    static constexpr std::uint8_t char_code2 = static_cast< std::uint8_t >
-    (
-        static_cast< std::int8_t >('a') > static_cast< std::int8_t >('A') ?
-        (
-            static_cast< std::int8_t >('a') > static_cast< std::int8_t >('0') ? 'a' : '0'
-        ) :
-        (
-            static_cast< std::int8_t >('A') > static_cast< std::int8_t >('0') ? 'A' : '0'
-        )
-    );
-    static constexpr std::uint8_t char_code2_sub = char_code2 == static_cast< std::uint8_t >('0') ?
-        static_cast< std::uint8_t >('0') : static_cast< std::uint8_t >(char_code2 - 10u);
+    using char_codes = detail::sort<
+        detail::type_list<
+            char_code_info< static_cast< std::uint8_t >('a'), static_cast< std::uint8_t >('a' - 10u) >,
+            char_code_info< static_cast< std::uint8_t >('A'), static_cast< std::uint8_t >('A' - 10u) >,
+            char_code_info< static_cast< std::uint8_t >('0'), static_cast< std::uint8_t >('0') >,
+            char_code_info< static_cast< std::uint8_t >('9' + 1u), static_cast< std::uint8_t >('9' + 1u - 16u) >
+        >,
+        order_char_codes
+    >::type;
 
-    static constexpr std::uint8_t char_code1 = static_cast< std::uint8_t >
-    (
-        static_cast< std::int8_t >('a') > static_cast< std::int8_t >('A') ?
-        (
-            static_cast< std::int8_t >('a') < static_cast< std::int8_t >('0') ? 'a' : '0'
-        ) :
-        (
-            static_cast< std::int8_t >('A') < static_cast< std::int8_t >('0') ? 'A' : '0'
-        )
-    );
-    static constexpr std::uint8_t char_code1_sub = char_code1 == static_cast< std::uint8_t >('0') ?
-        static_cast< std::uint8_t >('0') : static_cast< std::uint8_t >(char_code1 - 10u);
+    static constexpr std::uint8_t char_code3 = detail::elem_at< char_codes, 3u >::type::char_code;
+    static constexpr std::uint8_t char_code3_sub = detail::elem_at< char_codes, 3u >::type::subtrahend;
 
-    static constexpr std::uint8_t char_code0 = static_cast< std::uint8_t >
-    (
-        static_cast< std::int8_t >('a') < static_cast< std::int8_t >('A') ?
-        (
-            static_cast< std::int8_t >('a') < static_cast< std::int8_t >('0') ? 'a' : '0'
-        ) :
-        (
-            static_cast< std::int8_t >('A') < static_cast< std::int8_t >('0') ? 'A' : '0'
-        )
-    );
-    static constexpr std::uint8_t char_code0_sub = char_code0 == static_cast< std::uint8_t >('0') ?
-        static_cast< std::uint8_t >('0') : static_cast< std::uint8_t >(char_code0 - 10u);
+    static constexpr std::uint8_t char_code2 = detail::elem_at< char_codes, 2u >::type::char_code;
+    static constexpr std::uint8_t char_code2_sub = detail::elem_at< char_codes, 2u >::type::subtrahend;
 
-    static constexpr std::uint32_t char_code_sub =
-        (static_cast< std::uint32_t >(char_code0_sub) << 16u) | (static_cast< std::uint32_t >(char_code1_sub) << 8u) | char_code2_sub;
+    static constexpr std::uint8_t char_code1 = detail::elem_at< char_codes, 1u >::type::char_code;
+    static constexpr std::uint8_t char_code1_sub = detail::elem_at< char_codes, 1u >::type::subtrahend;
 
+    static constexpr std::uint8_t char_code0 = detail::elem_at< char_codes, 0u >::type::char_code;
+    static constexpr std::uint8_t char_code0_sub = detail::elem_at< char_codes, 0u >::type::subtrahend;
+
+    static const simd_vector128< std::uint8_t > mm_char_code3_cmp;
     static const simd_vector128< std::uint8_t > mm_char_code2_cmp;
     static const simd_vector128< std::uint8_t > mm_char_code1_cmp;
 
+    static const simd_vector128< std::uint8_t > mm_char_code3_sub;
     static const simd_vector128< std::uint8_t > mm_char_code2_sub;
     static const simd_vector128< std::uint8_t > mm_char_code1_sub;
     static const simd_vector128< std::uint8_t > mm_char_code0_sub;
@@ -167,6 +184,19 @@ const simd_vector128< std::uint8_t > from_chars_simd_char_constants< char, false
 {{
     static_cast< std::uint8_t >('-'), 0x00, 0x00, 0x00, 0x00, static_cast< std::uint8_t >('-'), 0x00, 0x00,
     0x00, 0x00, static_cast< std::uint8_t >('-'), 0x00, 0x00, 0x00, 0x00, static_cast< std::uint8_t >('-')
+}};
+
+template< bool IsWCharASCIICompatible >
+const simd_vector128< std::uint8_t > from_chars_simd_char_constants< char, false, IsWCharASCIICompatible >::mm_char_code3_cmp =
+{{
+    static_cast< std::uint8_t >(char_code3 - 1u), static_cast< std::uint8_t >(char_code3 - 1u),
+    static_cast< std::uint8_t >(char_code3 - 1u), static_cast< std::uint8_t >(char_code3 - 1u),
+    static_cast< std::uint8_t >(char_code3 - 1u), static_cast< std::uint8_t >(char_code3 - 1u),
+    static_cast< std::uint8_t >(char_code3 - 1u), static_cast< std::uint8_t >(char_code3 - 1u),
+    static_cast< std::uint8_t >(char_code3 - 1u), static_cast< std::uint8_t >(char_code3 - 1u),
+    static_cast< std::uint8_t >(char_code3 - 1u), static_cast< std::uint8_t >(char_code3 - 1u),
+    static_cast< std::uint8_t >(char_code3 - 1u), static_cast< std::uint8_t >(char_code3 - 1u),
+    static_cast< std::uint8_t >(char_code3 - 1u), static_cast< std::uint8_t >(char_code3 - 1u)
 }};
 
 template< bool IsWCharASCIICompatible >
@@ -193,6 +223,13 @@ const simd_vector128< std::uint8_t > from_chars_simd_char_constants< char, false
     static_cast< std::uint8_t >(char_code1 - 1u), static_cast< std::uint8_t >(char_code1 - 1u),
     static_cast< std::uint8_t >(char_code1 - 1u), static_cast< std::uint8_t >(char_code1 - 1u),
     static_cast< std::uint8_t >(char_code1 - 1u), static_cast< std::uint8_t >(char_code1 - 1u)
+}};
+
+template< bool IsWCharASCIICompatible >
+const simd_vector128< std::uint8_t > from_chars_simd_char_constants< char, false, IsWCharASCIICompatible >::mm_char_code3_sub =
+{{
+    char_code3_sub, char_code3_sub, char_code3_sub, char_code3_sub, char_code3_sub, char_code3_sub, char_code3_sub, char_code3_sub,
+    char_code3_sub, char_code3_sub, char_code3_sub, char_code3_sub, char_code3_sub, char_code3_sub, char_code3_sub, char_code3_sub
 }};
 
 template< bool IsWCharASCIICompatible >
@@ -224,56 +261,38 @@ struct from_chars_simd_char_constants< wchar_t, IsCharASCIICompatible, false >
         static_cast< wchar_t >(static_cast< std::uint8_t >(L'-')) == L'-',
         "Boost.UUID: Unsupported wchar_t encoding, hexadecimal and dash character codes are expected to be representable by a single byte");
 
-    static_assert(static_cast< std::int8_t >(L'0') > -128 && static_cast< std::int8_t >(L'A') > -128 && static_cast< std::int8_t >(L'a') > -128,
-        "Boost.UUID: Unsupported wchar_t encoding, hexadecimal character codes are expected to be greater than -128");
+    static_assert(static_cast< std::uint8_t >(L'0') > 0u && static_cast< std::uint8_t >(L'A') > 0u && static_cast< std::uint8_t >(L'a') > 0u,
+        "Boost.UUID: Unsupported wchar_t encoding, hexadecimal character codes are expected to be greater than 0");
 
     static const simd_vector128< std::uint8_t > mm_expected_dashes;
 
-    static constexpr std::uint8_t char_code2 = static_cast< std::uint8_t >
-    (
-        static_cast< std::int8_t >(L'a') > static_cast< std::int8_t >(L'A') ?
-        (
-            static_cast< std::int8_t >(L'a') > static_cast< std::int8_t >(L'0') ? L'a' : L'0'
-        ) :
-        (
-            static_cast< std::int8_t >(L'A') > static_cast< std::int8_t >(L'0') ? L'A' : L'0'
-        )
-    );
-    static constexpr std::uint8_t char_code2_sub = char_code2 == static_cast< std::uint8_t >(L'0') ?
-        static_cast< std::uint8_t >(L'0') : static_cast< std::uint8_t >(char_code2 - 10u);
+    using char_codes = detail::sort<
+        detail::type_list<
+            char_code_info< static_cast< std::uint8_t >(L'a'), static_cast< std::uint8_t >(L'a' - 10u) >,
+            char_code_info< static_cast< std::uint8_t >(L'A'), static_cast< std::uint8_t >(L'A' - 10u) >,
+            char_code_info< static_cast< std::uint8_t >(L'0'), static_cast< std::uint8_t >(L'0') >,
+            char_code_info< static_cast< std::uint8_t >(L'9' + 1u), static_cast< std::uint8_t >(L'9' + 1u - 16u) >
+        >,
+        order_char_codes
+    >::type;
 
-    static constexpr std::uint8_t char_code1 = static_cast< std::uint8_t >
-    (
-        static_cast< std::int8_t >(L'a') > static_cast< std::int8_t >(L'A') ?
-        (
-            static_cast< std::int8_t >(L'a') < static_cast< std::int8_t >(L'0') ? L'a' : L'0'
-        ) :
-        (
-            static_cast< std::int8_t >(L'A') < static_cast< std::int8_t >(L'0') ? L'A' : L'0'
-        )
-    );
-    static constexpr std::uint8_t char_code1_sub = char_code1 == static_cast< std::uint8_t >(L'0') ?
-        static_cast< std::uint8_t >(L'0') : static_cast< std::uint8_t >(char_code1 - 10u);
+    static constexpr std::uint8_t char_code3 = detail::elem_at< char_codes, 3u >::type::char_code;
+    static constexpr std::uint8_t char_code3_sub = detail::elem_at< char_codes, 3u >::type::subtrahend;
 
-    static constexpr std::uint8_t char_code0 = static_cast< std::uint8_t >
-    (
-        static_cast< std::int8_t >(L'a') < static_cast< std::int8_t >(L'A') ?
-        (
-            static_cast< std::int8_t >(L'a') < static_cast< std::int8_t >(L'0') ? L'a' : L'0'
-        ) :
-        (
-            static_cast< std::int8_t >(L'A') < static_cast< std::int8_t >(L'0') ? L'A' : L'0'
-        )
-    );
-    static constexpr std::uint8_t char_code0_sub = char_code0 == static_cast< std::uint8_t >(L'0') ?
-        static_cast< std::uint8_t >(L'0') : static_cast< std::uint8_t >(char_code0 - 10u);
+    static constexpr std::uint8_t char_code2 = detail::elem_at< char_codes, 2u >::type::char_code;
+    static constexpr std::uint8_t char_code2_sub = detail::elem_at< char_codes, 2u >::type::subtrahend;
 
-    static constexpr std::uint32_t char_code_sub =
-        (static_cast< std::uint32_t >(char_code0_sub) << 16u) | (static_cast< std::uint32_t >(char_code1_sub) << 8u) | char_code2_sub;
+    static constexpr std::uint8_t char_code1 = detail::elem_at< char_codes, 1u >::type::char_code;
+    static constexpr std::uint8_t char_code1_sub = detail::elem_at< char_codes, 1u >::type::subtrahend;
 
+    static constexpr std::uint8_t char_code0 = detail::elem_at< char_codes, 0u >::type::char_code;
+    static constexpr std::uint8_t char_code0_sub = detail::elem_at< char_codes, 0u >::type::subtrahend;
+
+    static const simd_vector128< std::uint8_t > mm_char_code3_cmp;
     static const simd_vector128< std::uint8_t > mm_char_code2_cmp;
     static const simd_vector128< std::uint8_t > mm_char_code1_cmp;
 
+    static const simd_vector128< std::uint8_t > mm_char_code3_sub;
     static const simd_vector128< std::uint8_t > mm_char_code2_sub;
     static const simd_vector128< std::uint8_t > mm_char_code1_sub;
     static const simd_vector128< std::uint8_t > mm_char_code0_sub;
@@ -284,6 +303,19 @@ const simd_vector128< std::uint8_t > from_chars_simd_char_constants< wchar_t, Is
 {{
     static_cast< std::uint8_t >(L'-'), 0x00, 0x00, 0x00, 0x00, static_cast< std::uint8_t >(L'-'), 0x00, 0x00,
     0x00, 0x00, static_cast< std::uint8_t >(L'-'), 0x00, 0x00, 0x00, 0x00, static_cast< std::uint8_t >(L'-')
+}};
+
+template< bool IsCharASCIICompatible >
+const simd_vector128< std::uint8_t > from_chars_simd_char_constants< wchar_t, IsCharASCIICompatible, false >::mm_char_code3_cmp =
+{{
+    static_cast< std::uint8_t >(char_code3 - 1u), static_cast< std::uint8_t >(char_code3 - 1u),
+    static_cast< std::uint8_t >(char_code3 - 1u), static_cast< std::uint8_t >(char_code3 - 1u),
+    static_cast< std::uint8_t >(char_code3 - 1u), static_cast< std::uint8_t >(char_code3 - 1u),
+    static_cast< std::uint8_t >(char_code3 - 1u), static_cast< std::uint8_t >(char_code3 - 1u),
+    static_cast< std::uint8_t >(char_code3 - 1u), static_cast< std::uint8_t >(char_code3 - 1u),
+    static_cast< std::uint8_t >(char_code3 - 1u), static_cast< std::uint8_t >(char_code3 - 1u),
+    static_cast< std::uint8_t >(char_code3 - 1u), static_cast< std::uint8_t >(char_code3 - 1u),
+    static_cast< std::uint8_t >(char_code3 - 1u), static_cast< std::uint8_t >(char_code3 - 1u)
 }};
 
 template< bool IsCharASCIICompatible >
@@ -310,6 +342,13 @@ const simd_vector128< std::uint8_t > from_chars_simd_char_constants< wchar_t, Is
     static_cast< std::uint8_t >(char_code1 - 1u), static_cast< std::uint8_t >(char_code1 - 1u),
     static_cast< std::uint8_t >(char_code1 - 1u), static_cast< std::uint8_t >(char_code1 - 1u),
     static_cast< std::uint8_t >(char_code1 - 1u), static_cast< std::uint8_t >(char_code1 - 1u)
+}};
+
+template< bool IsCharASCIICompatible >
+const simd_vector128< std::uint8_t > from_chars_simd_char_constants< wchar_t, IsCharASCIICompatible, false >::mm_char_code3_sub =
+{{
+    char_code3_sub, char_code3_sub, char_code3_sub, char_code3_sub, char_code3_sub, char_code3_sub, char_code3_sub, char_code3_sub,
+    char_code3_sub, char_code3_sub, char_code3_sub, char_code3_sub, char_code3_sub, char_code3_sub, char_code3_sub, char_code3_sub
 }};
 
 template< bool IsCharASCIICompatible >
@@ -529,27 +568,28 @@ BOOST_FORCEINLINE void from_chars_simd_core
     }
 
     // Convert characters to 8-bit integers. See the comment in from_chars_x86.hpp for the algorithm description.
-    const vint8m1_t upper_i8 = __riscv_vreinterpret_v_u8m1_i8m1(upper);
-    const vint8m1_t lower_i8 = __riscv_vreinterpret_v_u8m1_i8m1(lower);
-    const vuint8m1_t char_code1_cmp = __riscv_vle8_v_u8m1(char_constants::mm_char_code1_cmp.bytes, vl);
+    const vuint8m1_t char_code3_cmp = __riscv_vle8_v_u8m1(char_constants::mm_char_code3_cmp.bytes, vl);
     const vuint8m1_t char_code2_cmp = __riscv_vle8_v_u8m1(char_constants::mm_char_code2_cmp.bytes, vl);
+    const vuint8m1_t char_code1_cmp = __riscv_vle8_v_u8m1(char_constants::mm_char_code1_cmp.bytes, vl);
 
-    const vint8m1_t char_code1_cmp_i8 = __riscv_vreinterpret_v_u8m1_i8m1(char_code1_cmp);
-    const vint8m1_t char_code2_cmp_i8 = __riscv_vreinterpret_v_u8m1_i8m1(char_code2_cmp);
+    const vbool8_t upper_code3_mask = __riscv_vmsgt_vv_u8m1_b8(upper, char_code3_cmp, vl);
+    const vbool8_t upper_code2_mask = __riscv_vmsgt_vv_u8m1_b8(upper, char_code2_cmp, vl);
+    const vbool8_t upper_code1_mask = __riscv_vmsgt_vv_u8m1_b8(upper, char_code1_cmp, vl);
+    const vbool8_t lower_code3_mask = __riscv_vmsgt_vv_u8m1_b8(lower, char_code3_cmp, vl);
+    const vbool8_t lower_code2_mask = __riscv_vmsgt_vv_u8m1_b8(lower, char_code2_cmp, vl);
+    const vbool8_t lower_code1_mask = __riscv_vmsgt_vv_u8m1_b8(lower, char_code1_cmp, vl);
 
-    const vbool8_t upper_code2_mask = __riscv_vmsgt_vv_i8m1_b8(upper_i8, char_code2_cmp_i8, vl);
-    const vbool8_t upper_code1_mask = __riscv_vmsgt_vv_i8m1_b8(upper_i8, char_code1_cmp_i8, vl);
-    const vbool8_t lower_code2_mask = __riscv_vmsgt_vv_i8m1_b8(lower_i8, char_code2_cmp_i8, vl);
-    const vbool8_t lower_code1_mask = __riscv_vmsgt_vv_i8m1_b8(lower_i8, char_code1_cmp_i8, vl);
-
-    const vuint8m1_t char_code0_sub = __riscv_vle8_v_u8m1(char_constants::mm_char_code0_sub.bytes, vl);
-    const vuint8m1_t char_code1_sub = __riscv_vle8_v_u8m1(char_constants::mm_char_code1_sub.bytes, vl);
+    const vuint8m1_t char_code3_sub = __riscv_vle8_v_u8m1(char_constants::mm_char_code3_sub.bytes, vl);
     const vuint8m1_t char_code2_sub = __riscv_vle8_v_u8m1(char_constants::mm_char_code2_sub.bytes, vl);
+    const vuint8m1_t char_code1_sub = __riscv_vle8_v_u8m1(char_constants::mm_char_code1_sub.bytes, vl);
+    const vuint8m1_t char_code0_sub = __riscv_vle8_v_u8m1(char_constants::mm_char_code0_sub.bytes, vl);
 
-    vuint8m1_t upper_sub = __riscv_vmerge_vvm_u8m1(char_code1_sub, char_code2_sub, upper_code2_mask, vl);
+    vuint8m1_t upper_sub = __riscv_vmerge_vvm_u8m1(char_code2_sub, char_code3_sub, upper_code3_mask, vl);
+    upper_sub = __riscv_vmerge_vvm_u8m1(char_code1_sub, upper_sub, upper_code2_mask, vl);
     upper_sub = __riscv_vmerge_vvm_u8m1(char_code0_sub, upper_sub, upper_code1_mask, vl);
 
-    vuint8m1_t lower_sub = __riscv_vmerge_vvm_u8m1(char_code1_sub, char_code2_sub, lower_code2_mask, vl);
+    vuint8m1_t lower_sub = __riscv_vmerge_vvm_u8m1(char_code2_sub, char_code3_sub, lower_code3_mask, vl);
+    lower_sub = __riscv_vmerge_vvm_u8m1(char_code1_sub, lower_sub, lower_code2_mask, vl);
     lower_sub = __riscv_vmerge_vvm_u8m1(char_code0_sub, lower_sub, lower_code1_mask, vl);
 
     upper = __riscv_vsub_vv_u8m1(upper, upper_sub, vl);

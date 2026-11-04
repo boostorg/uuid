@@ -89,6 +89,19 @@ int main()
     test(  U"abcdefgh-0000-0000-0000-000000000000", 6, from_chars_error::hex_digit_expected );
     test( u8"abcdefgh-0000-0000-0000-000000000000", 6, from_chars_error::hex_digit_expected );
 
+    // Invalid character is a character between ('9' + 1) and ('9' + 6); it must not decode as a value between 10 and 15
+    test(   "00000000-0000-0000-0000-00000000000:", 35, from_chars_error::hex_digit_expected );
+    test(  L"00000000-0000-0000-0000-00000000000:", 35, from_chars_error::hex_digit_expected );
+    test(  u"00000000-0000-0000-0000-00000000000:", 35, from_chars_error::hex_digit_expected );
+    test(  U"00000000-0000-0000-0000-00000000000:", 35, from_chars_error::hex_digit_expected );
+    test( u8"00000000-0000-0000-0000-00000000000:", 35, from_chars_error::hex_digit_expected );
+
+    test(   "00000000-0000-0000-0000-00000000000?", 35, from_chars_error::hex_digit_expected );
+    test(  L"00000000-0000-0000-0000-00000000000?", 35, from_chars_error::hex_digit_expected );
+    test(  u"00000000-0000-0000-0000-00000000000?", 35, from_chars_error::hex_digit_expected );
+    test(  U"00000000-0000-0000-0000-00000000000?", 35, from_chars_error::hex_digit_expected );
+    test( u8"00000000-0000-0000-0000-00000000000?", 35, from_chars_error::hex_digit_expected );
+
     test(   "Have a nice day", 0, from_chars_error::hex_digit_expected );
     test(  L"Have a nice day", 0, from_chars_error::hex_digit_expected );
     test(  u"Have a nice day", 0, from_chars_error::hex_digit_expected );
